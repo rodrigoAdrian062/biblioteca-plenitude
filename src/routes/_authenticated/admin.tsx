@@ -632,6 +632,72 @@ function MembersAdmin() {
           ) : null}
         </div>
       )}
+
+      <Dialog open={editing !== null} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-display">Editar acesso</DialogTitle>
+          </DialogHeader>
+          {editing ? (
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const email = editing.email.trim();
+                const password = editing.password;
+                if (password && password.length < 8) {
+                  toast.error("A senha deve ter ao menos 8 caracteres.");
+                  return;
+                }
+                update.mutate(
+                  {
+                    id: editing.id,
+                    full_name: editing.full_name.trim(),
+                    ...(email ? { email } : {}),
+                    ...(password ? { password } : {}),
+                  },
+                  { onSuccess: () => setEditing(null) },
+                );
+              }}
+            >
+              <div className="space-y-2">
+                <Label htmlFor="e-name">Nome</Label>
+                <Input
+                  id="e-name"
+                  required
+                  value={editing.full_name}
+                  onChange={(e) => setEditing({ ...editing, full_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="e-email">Login (e-mail)</Label>
+                <Input
+                  id="e-email"
+                  type="email"
+                  required
+                  value={editing.email}
+                  onChange={(e) => setEditing({ ...editing, email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="e-pass">Nova senha</Label>
+                <Input
+                  id="e-pass"
+                  type="text"
+                  placeholder="Deixe em branco para manter a atual"
+                  value={editing.password}
+                  onChange={(e) => setEditing({ ...editing, password: e.target.value })}
+                />
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={update.isPending}>
+                  Salvar alterações
+                </Button>
+              </DialogFooter>
+            </form>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
