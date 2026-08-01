@@ -60,14 +60,26 @@ export async function createMemberImpl(input: {
   is_admin?: boolean | undefined;
 }) {
   const db = await admin();
-  const { data, error } = await db.auth.admin.createUser({
-    email: input.email,
-    password: input.password,
-    email_confirm: true,
-  });
-  if (error || !data.user) throw new Error(error?.message ?? "Falha ao criar o acesso.");
+  const [localPart, domain] = input.email.split("@");
+  let created: { id: string } | null = null;
+  let lastError = "";
+  for (let attempt = 0; attempt < 6 && !created; attempt += 1) {
+    const email = attempt === 0 ? input.email : `${localPart}${attempt + 1}@${domain}`;
+    const { data, error } = await db.auth.admin.createUser({
+      email,
+      password: input.password,
+      email_confirm: true,
+    });
+    if (data?.user) {
+      created = { id: data.user.id };
+      break;
+    }
+    lastError = error?.message ?? "Falha ao criar o acesso.";
+    if (!/already|exist|registered/i.test(lastError)) break;
+  }
+  if (!created) throw new Error(lastError || "Falha ao criar o acesso.");
 
-  const userId = data.user.id;
+  const userId = created.id;
   const { error: pErr } = await db.from("profiles").insert({
     id: userId,
     full_name: input.full_name,
@@ -157,4 +169,30 @@ export async function hasAnyAdminImpl() {
     .select("id", { count: "exact", head: true })
     .eq("role", "admin");
   return (count ?? 0) > 0;
+}
+
+export async function updateOwnCredentialsImpl(input: {
+  id: string;
+  email?: string | undefined;
+  password?: string | undefined;
+}) {
+  const db = await admin();
+  if (input.email) {
+    const { error } = await db.auth.admin.updateUserById(input.id, {
+      email: input.email,
+      email_confirm: true,
+    });
+    if (error) throw new Error("Este login já está em uso.");
+  }
+  if (input.password) {
+    const { error } = await db.auth.admin.updateUserById(input.id, { password: input.password });
+    if (error) throw new Error(error.message);
+  }
+  return { ok: true };
+}
+
+export async function getOwnLoginImpl(id: string) {
+  const db = await admin();
+  const { data } = await db.auth.admin.getUserById(id);
+  return { email: data?.user?.email ?? "" };
 }
