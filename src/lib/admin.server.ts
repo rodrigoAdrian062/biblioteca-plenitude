@@ -94,11 +94,16 @@ export async function updateMemberImpl(input: {
   password?: string;
 }) {
   const db = await admin();
-  const patch: Record<string, unknown> = {};
-  if (input.full_name !== undefined) patch["full_name"] = input.full_name;
-  if (input.degree !== undefined) patch["degree"] = input.degree;
-  if (input.lodge !== undefined) patch["lodge"] = input.lodge;
-  if (input.active !== undefined) patch["active"] = input.active;
+  const patch: {
+    full_name?: string;
+    degree?: number;
+    lodge?: string | null;
+    active?: boolean;
+  } = {};
+  if (input.full_name !== undefined) patch.full_name = input.full_name;
+  if (input.degree !== undefined) patch.degree = input.degree;
+  if (input.lodge !== undefined) patch.lodge = input.lodge;
+  if (input.active !== undefined) patch.active = input.active;
 
   if (Object.keys(patch).length > 0) {
     const { error } = await db.from("profiles").update(patch).eq("id", input.id);
