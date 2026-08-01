@@ -7,6 +7,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { getBook } from "@/lib/library.functions";
 import { degreeLabel } from "@/lib/masonic";
+import { catalogName, scopeLabel } from "@/lib/catalog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
