@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, KeyRound, Layers, ShieldCheck } from "lucide-react";
+import { KeyRound, Layers, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
