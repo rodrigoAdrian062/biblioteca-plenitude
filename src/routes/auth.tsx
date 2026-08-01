@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
@@ -26,24 +26,89 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+const LOCK_KEY = "plenitude.login.attempts";
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000;
+
+type AttemptState = { count: number; first: number; lockedUntil: number };
+
+function readAttempts(): AttemptState {
+  if (typeof window === "undefined") return { count: 0, first: 0, lockedUntil: 0 };
+  try {
+    const raw = window.localStorage.getItem(LOCK_KEY);
+    if (!raw) return { count: 0, first: 0, lockedUntil: 0 };
+    return JSON.parse(raw) as AttemptState;
+  } catch {
+    return { count: 0, first: 0, lockedUntil: 0 };
+  }
+}
+
+function writeAttempts(state: AttemptState) {
+  try {
+    window.localStorage.setItem(LOCK_KEY, JSON.stringify(state));
+  } catch {
+    /* storage indisponível */
+  }
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [lockedUntil, setLockedUntil] = useState(() => readAttempts().lockedUntil ?? 0);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (lockedUntil <= Date.now()) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [lockedUntil]);
+
+  const remaining = Math.max(0, Math.ceil((lockedUntil - now) / 1000));
+  const isLocked = remaining > 0;
+
+  function registerFailure() {
+    const state = readAttempts();
+    const fresh = !state.first || Date.now() - state.first > WINDOW_MS;
+    const count = fresh ? 1 : state.count + 1;
+    const first = fresh ? Date.now() : state.first;
+    let until = 0;
+    if (count >= MAX_ATTEMPTS) {
+      const extra = count - MAX_ATTEMPTS;
+      const minutes = Math.min(30, 1 * Math.pow(2, extra));
+      until = Date.now() + minutes * 60 * 1000;
+    }
+    writeAttempts({ count, first, lockedUntil: until });
+    if (until) {
+      setLockedUntil(until);
+      setNow(Date.now());
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isLocked) {
+      toast.error("Muitas tentativas. Aguarde para tentar novamente.");
+      return;
+    }
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: loginToEmail(login),
+      email: loginToEmail(login.trim()),
       password,
     });
     if (error || !data.user) {
       setLoading(false);
-      toast.error("Credenciais inválidas ou acesso suspenso.");
+      registerFailure();
+      const left = Math.max(0, MAX_ATTEMPTS - readAttempts().count);
+      toast.error(
+        left > 0 && left <= 2
+          ? `Credenciais inválidas. ${left} tentativa(s) antes do bloqueio.`
+          : "Credenciais inválidas ou acesso suspenso.",
+      );
       return;
     }
+    writeAttempts({ count: 0, first: 0, lockedUntil: 0 });
 
     const { data: isAdmin } = await supabase.rpc("has_role", {
       _user_id: data.user.id,
@@ -75,6 +140,7 @@ function AuthPage() {
                 autoComplete="username"
                 required
                 maxLength={60}
+                disabled={isLocked}
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
               />
@@ -87,13 +153,23 @@ function AuthPage() {
                 autoComplete="current-password"
                 required
                 maxLength={72}
+                disabled={isLocked}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
+            <Button type="submit" className="w-full" disabled={loading || isLocked}>
+              {isLocked
+                ? `Bloqueado (${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")})`
+                : loading
+                  ? "Entrando..."
+                  : "Entrar"}
             </Button>
+            {isLocked ? (
+              <p className="text-center text-xs text-destructive">
+                Muitas tentativas inválidas. Tente novamente após o tempo indicado.
+              </p>
+            ) : null}
             <p className="text-center text-xs text-muted-foreground">
               Esqueceu a senha? Solicite ao administrador da Loja.
             </p>
