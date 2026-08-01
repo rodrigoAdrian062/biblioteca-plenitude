@@ -313,11 +313,43 @@ function Library() {
 
 
         {isLoading ? (
-          <p className="mt-10 text-sm text-muted-foreground">Abrindo os trabalhos...</p>
+          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="overflow-hidden rounded-xl border border-border/60 bg-card"
+                aria-hidden
+              >
+                <div className="aspect-[3/4] w-full animate-pulse bg-secondary" />
+                <div className="space-y-2 p-3">
+                  <div className="h-3 w-4/5 animate-pulse rounded bg-secondary" />
+                  <div className="h-3 w-2/5 animate-pulse rounded bg-secondary" />
+                  <div className="h-8 w-full animate-pulse rounded bg-secondary" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : visible.length === 0 ? (
-          <p className="mt-10 text-sm text-muted-foreground">
-            Nenhuma obra disponível para o seu grau no momento.
-          </p>
+          <div className="mt-10 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border/60 px-6 py-12 text-center">
+            <BookOpen className="h-8 w-8 text-primary/60" />
+            <p className="text-sm text-muted-foreground">
+              {hasFilters
+                ? "Nenhuma obra encontrada com os filtros aplicados."
+                : "Nenhuma obra disponível para o seu grau no momento."}
+            </p>
+            {hasFilters ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "" } })
+                }
+              >
+                <X className="mr-1 h-4 w-4" />
+                Limpar filtros
+              </Button>
+            ) : null}
+          </div>
         ) : tema ? (
           <BookGrid books={visible} className="mt-8" />
         ) : (
