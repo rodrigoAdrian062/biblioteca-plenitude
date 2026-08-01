@@ -799,8 +799,6 @@ function MembersAdmin() {
                 </div>
               </div>
             </div>
-
-            </div>
           ))}
           {members.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum irmão cadastrado.</p>
