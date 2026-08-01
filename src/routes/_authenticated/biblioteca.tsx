@@ -256,7 +256,7 @@ function Library() {
               size="sm"
               onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: "" }) })}
             >
-              Todos
+              Todos ({baseVisible.length})
             </Button>
             {SCOPES.map((s) => (
               <Button
@@ -267,9 +267,10 @@ function Library() {
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
                 }
               >
-                {s.label}
+                {s.label} ({counts[s.value] ?? 0})
               </Button>
             ))}
+
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
