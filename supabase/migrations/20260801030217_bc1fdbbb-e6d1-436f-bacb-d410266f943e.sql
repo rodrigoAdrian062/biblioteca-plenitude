@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "acervo read authenticated" ON storage.objects;
