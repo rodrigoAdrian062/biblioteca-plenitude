@@ -157,7 +157,7 @@ export default function PdfReader({ url, watermark, storageKey }: Props) {
     );
     Object.values(pageRefs.current).forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
-  }, [mode, numPages]);
+  }, [mode, numPages, restored]);
 
   return (
     <div
