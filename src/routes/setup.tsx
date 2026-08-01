@@ -17,12 +17,12 @@ export const Route = createFileRoute("/setup")({
   },
   head: () => ({
     meta: [
-      { title: "Primeira instalação | Biblioteca Maçônica" },
+      { title: "Primeira instalação | Biblioteca Plenitude" },
       {
         name: "description",
-        content: "Criação da primeira conta de administrador da biblioteca maçônica digital.",
+        content: "Criação da primeira conta de administrador da Biblioteca Plenitude.",
       },
-      { property: "og:title", content: "Primeira instalação | Biblioteca Maçônica" },
+      { property: "og:title", content: "Primeira instalação | Biblioteca Plenitude" },
       { property: "og:description", content: "Criação da conta inicial de administrador." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

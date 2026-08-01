@@ -37,7 +37,7 @@ export function AppHeader({
             className="h-9 w-9 shrink-0 rounded-full object-contain"
           />
           <span className="truncate font-display text-lg tracking-wide text-foreground">
-            Biblioteca Maçônica
+            Biblioteca Plenitude
           </span>
         </Link>
 

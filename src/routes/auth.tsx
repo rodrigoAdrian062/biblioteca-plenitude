@@ -11,12 +11,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar | Biblioteca Maçônica Digital" },
+      { title: "Entrar | Biblioteca Plenitude" },
       {
         name: "description",
         content: "Acesso restrito aos irmãos com credenciais fornecidas pela administração da Loja.",
       },
-      { property: "og:title", content: "Entrar | Biblioteca Maçônica Digital" },
+      { property: "og:title", content: "Entrar | Biblioteca Plenitude" },
       { property: "og:description", content: "Acesso restrito aos irmãos da Loja." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -62,7 +62,7 @@ function AuthPage() {
             className="mx-auto mb-2 h-20 w-20 object-contain"
           />
 
-          <CardTitle className="font-display text-2xl">Biblioteca Maçônica</CardTitle>
+          <CardTitle className="font-display text-2xl">Biblioteca Plenitude</CardTitle>
           <CardDescription>Acesso exclusivo aos irmãos cadastrados pela administração.</CardDescription>
         </CardHeader>
         <CardContent>
