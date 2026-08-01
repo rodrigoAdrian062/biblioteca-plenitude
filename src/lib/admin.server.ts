@@ -30,13 +30,14 @@ export type MemberRow = {
 
 export async function listMembersImpl(): Promise<MemberRow[]> {
   const db = await admin();
-  const [{ data: profiles }, { data: roles }, users] = await Promise.all([
+  const [{ data: profiles, error: pErr }, { data: roles }, users] = await Promise.all([
     db.from("profiles").select("*").order("full_name"),
     db.from("user_roles").select("user_id, role"),
     db.auth.admin.listUsers({ page: 1, perPage: 1000 }),
   ]);
+  if (pErr) throw new Error(pErr.message);
 
-  const emails = new Map(users.data.users.map((u) => [u.id, u.email ?? ""]));
+  const emails = new Map((users?.data?.users ?? []).map((u) => [u.id, u.email ?? ""]));
   const adminIds = new Set((roles ?? []).filter((r) => r.role === "admin").map((r) => r.user_id));
 
   return (profiles ?? []).map((p) => ({
@@ -61,7 +62,7 @@ export async function createMemberImpl(input: {
 }) {
   const db = await admin();
   const [localPart, domain] = input.email.split("@");
-  let created: { id: string } | null = null;
+  let created: { id: string; email: string } | null = null;
   let lastError = "";
   for (let attempt = 0; attempt < 6 && !created; attempt += 1) {
     const email = attempt === 0 ? input.email : `${localPart}${attempt + 1}@${domain}`;
@@ -71,7 +72,7 @@ export async function createMemberImpl(input: {
       email_confirm: true,
     });
     if (data?.user) {
-      created = { id: data.user.id };
+      created = { id: data.user.id, email };
       break;
     }
     lastError = error?.message ?? "Falha ao criar o acesso.";
@@ -80,20 +81,27 @@ export async function createMemberImpl(input: {
   if (!created) throw new Error(lastError || "Falha ao criar o acesso.");
 
   const userId = created.id;
+
+  // Se qualquer etapa falhar, removemos o usuário recém-criado para não deixar acesso órfão.
+  const rollback = async (message: string) => {
+    await db.auth.admin.deleteUser(userId).catch(() => undefined);
+    throw new Error(message);
+  };
+
   const { error: pErr } = await db.from("profiles").insert({
     id: userId,
     full_name: input.full_name,
     degree: input.degree,
     lodge: input.lodge ?? null,
   });
-  if (pErr) throw new Error(pErr.message);
+  if (pErr) await rollback(pErr.message);
 
   const { error: rErr } = await db
     .from("user_roles")
     .insert({ user_id: userId, role: input.is_admin ? "admin" : "member" });
-  if (rErr) throw new Error(rErr.message);
+  if (rErr) await rollback(rErr.message);
 
-  return { id: userId };
+  return { id: userId, email: created.email };
 }
 
 export async function updateMemberImpl(input: {
