@@ -112,6 +112,15 @@ export async function updateMemberImpl(input: {
     if (error) throw new Error(error.message);
   }
 
+  if (input.email) {
+    const { error } = await db.auth.admin.updateUserById(input.id, {
+      email: input.email,
+      email_confirm: true,
+    });
+    if (error) throw new Error(error.message);
+  }
+
+
   if (input.is_admin !== undefined) {
     await db.from("user_roles").delete().eq("user_id", input.id);
     const { error } = await db
