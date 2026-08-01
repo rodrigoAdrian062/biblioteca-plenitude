@@ -154,6 +154,7 @@ type BookForm = {
   description: string;
   min_degree: number;
   published: boolean;
+  scope: BookScope;
 };
 
 const emptyBook: BookForm = {
@@ -163,7 +164,9 @@ const emptyBook: BookForm = {
   description: "",
   min_degree: 1,
   published: true,
+  scope: "maconico",
 };
+
 
 function BooksAdmin() {
   const queryClient = useQueryClient();
