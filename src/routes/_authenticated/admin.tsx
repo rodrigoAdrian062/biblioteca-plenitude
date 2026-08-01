@@ -494,7 +494,9 @@ function BooksAdmin() {
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
+              </div>
             </div>
+
           ))}
           {books.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhuma obra cadastrada ainda.</p>
