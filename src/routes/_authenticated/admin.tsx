@@ -432,9 +432,22 @@ function MembersAdmin() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const [editing, setEditing] = useState<{
+    id: string;
+    full_name: string;
+    email: string;
+    password: string;
+  } | null>(null);
+
   const update = useMutation({
-    mutationFn: (vars: { id: string; degree?: number; active?: boolean; password?: string }) =>
-      updateMember({ data: vars }),
+    mutationFn: (vars: {
+      id: string;
+      degree?: number;
+      active?: boolean;
+      password?: string;
+      email?: string;
+      full_name?: string;
+    }) => updateMember({ data: vars }),
     onSuccess: async () => {
       toast.success("Cadastro atualizado.");
       await invalidate();
