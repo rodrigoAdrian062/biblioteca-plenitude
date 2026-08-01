@@ -178,6 +178,8 @@ function BooksAdmin() {
   const [file, setFile] = useState<File | null>(null);
   const [cover, setCover] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [scopeFilter, setScopeFilter] = useState<BookScope | "todos">("todos");
+
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books"],
@@ -210,6 +212,7 @@ function BooksAdmin() {
         description: string | null;
         min_degree: number;
         published: boolean;
+        scope: BookScope;
         file_path?: string;
         cover_path?: string;
       } = {
@@ -219,7 +222,9 @@ function BooksAdmin() {
         description: form.description.trim() || null,
         min_degree: form.min_degree,
         published: form.published,
+        scope: form.scope,
       };
+
       if (file) payload.file_path = await upload(file, "obras");
       if (cover) payload.cover_path = await upload(cover, "capas");
 
@@ -286,6 +291,13 @@ function BooksAdmin() {
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                 />
               </div>
+              <p className="rounded-md border border-border/60 bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
+                Nome padronizado:{" "}
+                <span className="font-medium text-card-foreground">
+                  {catalogName(form.author, form.title) || "AUTOR, Nome - Título"}
+                </span>
+              </p>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="author">Autor</Label>
@@ -334,6 +346,25 @@ function BooksAdmin() {
                 </Select>
               </div>
               <div className="space-y-2">
+                <Label>Tema do acervo</Label>
+                <Select
+                  value={form.scope}
+                  onValueChange={(v) => setForm({ ...form, scope: v as BookScope })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SCOPES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="file">Arquivo (PDF/EPUB)</Label>
                 <Input
                   id="file"
@@ -369,11 +400,34 @@ function BooksAdmin() {
         </Dialog>
       </div>
 
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <Button
+          size="sm"
+          variant={scopeFilter === "todos" ? "default" : "outline"}
+          onClick={() => setScopeFilter("todos")}
+        >
+          Todos
+        </Button>
+        {SCOPES.map((s) => (
+          <Button
+            key={s.value}
+            size="sm"
+            variant={scopeFilter === s.value ? "default" : "outline"}
+            onClick={() => setScopeFilter(s.value)}
+          >
+            {s.label}
+          </Button>
+        ))}
+      </div>
+
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando...</p>
       ) : (
         <div className="space-y-2">
-          {books.map((b) => (
+          {books
+            .filter((b) => scopeFilter === "todos" || (b.scope ?? "maconico") === scopeFilter)
+            .map((b) => (
+
             <div
               key={b.id}
               className="flex flex-wrap items-center gap-3 rounded-md border border-border/60 bg-card p-3"
@@ -393,14 +447,19 @@ function BooksAdmin() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-
-                <p className="truncate font-medium text-card-foreground">{b.title}</p>
+                <p className="truncate font-medium text-card-foreground">
+                  {catalogName(b.author, b.title)}
+                </p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {b.author || "Autor não informado"}
+                  {b.category || "Sem categoria"}
                 </p>
               </div>
+              <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
+                {scopeLabel(b.scope)}
+              </Badge>
               <Badge variant="outline">{degreeLabel(b.min_degree)}</Badge>
               {!b.published ? <Badge variant="secondary">Rascunho</Badge> : null}
+
               <Button
                 size="icon"
                 variant="ghost"
@@ -414,7 +473,9 @@ function BooksAdmin() {
                     description: b.description ?? "",
                     min_degree: b.min_degree,
                     published: b.published,
+                    scope: (b.scope as BookScope) ?? "maconico",
                   });
+
                   setOpen(true);
                 }}
               >
