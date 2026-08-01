@@ -92,6 +92,7 @@ export async function updateMemberImpl(input: {
   active?: boolean | undefined;
   is_admin?: boolean | undefined;
   password?: string | undefined;
+  email?: string | undefined;
 }) {
   const db = await admin();
   const patch = {
