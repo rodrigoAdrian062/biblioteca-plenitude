@@ -15,12 +15,12 @@ const PdfReader = lazy(() => import("@/components/PdfReader"));
 export const Route = createFileRoute("/_authenticated/obra/$id")({
   head: () => ({
     meta: [
-      { title: "Leitura da obra | Biblioteca Maçônica Digital" },
+      { title: "Leitura da obra | Biblioteca Plenitude" },
       {
         name: "description",
         content: "Leitor embutido para leitura das obras do acervo maçônico, sem download.",
       },
-      { property: "og:title", content: "Leitura da obra | Biblioteca Maçônica Digital" },
+      { property: "og:title", content: "Leitura da obra | Biblioteca Plenitude" },
       { property: "og:description", content: "Leia a obra diretamente no navegador, sem download." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },

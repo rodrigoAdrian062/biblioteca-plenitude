@@ -14,12 +14,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const Route = createFileRoute("/_authenticated/biblioteca")({
   head: () => ({
     meta: [
-      { title: "Acervo | Biblioteca Maçônica Digital" },
+      { title: "Acervo | Biblioteca Plenitude" },
       {
         name: "description",
         content: "Acervo maçônico disponível conforme o grau do irmão: Aprendiz, Companheiro e Mestre.",
       },
-      { property: "og:title", content: "Acervo | Biblioteca Maçônica Digital" },
+      { property: "og:title", content: "Acervo | Biblioteca Plenitude" },
       { property: "og:description", content: "Obras liberadas de acordo com o grau do irmão." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

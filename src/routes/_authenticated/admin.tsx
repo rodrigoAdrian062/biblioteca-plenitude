@@ -41,12 +41,12 @@ import {
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Administração | Biblioteca Maçônica Digital" },
+      { title: "Administração | Biblioteca Plenitude" },
       {
         name: "description",
-        content: "Painel administrativo para gerir irmãos, graus e o acervo da biblioteca maçônica.",
+        content: "Painel administrativo para gerir irmãos, graus e o acervo da Biblioteca Plenitude.",
       },
-      { property: "og:title", content: "Administração | Biblioteca Maçônica" },
+      { property: "og:title", content: "Administração | Biblioteca Plenitude" },
       { property: "og:description", content: "Gestão de irmãos e do acervo digital da Loja." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

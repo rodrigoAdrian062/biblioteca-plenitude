@@ -7,13 +7,13 @@ import logo from "@/assets/logo.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Biblioteca Maçônica Digital | Acervo por Grau" },
+      { title: "Biblioteca Plenitude | Acervo por Grau" },
       {
         name: "description",
         content:
           "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja.",
       },
-      { property: "og:title", content: "Biblioteca Maçônica Digital" },
+      { property: "og:title", content: "Biblioteca Plenitude" },
       {
         property: "og:description",
         content: "Acervo digital maçônico com acesso controlado por grau e login fornecido pelo administrador.",
@@ -35,7 +35,7 @@ function Landing() {
           className="mx-auto mb-6 h-28 w-28 object-contain drop-shadow"
         />
 
-        <h1 className="font-display text-4xl text-foreground sm:text-5xl">Biblioteca Maçônica Digital</h1>
+        <h1 className="font-display text-4xl text-foreground sm:text-5xl">Biblioteca Plenitude</h1>
         <div className="gold-rule mx-auto my-6 h-px w-40" />
         <p className="mx-auto max-w-2xl text-muted-foreground">
           Acervo reservado aos irmãos da Loja. Cada irmão acessa somente as obras compatíveis com o
