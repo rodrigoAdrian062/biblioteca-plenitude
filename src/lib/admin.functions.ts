@@ -79,3 +79,25 @@ export const bootstrapAdmin = createServerFn({ method: "POST" })
     }
     return createMemberImpl({ ...data, degree: 3, is_admin: true });
   });
+
+export const getOwnLogin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { getOwnLoginImpl } = await import("./admin.server");
+    return getOwnLoginImpl(context.userId);
+  });
+
+export const updateOwnCredentials = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        email: z.string().trim().email().max(255).optional(),
+        password: z.string().min(8).max(72).optional(),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { updateOwnCredentialsImpl } = await import("./admin.server");
+    return updateOwnCredentialsImpl({ id: context.userId, ...data });
+  });
