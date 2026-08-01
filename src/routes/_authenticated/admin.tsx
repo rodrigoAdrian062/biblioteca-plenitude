@@ -612,9 +612,9 @@ function MembersAdmin() {
   });
 
   return (
-    <section>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-xl">Irmãos</h2>
+    <section className="rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-display text-lg sm:text-xl">Irmãos</h2>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
