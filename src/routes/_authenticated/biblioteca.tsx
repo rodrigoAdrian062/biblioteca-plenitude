@@ -98,9 +98,9 @@ function Library() {
     [books],
   );
 
-  const visible = useMemo(() => {
+  const matchesBase = useMemo(() => {
     const t = q.trim().toLowerCase();
-    return books.filter((b) => {
+    return (b: (typeof books)[number]) => {
       const matchTerm =
         !t ||
         b.title.toLowerCase().includes(t) ||
@@ -110,12 +110,72 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
-      const matchScope = !tema || (b.scope ?? "maconico") === tema;
-      return matchTerm && matchDegree && matchAuthor && matchCategory && matchScope;
-    });
-  }, [books, q, grau, autor, categoria, tema]);
+      return matchTerm && matchDegree && matchAuthor && matchCategory;
+    };
+  }, [q, grau, autor, categoria]);
+
+  const baseVisible = useMemo(() => books.filter(matchesBase), [books, matchesBase]);
+
+  const counts = useMemo(() => {
+    const map: Record<string, number> = { maconico: 0, nao_maconico: 0 };
+    for (const b of baseVisible) {
+      const s = (b.scope ?? "maconico") as string;
+      map[s] = (map[s] ?? 0) + 1;
+    }
+    return map;
+  }, [baseVisible]);
+
+  const visible = useMemo(
+    () => (tema ? baseVisible.filter((b) => (b.scope ?? "maconico") === tema) : baseVisible),
+    [baseVisible, tema],
+  );
+
+  const sections = useMemo(
+    () =>
+      SCOPES.map((s) => ({
+        ...s,
+        books: baseVisible.filter((b) => (b.scope ?? "maconico") === s.value),
+      })),
+    [baseVisible],
+  );
 
   const hasFilters = Boolean(q || autor || categoria || grau || tema);
+
+  // Filtros persistentes entre sessões
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (hasFilters) return;
+    const saved = window.localStorage.getItem("acervo-filtros");
+    if (!saved) return;
+    try {
+      const parsed = JSON.parse(saved) as Partial<LibrarySearch>;
+      if (parsed && (parsed.q || parsed.autor || parsed.categoria || parsed.grau || parsed.tema)) {
+        void navigate({
+          search: () => ({
+            q: parsed.q ?? "",
+            autor: parsed.autor ?? "",
+            categoria: parsed.categoria ?? "",
+            grau: Number(parsed.grau) || 0,
+            tema: parsed.tema ?? "",
+          }),
+          replace: true,
+        });
+      }
+    } catch {
+      /* ignora filtros inválidos */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      "acervo-filtros",
+      JSON.stringify({ q, autor, categoria, grau, tema }),
+    );
+  }, [q, autor, categoria, grau, tema]);
+
+
 
 
   return (
@@ -196,7 +256,7 @@ function Library() {
               size="sm"
               onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: "" }) })}
             >
-              Todos
+              Todos ({baseVisible.length})
             </Button>
             {SCOPES.map((s) => (
               <Button
@@ -207,9 +267,10 @@ function Library() {
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
                 }
               >
-                {s.label}
+                {s.label} ({counts[s.value] ?? 0})
               </Button>
             ))}
+
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -257,63 +318,105 @@ function Library() {
           <p className="mt-10 text-sm text-muted-foreground">
             Nenhuma obra disponível para o seu grau no momento.
           </p>
+        ) : tema ? (
+          <BookGrid books={visible} className="mt-8" />
         ) : (
-          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-            {visible.map((book) => (
-              <Card key={book.id} className="flex flex-col overflow-hidden border-border/60">
-                <div className="aspect-[3/4] w-full bg-secondary">
-                  {book.cover_url ? (
-                    <img
-                      src={book.cover_url}
-                      alt={`Capa da obra ${book.title}`}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-primary/50">
-                      <BookOpen className="h-8 w-8" />
+          <div className="mt-8 space-y-10">
+            {sections
+              .filter((s) => s.books.length > 0)
+              .map((s) => (
+                <section key={s.value} aria-labelledby={`tema-${s.value}`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h2
+                      id={`tema-${s.value}`}
+                      className="font-display text-xl text-foreground"
+                    >
+                      {s.label}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-[10px]">
+                        {s.books.length} obra{s.books.length === 1 ? "" : "s"}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          void navigate({
+                            search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }),
+                          })
+                        }
+                      >
+                        Ver só {s.label.toLowerCase()}
+                      </Button>
                     </div>
-                  )}
-                </div>
-                <CardHeader className="gap-1 p-3 pb-1">
-                  <div className="flex min-w-0 items-start justify-between gap-1.5">
-                    <CardTitle className="line-clamp-3 font-display text-sm leading-snug">
-                      {catalogName(book.author, book.title)}
-                    </CardTitle>
-                    <Badge variant="outline" className="shrink-0 px-1.5 text-[10px]">
-                      {degreeLabel(book.min_degree)}
-                    </Badge>
                   </div>
-                  <Badge
-                    variant={book.scope === "nao_maconico" ? "secondary" : "default"}
-                    className="w-fit px-1.5 text-[10px]"
-                  >
-                    {scopeLabel(book.scope)}
-                  </Badge>
-
-                </CardHeader>
-                <CardContent className="mt-auto space-y-2 p-3 pt-0">
-                  {book.description ? (
-                    <p className="line-clamp-2 text-xs text-muted-foreground">{book.description}</p>
-                  ) : null}
-                  {book.category ? (
-                    <Badge variant="secondary" className="text-[10px]">
-                      {book.category}
-                    </Badge>
-                  ) : null}
-                  <Button asChild className="w-full" size="sm">
-                    <Link to="/obra/$id" params={{ id: book.id }}>
-                      <BookOpen className="mr-1.5 h-4 w-4" />
-                      Ler
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <div className="gold-rule my-3 h-px w-full" />
+                  <BookGrid books={s.books} />
+                </section>
+              ))}
           </div>
-
         )}
+
       </main>
+    </div>
+  );
+}
+
+type BookItem = Awaited<ReturnType<typeof listBooks>>[number];
+
+function BookGrid({ books, className = "" }: { books: BookItem[]; className?: string }) {
+  return (
+    <div className={`grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 ${className}`}>
+      {books.map((book) => (
+        <Card key={book.id} className="flex flex-col overflow-hidden border-border/60">
+          <div className="aspect-[3/4] w-full bg-secondary">
+            {book.cover_url ? (
+              <img
+                src={book.cover_url}
+                alt={`Capa da obra ${book.title}`}
+                loading="lazy"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-primary/50">
+                <BookOpen className="h-8 w-8" />
+              </div>
+            )}
+          </div>
+          <CardHeader className="gap-1 p-3 pb-1">
+            <div className="flex min-w-0 items-start justify-between gap-1.5">
+              <CardTitle className="line-clamp-3 font-display text-sm leading-snug">
+                {catalogName(book.author, book.title)}
+              </CardTitle>
+              <Badge variant="outline" className="shrink-0 px-1.5 text-[10px]">
+                {degreeLabel(book.min_degree)}
+              </Badge>
+            </div>
+            <Badge
+              variant={book.scope === "nao_maconico" ? "secondary" : "default"}
+              className="w-fit px-1.5 text-[10px]"
+            >
+              {scopeLabel(book.scope)}
+            </Badge>
+          </CardHeader>
+          <CardContent className="mt-auto space-y-2 p-3 pt-0">
+            {book.description ? (
+              <p className="line-clamp-2 text-xs text-muted-foreground">{book.description}</p>
+            ) : null}
+            {book.category ? (
+              <Badge variant="secondary" className="text-[10px]">
+                {book.category}
+              </Badge>
+            ) : null}
+            <Button asChild className="w-full" size="sm">
+              <Link to="/obra/$id" params={{ id: book.id }}>
+                <BookOpen className="mr-1.5 h-4 w-4" />
+                Ler
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
