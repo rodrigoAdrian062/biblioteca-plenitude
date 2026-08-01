@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState, useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Search } from "lucide-react";
+import { BookOpen, Search, X } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
@@ -10,8 +10,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type LibrarySearch = {
+  q: string;
+  autor: string;
+  categoria: string;
+  grau: number;
+};
+
+const ALL = "__all__";
 
 export const Route = createFileRoute("/_authenticated/biblioteca")({
+  validateSearch: (search: Record<string, unknown>): LibrarySearch => ({
+    q: typeof search['q'] === "string" ? search['q'] : "",
+    autor: typeof search['autor'] === "string" ? search['autor'] : "",
+    categoria: typeof search['categoria'] === "string" ? search['categoria'] : "",
+    grau: Number(search['grau']) || 0,
+  }),
   head: () => ({
     meta: [
       { title: "Acervo | Biblioteca Plenitude" },
@@ -30,27 +52,61 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 
 function Library() {
   const { profile, isAdmin } = useSessionProfile();
-  const [term, setTerm] = useState("");
-  const [degreeFilter, setDegreeFilter] = useState<number | null>(null);
+  const navigate = useNavigate({ from: "/biblioteca" });
+  const { q, autor, categoria, grau } = Route.useSearch();
+  const [term, setTerm] = useState(q);
+
+  useEffect(() => {
+    setTerm(q);
+  }, [q]);
+
+  // Debounce do campo de busca para a URL
+  useEffect(() => {
+    if (term === q) return;
+    const id = setTimeout(() => {
+      void navigate({ search: (prev) => ({ ...prev, q: term.slice(0, 100) }) });
+    }, 300);
+    return () => clearTimeout(id);
+  }, [term, q, navigate]);
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books"],
     queryFn: () => listBooks(),
   });
 
+  const authors = useMemo(
+    () =>
+      Array.from(new Set(books.map((b) => (b.author ?? "").trim()).filter(Boolean))).sort((a, b) =>
+        a.localeCompare(b, "pt-BR"),
+      ),
+    [books],
+  );
+
+  const categories = useMemo(
+    () =>
+      Array.from(new Set(books.map((b) => (b.category ?? "").trim()).filter(Boolean))).sort((a, b) =>
+        a.localeCompare(b, "pt-BR"),
+      ),
+    [books],
+  );
+
   const visible = useMemo(() => {
-    const t = term.trim().toLowerCase();
+    const t = q.trim().toLowerCase();
     return books.filter((b) => {
       const matchTerm =
         !t ||
         b.title.toLowerCase().includes(t) ||
         (b.author ?? "").toLowerCase().includes(t) ||
-        (b.category ?? "").toLowerCase().includes(t);
-      const matchDegree = degreeFilter === null || b.min_degree === degreeFilter;
-      return matchTerm && matchDegree;
+        (b.category ?? "").toLowerCase().includes(t) ||
+        (b.description ?? "").toLowerCase().includes(t);
+      const matchDegree = !grau || b.min_degree === grau;
+      const matchAuthor = !autor || (b.author ?? "").trim() === autor;
+      const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
+      return matchTerm && matchDegree && matchAuthor && matchCategory;
     });
-  }, [books, term, degreeFilter]);
+  }, [books, q, grau, autor, categoria]);
 
+  const hasFilters = Boolean(q || autor || categoria || grau);
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,35 +125,96 @@ function Library() {
             : "Carregando dados do irmão..."}
         </p>
 
-        <div className="mt-6 flex flex-wrap items-center gap-2">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              className="pl-9"
-              placeholder="Buscar por título, autor ou categoria"
-              value={term}
-              maxLength={100}
-              onChange={(e) => setTerm(e.target.value)}
-            />
-          </div>
-          <Button
-            variant={degreeFilter === null ? "default" : "outline"}
-            size="sm"
-            onClick={() => setDegreeFilter(null)}
-          >
-            Todos
-          </Button>
-          {DEGREES.filter((d) => !profile || d.value <= profile.degree).map((d) => (
-            <Button
-              key={d.value}
-              variant={degreeFilter === d.value ? "default" : "outline"}
-              size="sm"
-              onClick={() => setDegreeFilter(d.value)}
+        <div className="mt-6 space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                className="pl-9"
+                type="search"
+                aria-label="Buscar por título, autor ou categoria"
+                placeholder="Buscar por título, autor ou categoria"
+                value={term}
+                maxLength={100}
+                onChange={(e) => setTerm(e.target.value)}
+              />
+            </div>
+
+            <Select
+              value={autor || ALL}
+              onValueChange={(v) =>
+                void navigate({ search: (prev) => ({ ...prev, autor: v === ALL ? "" : v }) })
+              }
             >
-              {d.label}
+              <SelectTrigger className="w-full sm:w-52" aria-label="Filtrar por autor">
+                <SelectValue placeholder="Autor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>Todos os autores</SelectItem>
+                {authors.map((a) => (
+                  <SelectItem key={a} value={a}>
+                    {a}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={categoria || ALL}
+              onValueChange={(v) =>
+                void navigate({ search: (prev) => ({ ...prev, categoria: v === ALL ? "" : v }) })
+              }
+            >
+              <SelectTrigger className="w-full sm:w-52" aria-label="Filtrar por categoria">
+                <SelectValue placeholder="Categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>Todas as categorias</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant={!grau ? "default" : "outline"}
+              size="sm"
+              onClick={() => void navigate({ search: (prev) => ({ ...prev, grau: 0 }) })}
+            >
+              Todos
             </Button>
-          ))}
+            {DEGREES.filter((d) => !profile || d.value <= profile.degree).map((d) => (
+              <Button
+                key={d.value}
+                variant={grau === d.value ? "default" : "outline"}
+                size="sm"
+                onClick={() => void navigate({ search: (prev) => ({ ...prev, grau: d.value }) })}
+              >
+                {d.label}
+              </Button>
+            ))}
+            {hasFilters ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0 } })
+                }
+              >
+                <X className="mr-1 h-4 w-4" />
+                Limpar filtros
+              </Button>
+            ) : null}
+            <span className="ml-auto text-xs text-muted-foreground">
+              {visible.length} obra{visible.length === 1 ? "" : "s"}
+            </span>
+          </div>
         </div>
+
 
         {isLoading ? (
           <p className="mt-10 text-sm text-muted-foreground">Abrindo os trabalhos...</p>
