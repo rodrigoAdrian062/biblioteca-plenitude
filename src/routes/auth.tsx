@@ -85,11 +85,6 @@ function AuthPage() {
             <p className="text-center text-xs text-muted-foreground">
               Esqueceu a senha? Solicite ao administrador da Loja.
             </p>
-            <p className="text-center text-xs text-muted-foreground">
-              <Link to="/setup" className="underline">
-                Primeira instalação
-              </Link>
-            </p>
           </form>
         </CardContent>
       </Card>
