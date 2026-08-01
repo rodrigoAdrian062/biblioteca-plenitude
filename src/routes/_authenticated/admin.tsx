@@ -14,6 +14,7 @@ import {
 } from "@/lib/admin.functions";
 import { adminStats, listBooks } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
+import { emailToLogin, loginToEmail, suggestLogin, suggestPassword } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -416,13 +417,22 @@ function MembersAdmin() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
-    email: "",
+    login: "",
     password: "",
     full_name: "",
-    lodge: "",
     degree: 1,
     is_admin: false,
   });
+  const [createdInfo, setCreatedInfo] = useState<{ login: string; password: string } | null>(null);
+
+  function fillCredentials(fullName: string) {
+    setForm((f) => ({
+      ...f,
+      full_name: fullName,
+      login: suggestLogin(fullName),
+      password: suggestPassword(fullName),
+    }));
+  }
 
   const { data: members = [], isLoading } = useQuery({
     queryKey: ["members"],
@@ -439,18 +449,18 @@ function MembersAdmin() {
     mutationFn: () =>
       createMember({
         data: {
-          email: form.email.trim(),
+          email: loginToEmail(form.login),
           password: form.password,
           full_name: form.full_name.trim(),
           degree: form.degree,
-          lodge: form.lodge.trim() || null,
           is_admin: form.is_admin,
         },
       }),
     onSuccess: async () => {
       toast.success("Irmão cadastrado.");
       setOpen(false);
-      setForm({ email: "", password: "", full_name: "", lodge: "", degree: 1, is_admin: false });
+      setCreatedInfo({ login: form.login, password: form.password });
+      setForm({ login: "", password: "", full_name: "", degree: 1, is_admin: false });
       await invalidate();
     },
     onError: (e: Error) => toast.error(e.message),
@@ -518,39 +528,43 @@ function MembersAdmin() {
                   required
                   maxLength={120}
                   value={form.full_name}
-                  onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+                  onChange={(e) => fillCredentials(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="m-email">E-mail</Label>
+                <Label htmlFor="m-login">Login</Label>
                 <Input
-                  id="m-email"
-                  type="email"
+                  id="m-login"
                   required
-                  maxLength={255}
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  maxLength={40}
+                  value={form.login}
+                  onChange={(e) => setForm({ ...form, login: e.target.value })}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Gerado automaticamente a partir do nome. Pode ser editado.
+                </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="m-pass">Senha provisória</Label>
-                <Input
-                  id="m-pass"
-                  required
-                  minLength={8}
-                  maxLength={72}
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="m-lodge">Loja</Label>
-                <Input
-                  id="m-lodge"
-                  maxLength={160}
-                  value={form.lodge}
-                  onChange={(e) => setForm({ ...form, lodge: e.target.value })}
-                />
+                <Label htmlFor="m-pass">Senha</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="m-pass"
+                    required
+                    minLength={8}
+                    maxLength={72}
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() =>
+                      setForm({ ...form, password: suggestPassword(form.full_name || "Irmao") })
+                    }
+                  >
+                    Gerar
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Grau</Label>
@@ -599,7 +613,7 @@ function MembersAdmin() {
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium text-card-foreground">{m.full_name}</p>
-                <p className="truncate text-xs text-muted-foreground">{m.email}</p>
+                <p className="truncate text-xs text-muted-foreground">{emailToLogin(m.email)}</p>
               </div>
               {m.is_admin ? <Badge>Admin</Badge> : null}
               <div className="flex items-center gap-2">
@@ -643,7 +657,7 @@ function MembersAdmin() {
                   setEditing({
                     id: m.id,
                     full_name: m.full_name,
-                    email: m.email,
+                    email: emailToLogin(m.email),
                     password: "",
                   })
                 }
@@ -666,6 +680,32 @@ function MembersAdmin() {
         </div>
       )}
 
+      <Dialog open={createdInfo !== null} onOpenChange={(o) => !o && setCreatedInfo(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-display">Credenciais do irmão</DialogTitle>
+          </DialogHeader>
+          {createdInfo ? (
+            <div className="space-y-2 text-sm">
+              <p className="text-muted-foreground">
+                Anote e entregue ao irmão. A senha não poderá ser exibida novamente.
+              </p>
+              <p>
+                <span className="text-muted-foreground">Login: </span>
+                <span className="font-medium">{createdInfo.login}</span>
+              </p>
+              <p>
+                <span className="text-muted-foreground">Senha: </span>
+                <span className="font-medium">{createdInfo.password}</span>
+              </p>
+            </div>
+          ) : null}
+          <DialogFooter>
+            <Button onClick={() => setCreatedInfo(null)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={editing !== null} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent>
           <DialogHeader>
@@ -676,7 +716,7 @@ function MembersAdmin() {
               className="space-y-4"
               onSubmit={(e) => {
                 e.preventDefault();
-                const email = editing.email.trim();
+                const email = editing.email.trim() ? loginToEmail(editing.email) : "";
                 const password = editing.password;
                 if (password && password.length < 8) {
                   toast.error("A senha deve ter ao menos 8 caracteres.");
@@ -703,10 +743,9 @@ function MembersAdmin() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="e-email">Login (e-mail)</Label>
+                <Label htmlFor="e-email">Login</Label>
                 <Input
                   id="e-email"
-                  type="email"
                   required
                   value={editing.email}
                   onChange={(e) => setEditing({ ...editing, email: e.target.value })}
@@ -714,13 +753,24 @@ function MembersAdmin() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="e-pass">Nova senha</Label>
-                <Input
-                  id="e-pass"
-                  type="text"
-                  placeholder="Deixe em branco para manter a atual"
-                  value={editing.password}
-                  onChange={(e) => setEditing({ ...editing, password: e.target.value })}
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="e-pass"
+                    type="text"
+                    placeholder="Deixe em branco para manter a atual"
+                    value={editing.password}
+                    onChange={(e) => setEditing({ ...editing, password: e.target.value })}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() =>
+                      setEditing({ ...editing, password: suggestPassword(editing.full_name) })
+                    }
+                  >
+                    Gerar
+                  </Button>
+                </div>
               </div>
               <DialogFooter>
                 <Button type="submit" disabled={update.isPending}>

@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +36,7 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
+      email: loginToEmail(login),
       password,
     });
     if (error || !data.user) {
@@ -68,15 +69,14 @@ function AuthPage() {
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="login">Login</Label>
               <Input
-                id="email"
-                type="email"
-                autoComplete="email"
+                id="login"
+                autoComplete="username"
                 required
-                maxLength={255}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                maxLength={60}
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
               />
             </div>
             <div className="space-y-2">
