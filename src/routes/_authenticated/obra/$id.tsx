@@ -60,13 +60,21 @@ function BookReaderPage() {
           <>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 className="font-display text-3xl text-foreground">{book.title}</h1>
+                <h1 className="font-display text-3xl text-foreground">
+                  {catalogName(book.author, book.title)}
+                </h1>
                 {book.author ? (
                   <p className="mt-1 text-sm text-muted-foreground">{book.author}</p>
                 ) : null}
               </div>
-              <Badge variant="outline">{degreeLabel(book.min_degree)}</Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant={book.scope === "nao_maconico" ? "secondary" : "default"}>
+                  {scopeLabel(book.scope)}
+                </Badge>
+                <Badge variant="outline">{degreeLabel(book.min_degree)}</Badge>
+              </div>
             </div>
+
             <div className="gold-rule my-4 h-px w-32" />
             {book.description ? (
               <p className="mb-6 text-sm text-muted-foreground">{book.description}</p>
