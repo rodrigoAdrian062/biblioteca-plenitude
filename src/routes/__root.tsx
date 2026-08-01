@@ -4,12 +4,14 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import { Toaster } from "@/components/ui/sonner";
+import { isPublicThemeRoute } from "@/hooks/useTheme";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -122,7 +124,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var t=localStorage.getItem('plenitude:theme');if(t==='light'){document.documentElement.classList.remove('dark')}}catch(e){}",
+              "try{var p=location.pathname;if(p!=='/'&&p!=='/auth'&&p!=='/setup'){var k=Object.keys(localStorage).filter(function(x){return x.indexOf('plenitude:theme')===0});var t=k.length?localStorage.getItem(k[k.length-1]):null;if(t==='light'){document.documentElement.classList.remove('dark')}}}catch(e){}",
           }}
         />
       </head>
@@ -137,6 +139,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (isPublicThemeRoute(pathname)) {
+      document.documentElement.classList.add("dark");
+    }
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
