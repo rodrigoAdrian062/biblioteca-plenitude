@@ -85,7 +85,7 @@ function BookReaderPage() {
             {book.file_url ? (
               <ClientOnly fallback={<p className="text-sm text-muted-foreground">Carregando leitor...</p>}>
                 <Suspense fallback={<p className="text-sm text-muted-foreground">Carregando leitor...</p>}>
-                  <PdfReader url={book.file_url} watermark={profile?.full_name} />
+                  <PdfReader url={book.file_url} watermark={profile?.full_name} storageKey={id} />
                 </Suspense>
               </ClientOnly>
             ) : (

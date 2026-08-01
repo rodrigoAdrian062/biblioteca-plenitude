@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Library, LogOut, Search, Shield, UserCog } from "lucide-react";
+import { Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { degreeLabel } from "@/lib/masonic";
+import { useTheme } from "@/hooks/useTheme";
 import logo from "@/assets/logo.png";
+
 
 
 export function AppHeader({
@@ -21,7 +23,9 @@ export function AppHeader({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { theme, toggle } = useTheme();
   const [q, setQ] = useState("");
+
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -70,7 +74,18 @@ export function AppHeader({
         </form>
 
         <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
+            aria-label={theme === "dark" ? "Ativar modo claro" : "Ativar modo noturno"}
+            title={theme === "dark" ? "Modo claro" : "Modo noturno"}
+            onClick={toggle}
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
+
 
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>

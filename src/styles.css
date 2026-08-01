@@ -63,6 +63,45 @@
 
 :root {
   --radius: 0.5rem;
+  /* Tema claro: pergaminho com verde profundo e dourado */
+  --background: oklch(0.975 0.012 95);
+  --foreground: oklch(0.26 0.045 190);
+  --card: oklch(0.995 0.006 95);
+  --card-foreground: oklch(0.26 0.045 190);
+  --popover: oklch(0.995 0.006 95);
+  --popover-foreground: oklch(0.26 0.045 190);
+  --primary: oklch(0.30 0.05 190);
+  --primary-foreground: oklch(0.975 0.012 95);
+  --secondary: oklch(0.94 0.022 92);
+  --secondary-foreground: oklch(0.28 0.045 190);
+  --muted: oklch(0.94 0.018 92);
+  --muted-foreground: oklch(0.46 0.03 190);
+  --accent: oklch(0.90 0.055 85);
+  --accent-foreground: oklch(0.28 0.045 190);
+  --destructive: oklch(0.52 0.2 27);
+  --destructive-foreground: oklch(0.98 0.01 90);
+  --border: oklch(0.30 0.05 190 / 18%);
+  --input: oklch(0.30 0.05 190 / 22%);
+  --ring: oklch(0.66 0.145 76.7 / 60%);
+  --chart-1: oklch(0.66 0.145 76.7);
+  --chart-2: oklch(0.5 0.09 184.704);
+  --chart-3: oklch(0.42 0.07 188);
+  --chart-4: oklch(0.72 0.16 84.429);
+  --chart-5: oklch(0.68 0.16 70.08);
+  --sidebar: oklch(0.97 0.012 95);
+  --sidebar-foreground: oklch(0.26 0.045 190);
+  --sidebar-primary: oklch(0.30 0.05 190);
+  --sidebar-primary-foreground: oklch(0.975 0.012 95);
+  --sidebar-accent: oklch(0.93 0.025 92);
+  --sidebar-accent-foreground: oklch(0.28 0.045 190);
+  --sidebar-border: oklch(0.30 0.05 190 / 16%);
+  --sidebar-ring: oklch(0.66 0.145 76.7 / 55%);
+  --font-display: "Cinzel", Georgia, serif;
+  --font-body: "Lato", system-ui, sans-serif;
+}
+
+.dark {
+  color-scheme: dark;
   --background: oklch(0.205 0.035 191);
   --foreground: oklch(0.96 0.015 90);
   --card: oklch(0.27 0.048 189);
@@ -95,13 +134,8 @@
   --sidebar-accent-foreground: oklch(0.93 0.02 88);
   --sidebar-border: oklch(0.795 0.162 76.7 / 22%);
   --sidebar-ring: oklch(0.795 0.162 76.7 / 55%);
-  --font-display: "Cinzel", Georgia, serif;
-  --font-body: "Lato", system-ui, sans-serif;
 }
 
-.dark {
-  color-scheme: dark;
-}
 
 @layer base {
   * {

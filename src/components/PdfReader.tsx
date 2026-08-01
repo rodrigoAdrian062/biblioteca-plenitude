@@ -22,11 +22,32 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 type Props = {
   url: string;
   watermark?: string | undefined;
+  /** Identificador da obra: usado para lembrar a posição de leitura */
+  storageKey?: string | undefined;
 };
 
 type Mode = "horizontal" | "vertical";
 
-export default function PdfReader({ url, watermark }: Props) {
+type SavedPosition = { page: number; mode: Mode; scale: number };
+
+function readSaved(key: string | undefined): SavedPosition | null {
+  if (!key || typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(`plenitude:leitura:${key}`);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<SavedPosition>;
+    if (!parsed || typeof parsed.page !== "number") return null;
+    return {
+      page: Math.max(1, Math.round(parsed.page)),
+      mode: parsed.mode === "horizontal" ? "horizontal" : "vertical",
+      scale: typeof parsed.scale === "number" ? parsed.scale : 1,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export default function PdfReader({ url, watermark, storageKey }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [numPages, setNumPages] = useState(0);
@@ -35,6 +56,18 @@ export default function PdfReader({ url, watermark }: Props) {
   const [width, setWidth] = useState(800);
   const [mode, setMode] = useState<Mode>("vertical");
   const [full, setFull] = useState(false);
+  const [restored, setRestored] = useState(false);
+  const [resumedFrom, setResumedFrom] = useState<number | null>(null);
+  const pendingPage = useRef<number | null>(null);
+
+  // Restaura preferências salvas (modo/zoom) ao montar
+  useEffect(() => {
+    const saved = readSaved(storageKey);
+    if (!saved) return;
+    setMode(saved.mode);
+    setScale(saved.scale);
+    pendingPage.current = saved.page;
+  }, [storageKey]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -62,8 +95,37 @@ export default function PdfReader({ url, watermark }: Props) {
 
   const onLoad = useCallback(({ numPages: total }: { numPages: number }) => {
     setNumPages(total);
-    setPage(1);
+    const target = Math.min(Math.max(1, pendingPage.current ?? 1), total);
+    setPage(target);
+    if (target > 1) setResumedFrom(target);
   }, []);
+
+  // Salva a posição de leitura
+  useEffect(() => {
+    if (!storageKey || !numPages) return;
+    try {
+      localStorage.setItem(
+        `plenitude:leitura:${storageKey}`,
+        JSON.stringify({ page, mode, scale } satisfies SavedPosition),
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [storageKey, page, mode, scale, numPages]);
+
+  // Ao carregar (ou ao entrar/sair da tela cheia) volta exatamente para a página atual
+  useEffect(() => {
+    if (!numPages) return;
+    const id = window.setTimeout(() => {
+      if (mode === "vertical") {
+        pageRefs.current[page]?.scrollIntoView({ block: "start" });
+      }
+      setRestored(true);
+    }, 220);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numPages, full, mode]);
+
 
   const goTo = useCallback(
     (next: number) => {
@@ -78,7 +140,7 @@ export default function PdfReader({ url, watermark }: Props) {
 
   // Track visible page while scrolling in vertical mode
   useEffect(() => {
-    if (mode !== "vertical" || !numPages) return;
+    if (mode !== "vertical" || !numPages || !restored) return;
     const root = containerRef.current;
     if (!root) return;
     const observer = new IntersectionObserver(
@@ -95,7 +157,7 @@ export default function PdfReader({ url, watermark }: Props) {
     );
     Object.values(pageRefs.current).forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
-  }, [mode, numPages]);
+  }, [mode, numPages, restored]);
 
   return (
     <div
@@ -210,6 +272,36 @@ export default function PdfReader({ url, watermark }: Props) {
           </Button>
         </div>
       </div>
+
+      {resumedFrom ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 bg-accent/40 px-3 py-2 text-xs text-foreground">
+          <span>Leitura retomada na página {resumedFrom}.</span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2"
+              onClick={() => {
+                goTo(1);
+                setResumedFrom(null);
+              }}
+            >
+              Ir para o início
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              aria-label="Fechar aviso"
+              onClick={() => setResumedFrom(null)}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
+
 
       <div
         ref={containerRef}
