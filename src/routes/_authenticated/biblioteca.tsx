@@ -106,10 +106,10 @@ function Library() {
             Nenhuma obra disponível para o seu grau no momento.
           </p>
         ) : (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
             {visible.map((book) => (
               <Card key={book.id} className="flex flex-col overflow-hidden border-border/60">
-                <div className="aspect-[3/2] w-full bg-secondary">
+                <div className="aspect-[3/4] w-full bg-secondary">
                   {book.cover_url ? (
                     <img
                       src={book.cover_url}
@@ -119,38 +119,43 @@ function Library() {
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-primary/50">
-                      <BookOpen className="h-10 w-10" />
+                      <BookOpen className="h-8 w-8" />
                     </div>
                   )}
                 </div>
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="font-display text-base leading-snug">{book.title}</CardTitle>
-                    <Badge variant="outline">{degreeLabel(book.min_degree)}</Badge>
+                <CardHeader className="gap-1 p-3 pb-1">
+                  <div className="flex min-w-0 items-start justify-between gap-1.5">
+                    <CardTitle className="line-clamp-2 font-display text-sm leading-snug">
+                      {book.title}
+                    </CardTitle>
+                    <Badge variant="outline" className="shrink-0 px-1.5 text-[10px]">
+                      {degreeLabel(book.min_degree)}
+                    </Badge>
                   </div>
                   {book.author ? (
-                    <p className="text-xs text-muted-foreground">{book.author}</p>
+                    <p className="truncate text-xs text-muted-foreground">{book.author}</p>
                   ) : null}
                 </CardHeader>
-                <CardContent className="mt-auto space-y-3">
+                <CardContent className="mt-auto space-y-2 p-3 pt-0">
                   {book.description ? (
-                    <p className="line-clamp-3 text-sm text-muted-foreground">{book.description}</p>
+                    <p className="line-clamp-2 text-xs text-muted-foreground">{book.description}</p>
                   ) : null}
                   {book.category ? (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-[10px]">
                       {book.category}
                     </Badge>
                   ) : null}
                   <Button asChild className="w-full" size="sm">
                     <Link to="/obra/$id" params={{ id: book.id }}>
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Ler obra
+                      <BookOpen className="mr-1.5 h-4 w-4" />
+                      Ler
                     </Link>
                   </Button>
                 </CardContent>
               </Card>
             ))}
           </div>
+
         )}
       </main>
     </div>
