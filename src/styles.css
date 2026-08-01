@@ -122,6 +122,7 @@
 @layer base {
   body {
     font-family: var(--font-body);
+    overflow-x: hidden;
   }
   /* Espaço para o menu inferior no celular */
   @media (max-width: 639px) {
