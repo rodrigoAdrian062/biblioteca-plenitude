@@ -605,11 +605,15 @@ function MembersAdmin() {
               <Button
                 size="icon"
                 variant="ghost"
-                aria-label="Redefinir senha"
-                onClick={() => {
-                  const password = window.prompt("Nova senha (mín. 8 caracteres)");
-                  if (password && password.length >= 8) update.mutate({ id: m.id, password });
-                }}
+                aria-label="Editar login e senha"
+                onClick={() =>
+                  setEditing({
+                    id: m.id,
+                    full_name: m.full_name,
+                    email: m.email,
+                    password: "",
+                  })
+                }
               >
                 <Pencil className="h-4 w-4" />
               </Button>
