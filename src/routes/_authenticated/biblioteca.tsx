@@ -98,9 +98,9 @@ function Library() {
     [books],
   );
 
-  const visible = useMemo(() => {
+  const matchesBase = useMemo(() => {
     const t = q.trim().toLowerCase();
-    return books.filter((b) => {
+    return (b: (typeof books)[number]) => {
       const matchTerm =
         !t ||
         b.title.toLowerCase().includes(t) ||
@@ -110,12 +110,72 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
-      const matchScope = !tema || (b.scope ?? "maconico") === tema;
-      return matchTerm && matchDegree && matchAuthor && matchCategory && matchScope;
-    });
-  }, [books, q, grau, autor, categoria, tema]);
+      return matchTerm && matchDegree && matchAuthor && matchCategory;
+    };
+  }, [q, grau, autor, categoria]);
+
+  const baseVisible = useMemo(() => books.filter(matchesBase), [books, matchesBase]);
+
+  const counts = useMemo(() => {
+    const map: Record<string, number> = { maconico: 0, nao_maconico: 0 };
+    for (const b of baseVisible) {
+      const s = (b.scope ?? "maconico") as string;
+      map[s] = (map[s] ?? 0) + 1;
+    }
+    return map;
+  }, [baseVisible]);
+
+  const visible = useMemo(
+    () => (tema ? baseVisible.filter((b) => (b.scope ?? "maconico") === tema) : baseVisible),
+    [baseVisible, tema],
+  );
+
+  const sections = useMemo(
+    () =>
+      SCOPES.map((s) => ({
+        ...s,
+        books: baseVisible.filter((b) => (b.scope ?? "maconico") === s.value),
+      })),
+    [baseVisible],
+  );
 
   const hasFilters = Boolean(q || autor || categoria || grau || tema);
+
+  // Filtros persistentes entre sessões
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (hasFilters) return;
+    const saved = window.localStorage.getItem("acervo-filtros");
+    if (!saved) return;
+    try {
+      const parsed = JSON.parse(saved) as Partial<LibrarySearch>;
+      if (parsed && (parsed.q || parsed.autor || parsed.categoria || parsed.grau || parsed.tema)) {
+        void navigate({
+          search: () => ({
+            q: parsed.q ?? "",
+            autor: parsed.autor ?? "",
+            categoria: parsed.categoria ?? "",
+            grau: Number(parsed.grau) || 0,
+            tema: parsed.tema ?? "",
+          }),
+          replace: true,
+        });
+      }
+    } catch {
+      /* ignora filtros inválidos */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      "acervo-filtros",
+      JSON.stringify({ q, autor, categoria, grau, tema }),
+    );
+  }, [q, autor, categoria, grau, tema]);
+
+
 
 
   return (
