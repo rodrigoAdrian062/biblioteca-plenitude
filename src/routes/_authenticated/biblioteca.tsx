@@ -6,6 +6,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
+import { SCOPES, catalogName, scopeLabel } from "@/lib/catalog";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +25,7 @@ export type LibrarySearch = {
   autor: string;
   categoria: string;
   grau: number;
+  tema: string;
 };
 
 const ALL = "__all__";
@@ -33,7 +36,12 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
     autor: typeof search['autor'] === "string" ? search['autor'] : "",
     categoria: typeof search['categoria'] === "string" ? search['categoria'] : "",
     grau: Number(search['grau']) || 0,
+    tema:
+      search['tema'] === "maconico" || search['tema'] === "nao_maconico"
+        ? (search['tema'] as string)
+        : "",
   }),
+
   head: () => ({
     meta: [
       { title: "Acervo | Biblioteca Plenitude" },
