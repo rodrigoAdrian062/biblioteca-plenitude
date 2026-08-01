@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,11 +84,6 @@ function AuthPage() {
             </Button>
             <p className="text-center text-xs text-muted-foreground">
               Esqueceu a senha? Solicite ao administrador da Loja.
-            </p>
-            <p className="text-center text-xs text-muted-foreground">
-              <Link to="/setup" className="underline">
-                Primeira instalação
-              </Link>
             </p>
           </form>
         </CardContent>
