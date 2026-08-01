@@ -24,6 +24,10 @@ type Props = {
   watermark?: string | undefined;
   /** Identificador da obra: usado para lembrar a posição de leitura */
   storageKey?: string | undefined;
+  /** Página inicial vinda do histórico salvo no servidor */
+  initialPage?: number | undefined;
+  /** Notifica a página atual para salvar o histórico */
+  onProgress?: ((page: number, totalPages: number) => void) | undefined;
 };
 
 type Mode = "horizontal" | "vertical";
