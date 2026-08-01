@@ -48,6 +48,33 @@ export const getBookFileUrl = createServerFn({ method: "POST" })
     throw new Error("Este acervo não possui arquivo disponível.");
   });
 
+export const getBook = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { signAssetsImpl } = await import("./admin.server");
+    const { data: book, error } = await context.supabase
+      .from("books")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!book) throw new Error("Acervo indisponível para o seu grau.");
+
+    await context.supabase
+      .from("book_access_logs")
+      .insert({ book_id: book.id, user_id: context.userId, action: "open" });
+
+    const paths = [book.file_path, book.cover_path].filter((p): p is string => Boolean(p));
+    const signed = await signAssetsImpl(paths);
+
+    return {
+      ...book,
+      cover_url: book.cover_path ? (signed[book.cover_path] ?? null) : null,
+      file_url: book.file_path ? (signed[book.file_path] ?? null) : (book.external_url ?? null),
+    };
+  });
+
 export const adminStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
