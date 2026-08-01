@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, Pencil, Plus, Trash2 } from "lucide-react";
+import { BookOpen, Copy, MessageCircle, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
