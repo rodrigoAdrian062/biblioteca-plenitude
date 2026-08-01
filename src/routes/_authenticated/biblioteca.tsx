@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Download, Search } from "lucide-react";
-import { toast } from "sonner";
+import { BookOpen, Search } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
-import { getBookFileUrl, listBooks } from "@/lib/library.functions";
+import { listBooks } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,14 +51,6 @@ function Library() {
     });
   }, [books, term, degreeFilter]);
 
-  async function open(id: string) {
-    try {
-      const { url } = await getBookFileUrl({ data: { id } });
-      window.open(url, "_blank", "noopener,noreferrer");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível abrir a obra.");
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -150,9 +141,11 @@ function Library() {
                       {book.category}
                     </Badge>
                   ) : null}
-                  <Button className="w-full" size="sm" onClick={() => void open(book.id)}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Abrir obra
+                  <Button asChild className="w-full" size="sm">
+                    <Link to="/obra/$id" params={{ id: book.id }}>
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Ler obra
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
