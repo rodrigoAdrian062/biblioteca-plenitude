@@ -59,6 +59,7 @@ export type Database = {
           id: string
           min_degree: number
           published: boolean
+          scope: string
           title: string
           updated_at: string
         }
@@ -74,6 +75,7 @@ export type Database = {
           id?: string
           min_degree?: number
           published?: boolean
+          scope?: string
           title: string
           updated_at?: string
         }
@@ -89,6 +91,7 @@ export type Database = {
           id?: string
           min_degree?: number
           published?: boolean
+          scope?: string
           title?: string
           updated_at?: string
         }
