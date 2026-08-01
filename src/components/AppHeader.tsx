@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Search, Shield, UserCog } from "lucide-react";
+import { Library, LogOut, Search, Shield, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,25 +74,75 @@ export function AppHeader({
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
           ) : null}
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
             <Link to="/perfil">
               <UserCog className="mr-1 h-4 w-4" />
               <span className="hidden sm:inline">Minha conta</span>
             </Link>
           </Button>
           {isAdmin ? (
-            <Button asChild variant="secondary" size="sm">
+            <Button asChild variant="secondary" size="sm" className="hidden sm:inline-flex">
               <Link to="/admin">
                 <Shield className="mr-1 h-4 w-4" />
                 Administração
               </Link>
             </Button>
           ) : null}
-          <Button variant="ghost" size="sm" onClick={() => void signOut()}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hidden sm:inline-flex"
+            onClick={() => void signOut()}
+          >
             <LogOut className="h-4 w-4" />
           </Button>
         </div>
       </div>
+
+      {/* Menu inferior no celular */}
+      <nav
+        aria-label="Menu principal"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
+      >
+        <div className="grid grid-cols-4 items-stretch">
+          <Link
+            to="/biblioteca"
+            className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
+            activeProps={{ className: "active" }}
+          >
+            <Library className="h-5 w-5" />
+            Acervo
+          </Link>
+          <Link
+            to="/perfil"
+            className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
+            activeProps={{ className: "active" }}
+          >
+            <UserCog className="h-5 w-5" />
+            Conta
+          </Link>
+          {isAdmin ? (
+            <Link
+              to="/admin"
+              className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
+              activeProps={{ className: "active" }}
+            >
+              <Shield className="h-5 w-5" />
+              Admin
+            </Link>
+          ) : (
+            <span aria-hidden />
+          )}
+          <button
+            type="button"
+            onClick={() => void signOut()}
+            className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground"
+          >
+            <LogOut className="h-5 w-5" />
+            Sair
+          </button>
+        </div>
+      </nav>
     </header>
   );
 }
