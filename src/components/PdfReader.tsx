@@ -74,24 +74,26 @@ export default function PdfReader({ url, watermark }: Props) {
   }, [mode, numPages]);
 
   return (
-    <div className="rounded-lg border border-border/60 bg-secondary/40">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-3 py-2">
-        <div className="flex items-center gap-2">
+    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-lg border border-border/60 bg-secondary/40">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-2 py-2 sm:px-3">
+        <div className="flex min-w-0 items-center gap-1.5">
           <Button
             variant="outline"
             size="icon"
+            className="h-8 w-8 shrink-0"
             aria-label="Página anterior"
             disabled={page <= 1}
             onClick={() => goTo(page - 1)}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm text-muted-foreground">
+          <span className="shrink-0 text-xs text-muted-foreground sm:text-sm">
             {numPages ? `${page} / ${numPages}` : "..."}
           </span>
           <Button
             variant="outline"
             size="icon"
+            className="h-8 w-8 shrink-0"
             aria-label="Próxima página"
             disabled={numPages === 0 || page >= numPages}
             onClick={() => goTo(page + 1)}
@@ -100,40 +102,46 @@ export default function PdfReader({ url, watermark }: Props) {
           </Button>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded-md border border-border/60 p-1">
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1 rounded-md border border-border/60 p-0.5">
             <Button
               variant={mode === "vertical" ? "default" : "ghost"}
               size="sm"
+              className="h-8 px-2"
               aria-label="Leitura vertical"
               onClick={() => setMode("vertical")}
             >
-              <MoveVertical className="mr-1 h-4 w-4" /> Vertical
+              <MoveVertical className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Vertical</span>
             </Button>
             <Button
               variant={mode === "horizontal" ? "default" : "ghost"}
               size="sm"
+              className="h-8 px-2"
               aria-label="Leitura horizontal"
               onClick={() => setMode("horizontal")}
             >
-              <MoveHorizontal className="mr-1 h-4 w-4" /> Horizontal
+              <MoveHorizontal className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Horizontal</span>
             </Button>
           </div>
 
           <Button
             variant="outline"
             size="icon"
+            className="h-8 w-8 shrink-0"
             aria-label="Reduzir zoom"
             onClick={() => setScale((s) => Math.max(0.6, +(s - 0.2).toFixed(2)))}
           >
             <Minus className="h-4 w-4" />
           </Button>
-          <span className="w-12 text-center text-sm text-muted-foreground">
+          <span className="w-10 shrink-0 text-center text-xs text-muted-foreground sm:text-sm">
             {Math.round(scale * 100)}%
           </span>
           <Button
             variant="outline"
             size="icon"
+            className="h-8 w-8 shrink-0"
             aria-label="Ampliar zoom"
             onClick={() => setScale((s) => Math.min(2.4, +(s + 0.2).toFixed(2)))}
           >
@@ -141,6 +149,7 @@ export default function PdfReader({ url, watermark }: Props) {
           </Button>
         </div>
       </div>
+
 
       <div
         ref={containerRef}
