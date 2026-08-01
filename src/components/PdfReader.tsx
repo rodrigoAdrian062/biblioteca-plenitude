@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { ChevronLeft, ChevronRight, Minus, Plus, MoveVertical, MoveHorizontal } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus,
+  MoveVertical,
+  MoveHorizontal,
+  Maximize2,
+  X,
+} from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Button } from "@/components/ui/button";
@@ -25,16 +34,31 @@ export default function PdfReader({ url, watermark }: Props) {
   const [scale, setScale] = useState(1);
   const [width, setWidth] = useState(800);
   const [mode, setMode] = useState<Mode>("vertical");
+  const [full, setFull] = useState(false);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const update = () => setWidth(Math.min(el.clientWidth - 24, 900));
+    const update = () => setWidth(Math.min(el.clientWidth - 24, full ? 1200 : 900));
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [full]);
+
+  useEffect(() => {
+    if (!full) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFull(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [full]);
 
   const onLoad = useCallback(({ numPages: total }: { numPages: number }) => {
     setNumPages(total);
@@ -74,7 +98,33 @@ export default function PdfReader({ url, watermark }: Props) {
   }, [mode, numPages]);
 
   return (
-    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-lg border border-border/60 bg-secondary/40">
+    <div
+      className={
+        full
+          ? "fixed inset-0 z-[60] flex min-w-0 flex-col bg-background"
+          : "w-full max-w-full min-w-0 overflow-hidden rounded-xl border border-border/60 bg-secondary/40"
+      }
+    >
+      {full ? (
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-card px-3 py-2">
+          <Button size="sm" onClick={() => setFull(false)} className="shrink-0">
+            <ChevronLeft className="mr-1 h-4 w-4" />
+            Voltar
+          </Button>
+          <span className="truncate text-xs text-muted-foreground">
+            {watermark ? `Leitura de ${watermark}` : "Leitura"}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            aria-label="Sair da tela cheia"
+            onClick={() => setFull(false)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-2 py-2 sm:px-3">
         <div className="flex min-w-0 items-center gap-1.5">
           <Button
@@ -147,13 +197,25 @@ export default function PdfReader({ url, watermark }: Props) {
           >
             <Plus className="h-4 w-4" />
           </Button>
+
+          <Button
+            variant={full ? "default" : "outline"}
+            size="sm"
+            className="h-8 shrink-0 px-2"
+            aria-label={full ? "Sair da tela cheia" : "Ler em tela cheia"}
+            onClick={() => setFull((v) => !v)}
+          >
+            {full ? <X className="h-4 w-4 sm:mr-1" /> : <Maximize2 className="h-4 w-4 sm:mr-1" />}
+            <span className="hidden sm:inline">{full ? "Sair" : "Tela cheia"}</span>
+          </Button>
         </div>
       </div>
 
-
       <div
         ref={containerRef}
-        className="relative max-h-[80vh] w-full max-w-full overflow-auto p-2 select-none sm:p-3"
+        className={`relative w-full max-w-full overflow-auto p-2 select-none sm:p-3 ${
+          full ? "flex-1 min-h-0" : "max-h-[80vh]"
+        }`}
         onContextMenu={(e) => e.preventDefault()}
         onDragStart={(e) => e.preventDefault()}
       >

@@ -70,7 +70,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
       _user_id: auth.user.id,
       _role: "admin",
     });
-    if (error || !isAdmin) throw redirect({ to: "/biblioteca" });
+    if (error || !isAdmin) throw redirect({ to: "/biblioteca", search: { q: "", autor: "", categoria: "", grau: 0, tema: "" } });
   },
   head: () => ({
     meta: [
@@ -94,29 +94,35 @@ function AdminPage() {
   return (
     <div className="min-h-screen bg-background">
       <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} />
-      <main className="mx-auto max-w-6xl px-4 py-10">
-        <h1 className="font-display text-3xl">Administração</h1>
-        <div className="gold-rule my-4 h-px w-32" />
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
+        <section className="rounded-2xl border border-border/60 bg-card/60 p-5 sm:p-6">
+          <h1 className="font-display text-2xl sm:text-3xl">Administração</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Gerencie o acervo, os irmãos e acompanhe os números da Biblioteca Plenitude.
+          </p>
+          <div className="gold-rule mt-4 h-px w-24" />
+        </section>
+
         {loading ? (
-          <p className="text-sm text-muted-foreground">Verificando permissões...</p>
+          <p className="mt-6 text-sm text-muted-foreground">Verificando permissões...</p>
         ) : !isAdmin ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-6 text-sm text-muted-foreground">
             Acesso restrito à administração da Loja.
           </p>
         ) : (
-          <Tabs defaultValue="acervo">
-            <TabsList>
+          <Tabs defaultValue="acervo" className="mt-5">
+            <TabsList className="grid w-full grid-cols-3 sm:inline-flex sm:w-auto">
               <TabsTrigger value="acervo">Acervo</TabsTrigger>
               <TabsTrigger value="irmaos">Irmãos</TabsTrigger>
               <TabsTrigger value="painel">Painel</TabsTrigger>
             </TabsList>
-            <TabsContent value="acervo" className="mt-6">
+            <TabsContent value="acervo" className="mt-5">
               <BooksAdmin />
             </TabsContent>
-            <TabsContent value="irmaos" className="mt-6">
+            <TabsContent value="irmaos" className="mt-5">
               <MembersAdmin />
             </TabsContent>
-            <TabsContent value="painel" className="mt-6">
+            <TabsContent value="painel" className="mt-5">
               <StatsPanel />
             </TabsContent>
           </Tabs>
@@ -136,9 +142,14 @@ function StatsPanel() {
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {cards.map((c) => (
-        <Card key={c.label} className="border-border/60">
+        <Card
+          key={c.label}
+          className="rounded-2xl border-border/60 bg-card/60 transition-colors hover:border-primary/40"
+        >
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-normal text-muted-foreground">{c.label}</CardTitle>
+            <CardTitle className="text-xs font-normal uppercase tracking-wide text-muted-foreground">
+              {c.label}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="font-display text-3xl text-primary">{c.value}</p>
@@ -259,9 +270,9 @@ function BooksAdmin() {
   }
 
   return (
-    <section>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-xl">Obras do acervo</h2>
+    <section className="rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-display text-lg sm:text-xl">Obras do acervo</h2>
         <Dialog
           open={open}
           onOpenChange={(v) => {
@@ -601,9 +612,9 @@ function MembersAdmin() {
   });
 
   return (
-    <section>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-xl">Irmãos</h2>
+    <section className="rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-display text-lg sm:text-xl">Irmãos</h2>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
