@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Library, LogOut, Search, Shield, UserCog } from "lucide-react";
+import { Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { degreeLabel } from "@/lib/masonic";
+import { useTheme } from "@/hooks/useTheme";
 import logo from "@/assets/logo.png";
+
 
 
 export function AppHeader({
