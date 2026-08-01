@@ -70,7 +70,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
       _user_id: auth.user.id,
       _role: "admin",
     });
-    if (error || !isAdmin) throw redirect({ to: "/biblioteca", search: { q: "", autor: "", categoria: "", grau: 0, tema: "" } });
+    if (error || !isAdmin) throw redirect({ to: "/biblioteca", search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } });
   },
   head: () => ({
     meta: [
