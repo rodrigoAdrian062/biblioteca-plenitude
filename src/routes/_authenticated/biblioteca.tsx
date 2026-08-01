@@ -317,62 +317,45 @@ function Library() {
           <p className="mt-10 text-sm text-muted-foreground">
             Nenhuma obra disponível para o seu grau no momento.
           </p>
+        ) : tema ? (
+          <BookGrid books={visible} className="mt-8" />
         ) : (
-          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-            {visible.map((book) => (
-              <Card key={book.id} className="flex flex-col overflow-hidden border-border/60">
-                <div className="aspect-[3/4] w-full bg-secondary">
-                  {book.cover_url ? (
-                    <img
-                      src={book.cover_url}
-                      alt={`Capa da obra ${book.title}`}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-primary/50">
-                      <BookOpen className="h-8 w-8" />
+          <div className="mt-8 space-y-10">
+            {sections
+              .filter((s) => s.books.length > 0)
+              .map((s) => (
+                <section key={s.value} aria-labelledby={`tema-${s.value}`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h2
+                      id={`tema-${s.value}`}
+                      className="font-display text-xl text-foreground"
+                    >
+                      {s.label}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-[10px]">
+                        {s.books.length} obra{s.books.length === 1 ? "" : "s"}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          void navigate({
+                            search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }),
+                          })
+                        }
+                      >
+                        Ver só {s.label.toLowerCase()}
+                      </Button>
                     </div>
-                  )}
-                </div>
-                <CardHeader className="gap-1 p-3 pb-1">
-                  <div className="flex min-w-0 items-start justify-between gap-1.5">
-                    <CardTitle className="line-clamp-3 font-display text-sm leading-snug">
-                      {catalogName(book.author, book.title)}
-                    </CardTitle>
-                    <Badge variant="outline" className="shrink-0 px-1.5 text-[10px]">
-                      {degreeLabel(book.min_degree)}
-                    </Badge>
                   </div>
-                  <Badge
-                    variant={book.scope === "nao_maconico" ? "secondary" : "default"}
-                    className="w-fit px-1.5 text-[10px]"
-                  >
-                    {scopeLabel(book.scope)}
-                  </Badge>
-
-                </CardHeader>
-                <CardContent className="mt-auto space-y-2 p-3 pt-0">
-                  {book.description ? (
-                    <p className="line-clamp-2 text-xs text-muted-foreground">{book.description}</p>
-                  ) : null}
-                  {book.category ? (
-                    <Badge variant="secondary" className="text-[10px]">
-                      {book.category}
-                    </Badge>
-                  ) : null}
-                  <Button asChild className="w-full" size="sm">
-                    <Link to="/obra/$id" params={{ id: book.id }}>
-                      <BookOpen className="mr-1.5 h-4 w-4" />
-                      Ler
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <div className="gold-rule my-3 h-px w-full" />
+                  <BookGrid books={s.books} />
+                </section>
+              ))}
           </div>
-
         )}
+
       </main>
     </div>
   );
