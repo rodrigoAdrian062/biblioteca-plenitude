@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Search, Shield } from "lucide-react";
+import { LogOut, Search, Shield, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,6 +74,12 @@ export function AppHeader({
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
           ) : null}
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/perfil">
+              <UserCog className="mr-1 h-4 w-4" />
+              <span className="hidden sm:inline">Minha conta</span>
+            </Link>
+          </Button>
           {isAdmin ? (
             <Button asChild variant="secondary" size="sm">
               <Link to="/admin">
