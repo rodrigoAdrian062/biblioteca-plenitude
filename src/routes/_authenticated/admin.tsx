@@ -39,6 +39,15 @@ import {
 } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  beforeLoad: async () => {
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) throw redirect({ to: "/auth" });
+    const { data: isAdmin, error } = await supabase.rpc("has_role", {
+      _user_id: auth.user.id,
+      _role: "admin",
+    });
+    if (error || !isAdmin) throw redirect({ to: "/biblioteca" });
+  },
   head: () => ({
     meta: [
       { title: "Administração | Biblioteca Plenitude" },
