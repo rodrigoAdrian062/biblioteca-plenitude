@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BookOpen } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -56,9 +56,12 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md border-border/60">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full border border-primary/40 text-primary">
-            <BookOpen className="h-5 w-5" />
-          </div>
+          <img
+            src={logo}
+            alt="Brasão A.R.L.S. Plenitude nº 4759"
+            className="mx-auto mb-2 h-20 w-20 object-contain"
+          />
+
           <CardTitle className="font-display text-2xl">Biblioteca Maçônica</CardTitle>
           <CardDescription>Acesso exclusivo aos irmãos cadastrados pela administração.</CardDescription>
         </CardHeader>

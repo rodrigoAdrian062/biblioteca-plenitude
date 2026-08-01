@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BookOpen, LogOut, Shield } from "lucide-react";
+import { LogOut, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { degreeLabel } from "@/lib/masonic";
+import logo from "@/assets/logo.png";
+
 
 export function AppHeader({
   fullName,
@@ -28,12 +30,17 @@ export function AppHeader({
   return (
     <header className="border-b border-border/60 bg-card/40 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-        <Link to="/biblioteca" className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-primary" />
-          <span className="font-display text-lg tracking-wide text-foreground">
+        <Link to="/biblioteca" className="flex min-w-0 items-center gap-2">
+          <img
+            src={logo}
+            alt="Logo A.R.L.S. Plenitude nº 4759"
+            className="h-9 w-9 shrink-0 rounded-full object-contain"
+          />
+          <span className="truncate font-display text-lg tracking-wide text-foreground">
             Biblioteca Maçônica
           </span>
         </Link>
+
 
         <div className="ml-auto flex items-center gap-2">
           {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
