@@ -248,6 +248,7 @@ function BooksAdmin() {
   }
 
   async function remove(id: string) {
+    if (!window.confirm("Remover esta obra do acervo? A ação não pode ser desfeita.")) return;
     const { error } = await supabase.from("books").delete().eq("id", id);
     if (error) {
       toast.error(error.message);
