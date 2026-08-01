@@ -98,7 +98,33 @@ export default function PdfReader({ url, watermark }: Props) {
   }, [mode, numPages]);
 
   return (
-    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-lg border border-border/60 bg-secondary/40">
+    <div
+      className={
+        full
+          ? "fixed inset-0 z-[60] flex min-w-0 flex-col bg-background"
+          : "w-full max-w-full min-w-0 overflow-hidden rounded-xl border border-border/60 bg-secondary/40"
+      }
+    >
+      {full ? (
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-card px-3 py-2">
+          <Button size="sm" onClick={() => setFull(false)} className="shrink-0">
+            <ChevronLeft className="mr-1 h-4 w-4" />
+            Voltar
+          </Button>
+          <span className="truncate text-xs text-muted-foreground">
+            {watermark ? `Leitura de ${watermark}` : "Leitura"}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            aria-label="Sair da tela cheia"
+            onClick={() => setFull(false)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-2 py-2 sm:px-3">
         <div className="flex min-w-0 items-center gap-1.5">
           <Button
