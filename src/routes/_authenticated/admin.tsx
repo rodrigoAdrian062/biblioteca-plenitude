@@ -447,6 +447,7 @@ function MembersAdmin() {
       password?: string;
       email?: string;
       full_name?: string;
+      is_admin?: boolean;
     }) => updateMember({ data: vars }),
     onSuccess: async () => {
       toast.success("Cadastro atualizado.");
@@ -577,6 +578,14 @@ function MembersAdmin() {
                 <p className="truncate text-xs text-muted-foreground">{m.email}</p>
               </div>
               {m.is_admin ? <Badge>Admin</Badge> : null}
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={m.is_admin}
+                  aria-label="Acesso administrativo"
+                  onCheckedChange={(v) => update.mutate({ id: m.id, is_admin: v })}
+                />
+                <span className="text-xs text-muted-foreground">Admin</span>
+              </div>
               <Select
                 value={String(m.degree)}
                 onValueChange={(v) => update.mutate({ id: m.id, degree: Number(v) })}
