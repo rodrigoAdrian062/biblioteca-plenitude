@@ -29,9 +29,12 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-primary/40 text-primary">
-          <BookOpen className="h-7 w-7" />
-        </div>
+        <img
+          src={logo}
+          alt="Brasão A.R.L.S. Plenitude nº 4759"
+          className="mx-auto mb-6 h-28 w-28 object-contain drop-shadow"
+        />
+
         <h1 className="font-display text-4xl text-foreground sm:text-5xl">Biblioteca Maçônica Digital</h1>
         <div className="gold-rule mx-auto my-6 h-px w-40" />
         <p className="mx-auto max-w-2xl text-muted-foreground">
