@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { BookOpen, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
@@ -351,7 +351,22 @@ function BooksAdmin() {
               key={b.id}
               className="flex flex-wrap items-center gap-3 rounded-md border border-border/60 bg-card p-3"
             >
+              <div className="h-16 w-12 shrink-0 overflow-hidden rounded border border-border/60 bg-secondary">
+                {b.cover_url ? (
+                  <img
+                    src={b.cover_url}
+                    alt={`Capa da obra ${b.title}`}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-primary/50">
+                    <BookOpen className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
               <div className="min-w-0 flex-1">
+
                 <p className="truncate font-medium text-card-foreground">{b.title}</p>
                 <p className="truncate text-xs text-muted-foreground">
                   {b.author || "Autor não informado"}
