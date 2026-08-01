@@ -47,6 +47,9 @@ export const updateMember = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { assertAdmin, updateMemberImpl } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
+    if (data.id === context.userId && (data.is_admin === false || data.active === false)) {
+      throw new Error("Você não pode remover o próprio acesso administrativo.");
+    }
     return updateMemberImpl(data);
   });
 
@@ -56,6 +59,9 @@ export const deleteMember = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { assertAdmin, deleteMemberImpl } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
+    if (data.id === context.userId) {
+      throw new Error("Você não pode excluir a própria conta de administrador.");
+    }
     return deleteMemberImpl(data.id);
   });
 
