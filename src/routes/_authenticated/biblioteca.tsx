@@ -150,9 +150,11 @@ function Library() {
                       {book.category}
                     </Badge>
                   ) : null}
-                  <Button className="w-full" size="sm" onClick={() => void open(book.id)}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Abrir obra
+                  <Button asChild className="w-full" size="sm">
+                    <Link to="/obra/$id" params={{ id: book.id }}>
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Ler obra
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
