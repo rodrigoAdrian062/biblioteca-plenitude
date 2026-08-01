@@ -56,12 +56,25 @@ function AuthPage() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [lockedUntil, setLockedUntil] = useState(() => readAttempts().lockedUntil ?? 0);
+  // Lido apenas após a hidratação para não divergir do HTML renderizado no servidor.
+  const [lockedUntil, setLockedUntil] = useState(0);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
+    setLockedUntil(readAttempts().lockedUntil ?? 0);
+    setNow(Date.now());
+  }, []);
+
+  useEffect(() => {
     if (lockedUntil <= Date.now()) return;
-    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    const id = window.setInterval(() => {
+      const current = Date.now();
+      setNow(current);
+      if (current >= lockedUntil) {
+        setLockedUntil(0);
+        window.clearInterval(id);
+      }
+    }, 1000);
     return () => window.clearInterval(id);
   }, [lockedUntil]);
 

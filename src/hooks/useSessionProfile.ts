@@ -41,9 +41,11 @@ export function useSessionProfile() {
       setLoading(false);
     };
 
+    // Nunca chamar a API do Supabase de dentro do callback (risco de deadlock):
+    // adiamos a carga do perfil para fora do evento.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
-      void load(next);
+      setTimeout(() => void load(next), 0);
     });
 
     void supabase.auth.getSession().then(({ data }) => {

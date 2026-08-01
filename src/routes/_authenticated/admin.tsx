@@ -248,6 +248,7 @@ function BooksAdmin() {
   }
 
   async function remove(id: string) {
+    if (!window.confirm("Remover esta obra do acervo? A ação não pode ser desfeita.")) return;
     const { error } = await supabase.from("books").delete().eq("id", id);
     if (error) {
       toast.error(error.message);
@@ -550,10 +551,16 @@ function MembersAdmin() {
           is_admin: form.is_admin,
         },
       }),
-    onSuccess: async () => {
-      toast.success("Irmão cadastrado.");
+    onSuccess: async (result) => {
+      // O servidor pode ajustar o login quando já existe outro igual — mostramos o real.
+      const realLogin = emailToLogin(result?.email ?? "") || form.login;
+      if (realLogin !== form.login) {
+        toast.info(`O login “${form.login}” já existia. Login criado: ${realLogin}`);
+      } else {
+        toast.success("Irmão cadastrado.");
+      }
       setOpen(false);
-      setCreatedInfo({ login: form.login, password: form.password });
+      setCreatedInfo({ login: realLogin, password: form.password });
       setForm({ login: "", password: "", full_name: "", degree: 1, is_admin: false });
       await invalidate();
     },
@@ -703,69 +710,94 @@ function MembersAdmin() {
           {members.map((m) => (
             <div
               key={m.id}
-              className="flex flex-wrap items-center gap-3 rounded-md border border-border/60 bg-card p-3"
+              className="rounded-md border border-border/60 bg-card p-3"
             >
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-card-foreground">{m.full_name}</p>
-                <p className="truncate text-xs text-muted-foreground">{emailToLogin(m.email)}</p>
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                <div className="min-w-0">
+                  <p className="break-words font-medium leading-snug text-card-foreground">
+                    {m.full_name}
+                  </p>
+                  <p className="break-words text-xs text-muted-foreground">
+                    {emailToLogin(m.email)}
+                  </p>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                    {m.is_admin ? <Badge>Admin</Badge> : null}
+                    <Badge variant={m.active ? "outline" : "secondary"}>
+                      {m.active ? "Ativo" : "Suspenso"}
+                    </Badge>
+                    <Badge variant="outline">{degreeLabel(m.degree)}</Badge>
+                  </div>
+                </div>
+                <div className="flex shrink-0 gap-1">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Editar login e senha"
+                    onClick={() =>
+                      setEditing({
+                        id: m.id,
+                        full_name: m.full_name,
+                        email: emailToLogin(m.email),
+                        password: "",
+                      })
+                    }
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Remover irmão"
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `Remover definitivamente o acesso de ${m.full_name}? A ação não pode ser desfeita.`,
+                        )
+                      ) {
+                        remove.mutate(m.id);
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
               </div>
-              {m.is_admin ? <Badge>Admin</Badge> : null}
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={m.is_admin}
-                  aria-label="Acesso administrativo"
-                  onCheckedChange={(v) => update.mutate({ id: m.id, is_admin: v })}
-                />
-                <span className="text-xs text-muted-foreground">Admin</span>
+
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border/60 pt-3">
+                <Select
+                  value={String(m.degree)}
+                  onValueChange={(v) => update.mutate({ id: m.id, degree: Number(v) })}
+                >
+                  <SelectTrigger className="h-9 w-full sm:w-44" aria-label="Grau do irmão">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DEGREES.map((d) => (
+                      <SelectItem key={d.value} value={String(d.value)}>
+                        {d.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={m.is_admin}
+                    aria-label="Acesso administrativo"
+                    onCheckedChange={(v) => update.mutate({ id: m.id, is_admin: v })}
+                  />
+                  <span className="text-xs text-muted-foreground">Admin</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={m.active}
+                    aria-label="Acesso ativo"
+                    onCheckedChange={(v) => update.mutate({ id: m.id, active: v })}
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    {m.active ? "Ativo" : "Suspenso"}
+                  </span>
+                </div>
               </div>
-              <Select
-                value={String(m.degree)}
-                onValueChange={(v) => update.mutate({ id: m.id, degree: Number(v) })}
-              >
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DEGREES.map((d) => (
-                    <SelectItem key={d.value} value={String(d.value)}>
-                      {d.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={m.active}
-                  aria-label="Acesso ativo"
-                  onCheckedChange={(v) => update.mutate({ id: m.id, active: v })}
-                />
-                <span className="text-xs text-muted-foreground">
-                  {m.active ? "Ativo" : "Suspenso"}
-                </span>
-              </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Editar login e senha"
-                onClick={() =>
-                  setEditing({
-                    id: m.id,
-                    full_name: m.full_name,
-                    email: emailToLogin(m.email),
-                    password: "",
-                  })
-                }
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Remover irmão"
-                onClick={() => remove.mutate(m.id)}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
             </div>
           ))}
           {members.length === 0 ? (
