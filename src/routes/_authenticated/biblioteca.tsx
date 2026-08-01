@@ -1,10 +1,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Search, X } from "lucide-react";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { BookOpen, Search, X, Heart, History } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
+import { listFavorites, toggleFavorite, listHistory } from "@/lib/reading.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, catalogName, scopeLabel } from "@/lib/catalog";
 
@@ -26,6 +27,7 @@ export type LibrarySearch = {
   categoria: string;
   grau: number;
   tema: string;
+  fav: boolean;
 };
 
 const ALL = "__all__";
@@ -40,6 +42,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
       search['tema'] === "maconico" || search['tema'] === "nao_maconico"
         ? (search['tema'] as string)
         : "",
+    fav: search['fav'] === true || search['fav'] === "true",
   }),
 
   head: () => ({
@@ -61,7 +64,8 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 function Library() {
   const { profile, isAdmin } = useSessionProfile();
   const navigate = useNavigate({ from: "/biblioteca" });
-  const { q, autor, categoria, grau, tema } = Route.useSearch();
+  const { q, autor, categoria, grau, tema, fav } = Route.useSearch();
+  const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
 
   useEffect(() => {
@@ -81,6 +85,25 @@ function Library() {
     queryKey: ["books"],
     queryFn: () => listBooks(),
   });
+
+  const { data: favorites = [] } = useQuery({
+    queryKey: ["favorites"],
+    queryFn: () => listFavorites(),
+  });
+
+  const { data: history = [] } = useQuery({
+    queryKey: ["reading-history"],
+    queryFn: () => listHistory(),
+  });
+
+  const favMutation = useMutation({
+    mutationFn: (vars: { bookId: string; favorite: boolean }) => toggleFavorite({ data: vars }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["favorites"] }),
+  });
+
+  const favSet = useMemo(() => new Set(favorites), [favorites]);
+  const onToggleFavorite = (bookId: string, favorite: boolean) =>
+    favMutation.mutate({ bookId, favorite });
 
   const authors = useMemo(
     () =>
@@ -110,9 +133,10 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
-      return matchTerm && matchDegree && matchAuthor && matchCategory;
+      const matchFav = !fav || favSet.has(b.id);
+      return matchTerm && matchDegree && matchAuthor && matchCategory && matchFav;
     };
-  }, [q, grau, autor, categoria]);
+  }, [q, grau, autor, categoria, fav, favSet]);
 
   const baseVisible = useMemo(() => books.filter(matchesBase), [books, matchesBase]);
 
@@ -139,7 +163,7 @@ function Library() {
     [baseVisible],
   );
 
-  const hasFilters = Boolean(q || autor || categoria || grau || tema);
+  const hasFilters = Boolean(q || autor || categoria || grau || tema || fav);
 
   // Filtros persistentes entre sessões
   useEffect(() => {
@@ -149,7 +173,10 @@ function Library() {
     if (!saved) return;
     try {
       const parsed = JSON.parse(saved) as Partial<LibrarySearch>;
-      if (parsed && (parsed.q || parsed.autor || parsed.categoria || parsed.grau || parsed.tema)) {
+      if (
+        parsed &&
+        (parsed.q || parsed.autor || parsed.categoria || parsed.grau || parsed.tema || parsed.fav)
+      ) {
         void navigate({
           search: () => ({
             q: parsed.q ?? "",
@@ -157,6 +184,7 @@ function Library() {
             categoria: parsed.categoria ?? "",
             grau: Number(parsed.grau) || 0,
             tema: parsed.tema ?? "",
+            fav: Boolean(parsed.fav),
           }),
           replace: true,
         });
@@ -171,9 +199,9 @@ function Library() {
     if (typeof window === "undefined") return;
     window.localStorage.setItem(
       "acervo-filtros",
-      JSON.stringify({ q, autor, categoria, grau, tema }),
+      JSON.stringify({ q, autor, categoria, grau, tema, fav }),
     );
-  }, [q, autor, categoria, grau, tema]);
+  }, [q, autor, categoria, grau, tema, fav]);
 
 
 
@@ -284,6 +312,20 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Minhas</span>
+            <Button
+              variant={fav ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              aria-pressed={fav}
+              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, fav: !prev.fav }) })}
+            >
+              <Heart className={`mr-1.5 h-4 w-4 ${fav ? "fill-current" : ""}`} />
+              Favoritas ({favorites.length})
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
             <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Grau</span>
             <Button
               variant={!grau ? "default" : "outline"}
@@ -310,7 +352,7 @@ function Library() {
                 size="sm"
                 className="ml-auto rounded-full"
                 onClick={() =>
-                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "" } })
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } })
                 }
               >
                 <X className="mr-1 h-4 w-4" />
@@ -321,6 +363,50 @@ function Library() {
         </section>
 
 
+
+        {history.length > 0 && !fav ? (
+          <section className="mt-6 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5" aria-labelledby="continuar-lendo">
+            <div className="flex items-center gap-2">
+              <History className="h-4 w-4 text-primary" />
+              <h2 id="continuar-lendo" className="font-display text-lg text-foreground">
+                Continuar lendo
+              </h2>
+            </div>
+            <div className="gold-rule my-3 h-px w-24" />
+            <div className="flex gap-3 overflow-x-auto pb-1">
+              {history.map((h) => (
+                <Link
+                  key={h.book_id}
+                  to="/obra/$id"
+                  params={{ id: h.book_id }}
+                  className="flex w-56 shrink-0 gap-3 rounded-xl border border-border/60 bg-card p-2 transition-colors hover:border-primary/40"
+                >
+                  <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary">
+                    {h.cover_url ? (
+                      <img src={h.cover_url} alt={`Capa da obra ${h.title}`} loading="lazy" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-primary/50">
+                        <BookOpen className="h-5 w-5" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="line-clamp-2 text-xs font-medium text-foreground">
+                      {catalogName(h.author, h.title)}
+                    </p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      Pág. {h.last_page}
+                      {h.total_pages ? `/${h.total_pages}` : ""}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {new Date(h.updated_at).toLocaleDateString("pt-BR")}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {isLoading ? (
           <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
@@ -352,7 +438,7 @@ function Library() {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "" } })
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } })
                 }
               >
                 <X className="mr-1 h-4 w-4" />
@@ -361,7 +447,7 @@ function Library() {
             ) : null}
           </div>
         ) : tema ? (
-          <BookGrid books={visible} className="mt-8" />
+          <BookGrid books={visible} className="mt-8" favSet={favSet} onToggleFavorite={onToggleFavorite} />
         ) : (
           <div className="mt-8 space-y-10">
             {sections
@@ -393,7 +479,7 @@ function Library() {
                     </div>
                   </div>
                   <div className="gold-rule my-3 h-px w-full" />
-                  <BookGrid books={s.books} />
+                  <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={s.books} />
                 </section>
               ))}
           </div>
@@ -406,12 +492,35 @@ function Library() {
 
 type BookItem = Awaited<ReturnType<typeof listBooks>>[number];
 
-function BookGrid({ books, className = "" }: { books: BookItem[]; className?: string }) {
+function BookGrid({
+  books,
+  className = "",
+  favSet,
+  onToggleFavorite,
+}: {
+  books: BookItem[];
+  className?: string;
+  favSet: Set<string>;
+  onToggleFavorite: (bookId: string, favorite: boolean) => void;
+}) {
   return (
     <div className={`grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 ${className}`}>
       {books.map((book) => (
         <Card key={book.id} className="group flex flex-col overflow-hidden border-border/60 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg">
-          <div className="aspect-[3/4] w-full bg-secondary">
+          <div className="relative aspect-[3/4] w-full bg-secondary">
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon"
+              aria-label={favSet.has(book.id) ? "Remover dos favoritos" : "Marcar como favorita"}
+              aria-pressed={favSet.has(book.id)}
+              className="absolute right-1.5 top-1.5 z-10 h-8 w-8 rounded-full opacity-90"
+              onClick={() => onToggleFavorite(book.id, !favSet.has(book.id))}
+            >
+              <Heart
+                className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
+              />
+            </Button>
             {book.cover_url ? (
               <img
                 src={book.cover_url}
