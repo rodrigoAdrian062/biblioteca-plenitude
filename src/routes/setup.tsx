@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminExists, bootstrapAdmin } from "@/lib/admin.functions";
@@ -9,6 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/setup")({
+  beforeLoad: async () => {
+    const result = await adminExists();
+    if (result?.exists) {
+      throw redirect({ to: "/auth" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Primeira instalação | Biblioteca Maçônica" },
@@ -31,6 +37,7 @@ function Setup() {
     queryKey: ["admin-exists"],
     queryFn: () => adminExists(),
   });
+
   const [form, setForm] = useState({ email: "", password: "", full_name: "" });
   const [saving, setSaving] = useState(false);
 
