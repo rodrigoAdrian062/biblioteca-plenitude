@@ -14,6 +14,8 @@ import {
 } from "@/lib/admin.functions";
 import { adminStats, listBooks } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
+import { SCOPES, catalogName, scopeLabel, type BookScope } from "@/lib/catalog";
+
 import { emailToLogin, loginToEmail, suggestLogin, suggestPassword } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
