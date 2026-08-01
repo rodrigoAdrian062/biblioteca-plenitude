@@ -11,9 +11,9 @@ export function AppHeader({
   degree,
   isAdmin,
 }: {
-  fullName?: string;
-  degree?: number;
-  isAdmin?: boolean;
+  fullName?: string | undefined;
+  degree?: number | undefined;
+  isAdmin?: boolean | undefined;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
