@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminExists, bootstrapAdmin } from "@/lib/admin.functions";
+import { loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +39,7 @@ function Setup() {
     queryFn: () => adminExists(),
   });
 
-  const [form, setForm] = useState({ email: "", password: "", full_name: "" });
+  const [form, setForm] = useState({ login: "", password: "", full_name: "" });
   const [saving, setSaving] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
@@ -46,7 +47,13 @@ function Setup() {
     setSaving(true);
     try {
       await bootstrapAdmin({
-        data: { ...form, email: form.email.trim(), degree: 3, lodge: null },
+        data: {
+          full_name: form.full_name.trim(),
+          password: form.password,
+          email: loginToEmail(form.login),
+          degree: 3,
+          lodge: null,
+        },
       });
       toast.success("Administrador criado. Faça login.");
       await refetch();
@@ -88,14 +95,14 @@ function Setup() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
+                <Label htmlFor="login">Login</Label>
                 <Input
-                  id="email"
-                  type="email"
+                  id="login"
                   required
-                  maxLength={255}
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  autoComplete="username"
+                  maxLength={40}
+                  value={form.login}
+                  onChange={(e) => setForm({ ...form, login: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
