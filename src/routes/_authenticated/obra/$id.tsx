@@ -75,7 +75,7 @@ function BookReaderPage() {
 
       <main className="mx-auto w-full max-w-5xl min-w-0 px-3 py-6 sm:px-4 sm:py-10">
         <Button asChild variant="ghost" size="sm" className="mb-4">
-          <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "" }}>
+          <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false }}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar ao acervo
           </Link>
