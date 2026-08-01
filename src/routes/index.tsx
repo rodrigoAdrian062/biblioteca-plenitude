@@ -13,10 +13,10 @@ export const Route = createFileRoute("/")({
         content:
           "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja.",
       },
-      { property: "og:title", content: "Biblioteca Plenitude" },
+      { property: "og:title", content: "Biblioteca Plenitude | Acervo por Grau" },
       {
         property: "og:description",
-        content: "Acervo digital maçônico com acesso controlado por grau e login fornecido pelo administrador.",
+        content: "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

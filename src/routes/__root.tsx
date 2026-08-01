@@ -79,13 +79,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Biblioteca Plenitude" },
+      { title: "Biblioteca Plenitude | Acervo por Grau" },
       {
         name: "description",
-        content: "Acervo maçônico digital com acesso por grau, restrito aos irmãos da Loja.",
+        content: "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Biblioteca Plenitude | Acervo por Grau" },
+      { name: "twitter:title", content: "Biblioteca Plenitude | Acervo por Grau" },
+      { property: "og:description", content: "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja." },
+      { name: "twitter:description", content: "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/934ddc5b-0b5f-4789-a732-3a58431bd77d/id-preview-757edcae--a809ec34-d27f-4412-b890-54949da781e0.lovable.app-1785555992756.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/934ddc5b-0b5f-4789-a732-3a58431bd77d/id-preview-757edcae--a809ec34-d27f-4412-b890-54949da781e0.lovable.app-1785555992756.png" },
     ],
     links: [
       {
