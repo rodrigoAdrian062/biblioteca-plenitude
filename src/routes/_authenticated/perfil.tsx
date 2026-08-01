@@ -73,7 +73,7 @@ function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} />
+      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} userId={profile?.id} />
       <main className="mx-auto max-w-lg px-4 py-10">
         <h1 className="font-display text-3xl">Minha conta</h1>
         <div className="gold-rule my-4 h-px w-32" />

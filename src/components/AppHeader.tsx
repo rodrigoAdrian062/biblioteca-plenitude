@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { degreeLabel } from "@/lib/masonic";
 import { useTheme } from "@/hooks/useTheme";
+import { NotificationsBell } from "@/components/NotificationsBell";
 import logo from "@/assets/logo.png";
 
 
@@ -16,10 +17,12 @@ export function AppHeader({
   fullName,
   degree,
   isAdmin,
+  userId,
 }: {
   fullName?: string | undefined;
   degree?: number | undefined;
   isAdmin?: boolean | undefined;
+  userId?: string | undefined;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -74,6 +77,11 @@ export function AppHeader({
         </form>
 
         <div className="ml-auto flex items-center gap-2">
+          {userId && !isAdmin ? (
+            <span className="hidden sm:inline-flex">
+              <NotificationsBell userId={userId} />
+            </span>
+          ) : null}
           <Button
             variant="ghost"
             size="icon"
@@ -147,6 +155,8 @@ export function AppHeader({
               <Shield className="h-5 w-5" />
               Admin
             </Link>
+          ) : userId ? (
+            <NotificationsBell userId={userId} variant="menu" />
           ) : (
             <span aria-hidden />
           )}
