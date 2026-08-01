@@ -74,7 +74,18 @@ export function AppHeader({
         </form>
 
         <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
+            aria-label={theme === "dark" ? "Ativar modo claro" : "Ativar modo noturno"}
+            title={theme === "dark" ? "Modo claro" : "Modo noturno"}
+            onClick={toggle}
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
+
 
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
