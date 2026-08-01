@@ -94,16 +94,12 @@ export async function updateMemberImpl(input: {
   password?: string | undefined;
 }) {
   const db = await admin();
-  const patch: {
-    full_name?: string | undefined;
-    degree?: number | undefined;
-    lodge?: string | null | undefined;
-    active?: boolean | undefined;
-  } = {};
-  if (input.full_name !== undefined) patch.full_name = input.full_name;
-  if (input.degree !== undefined) patch.degree = input.degree;
-  if (input.lodge !== undefined) patch.lodge = input.lodge;
-  if (input.active !== undefined) patch.active = input.active;
+  const patch = {
+    ...(input.full_name !== undefined ? { full_name: input.full_name } : {}),
+    ...(input.degree !== undefined ? { degree: input.degree } : {}),
+    ...(input.lodge !== undefined ? { lodge: input.lodge } : {}),
+    ...(input.active !== undefined ? { active: input.active } : {}),
+  };
 
   if (Object.keys(patch).length > 0) {
     const { error } = await db.from("profiles").update(patch).eq("id", input.id);
