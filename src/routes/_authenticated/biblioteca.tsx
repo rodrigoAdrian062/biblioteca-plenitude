@@ -186,18 +186,27 @@ function Library() {
         isAdmin={isAdmin}
       />
 
-      <main className="mx-auto max-w-6xl px-4 py-10">
-        <h1 className="font-display text-3xl text-foreground">Acervo</h1>
-        <div className="gold-rule my-4 h-px w-32" />
-        <p className="text-sm text-muted-foreground">
-          {profile
-            ? `Irmão ${profile.full_name} — grau de ${degreeLabel(profile.degree)}. Obras liberadas até o seu grau.`
-            : "Carregando dados do irmão..."}
-        </p>
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
+        <section className="rounded-2xl border border-border/60 bg-card/60 p-5 sm:p-6">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="font-display text-2xl text-foreground sm:text-3xl">Acervo</h1>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {profile
+                  ? `Irmão ${profile.full_name} — obras liberadas até o grau de ${degreeLabel(profile.degree)}.`
+                  : "Carregando dados do irmão..."}
+              </p>
+            </div>
+            <Badge variant="outline" className="shrink-0">
+              {visible.length} obra{visible.length === 1 ? "" : "s"}
+            </Badge>
+          </div>
+          <div className="gold-rule mt-4 h-px w-24" />
+        </section>
 
-        <div className="mt-6 space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative w-full max-w-sm">
+        <section className="mt-5 space-y-4 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5">
+          <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_13rem_13rem]">
+            <div className="relative min-w-0">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 className="pl-9"
@@ -216,7 +225,7 @@ function Library() {
                 void navigate({ search: (prev: LibrarySearch) => ({ ...prev, autor: v === ALL ? "" : v }) })
               }
             >
-              <SelectTrigger className="w-full sm:w-52" aria-label="Filtrar por autor">
+              <SelectTrigger className="w-full" aria-label="Filtrar por autor">
                 <SelectValue placeholder="Autor" />
               </SelectTrigger>
               <SelectContent>
@@ -235,7 +244,7 @@ function Library() {
                 void navigate({ search: (prev: LibrarySearch) => ({ ...prev, categoria: v === ALL ? "" : v }) })
               }
             >
-              <SelectTrigger className="w-full sm:w-52" aria-label="Filtrar por categoria">
+              <SelectTrigger className="w-full" aria-label="Filtrar por categoria">
                 <SelectValue placeholder="Categoria" />
               </SelectTrigger>
               <SelectContent>
@@ -250,10 +259,11 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs uppercase tracking-wide text-muted-foreground">Tema</span>
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tema</span>
             <Button
               variant={!tema ? "default" : "outline"}
               size="sm"
+              className="rounded-full"
               onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: "" }) })}
             >
               Todos ({baseVisible.length})
@@ -263,6 +273,7 @@ function Library() {
                 key={s.value}
                 variant={tema === s.value ? "default" : "outline"}
                 size="sm"
+                className="rounded-full"
                 onClick={() =>
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
                 }
@@ -270,14 +281,14 @@ function Library() {
                 {s.label} ({counts[s.value] ?? 0})
               </Button>
             ))}
-
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs uppercase tracking-wide text-muted-foreground">Grau</span>
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Grau</span>
             <Button
               variant={!grau ? "default" : "outline"}
               size="sm"
+              className="rounded-full"
               onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, grau: 0 }) })}
             >
               Todos
@@ -287,6 +298,7 @@ function Library() {
                 key={d.value}
                 variant={grau === d.value ? "default" : "outline"}
                 size="sm"
+                className="rounded-full"
                 onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, grau: d.value }) })}
               >
                 {d.label}
@@ -296,6 +308,7 @@ function Library() {
               <Button
                 variant="ghost"
                 size="sm"
+                className="ml-auto rounded-full"
                 onClick={() =>
                   void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "" } })
                 }
@@ -304,12 +317,9 @@ function Library() {
                 Limpar filtros
               </Button>
             ) : null}
-
-            <span className="ml-auto text-xs text-muted-foreground">
-              {visible.length} obra{visible.length === 1 ? "" : "s"}
-            </span>
           </div>
-        </div>
+        </section>
+
 
 
         {isLoading ? (
