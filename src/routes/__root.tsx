@@ -122,7 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var t=localStorage.getItem('plenitude:theme');if(t==='light'){document.documentElement.classList.remove('dark')}}catch(e){}",
+              "try{var p=location.pathname;if(p!=='/'&&p!=='/auth'&&p!=='/setup'){var k=Object.keys(localStorage).filter(function(x){return x.indexOf('plenitude:theme')===0});var t=k.length?localStorage.getItem(k[k.length-1]):null;if(t==='light'){document.documentElement.classList.remove('dark')}}}catch(e){}",
           }}
         />
       </head>
