@@ -156,7 +156,6 @@ function Library() {
             ))}
           </div>
 
-          </div>
         )}
       </main>
     </div>
