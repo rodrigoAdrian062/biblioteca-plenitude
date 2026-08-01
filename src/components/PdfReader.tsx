@@ -51,7 +51,7 @@ function readSaved(key: string | undefined): SavedPosition | null {
   }
 }
 
-export default function PdfReader({ url, watermark, storageKey }: Props) {
+export default function PdfReader({ url, watermark, storageKey, initialPage, onProgress }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [numPages, setNumPages] = useState(0);
@@ -67,11 +67,25 @@ export default function PdfReader({ url, watermark, storageKey }: Props) {
   // Restaura preferências salvas (modo/zoom) ao montar
   useEffect(() => {
     const saved = readSaved(storageKey);
-    if (!saved) return;
-    setMode(saved.mode);
-    setScale(saved.scale);
-    pendingPage.current = saved.page;
-  }, [storageKey]);
+    if (saved) {
+      setMode(saved.mode);
+      setScale(saved.scale);
+      pendingPage.current = saved.page;
+    }
+    // O histórico salvo no servidor tem prioridade quando está mais adiante
+    if (initialPage && initialPage > (pendingPage.current ?? 1)) {
+      pendingPage.current = initialPage;
+    }
+  }, [storageKey, initialPage]);
+
+  // Notifica o histórico de leitura (com atraso, para não salvar a cada rolagem)
+  useEffect(() => {
+    if (!onProgress || !numPages || !restored) return;
+    const id = window.setTimeout(() => onProgress(page, numPages), 1500);
+    return () => window.clearTimeout(id);
+  }, [onProgress, page, numPages, restored]);
+
+
 
   useEffect(() => {
     const el = containerRef.current;
