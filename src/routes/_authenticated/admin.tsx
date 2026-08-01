@@ -550,10 +550,16 @@ function MembersAdmin() {
           is_admin: form.is_admin,
         },
       }),
-    onSuccess: async () => {
-      toast.success("Irmão cadastrado.");
+    onSuccess: async (result) => {
+      // O servidor pode ajustar o login quando já existe outro igual — mostramos o real.
+      const realLogin = emailToLogin(result?.email ?? "") || form.login;
+      if (realLogin !== form.login) {
+        toast.info(`O login “${form.login}” já existia. Login criado: ${realLogin}`);
+      } else {
+        toast.success("Irmão cadastrado.");
+      }
       setOpen(false);
-      setCreatedInfo({ login: form.login, password: form.password });
+      setCreatedInfo({ login: realLogin, password: form.password });
       setForm({ login: "", password: "", full_name: "", degree: 1, is_admin: false });
       await invalidate();
     },
