@@ -31,6 +31,7 @@ export function AppHeader({
   }
 
   return (
+    <>
     <header className="border-b border-border/60 bg-card/40 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
         <Link to="/biblioteca" className="flex min-w-0 items-center gap-2">
