@@ -400,7 +400,7 @@ function BookGrid({ books, className = "" }: { books: BookItem[]; className?: st
   return (
     <div className={`grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 ${className}`}>
       {books.map((book) => (
-        <Card key={book.id} className="flex flex-col overflow-hidden border-border/60">
+        <Card key={book.id} className="group flex flex-col overflow-hidden border-border/60 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg">
           <div className="aspect-[3/4] w-full bg-secondary">
             {book.cover_url ? (
               <img
