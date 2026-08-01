@@ -140,7 +140,7 @@ export default function PdfReader({ url, watermark, storageKey }: Props) {
 
   // Track visible page while scrolling in vertical mode
   useEffect(() => {
-    if (mode !== "vertical" || !numPages) return;
+    if (mode !== "vertical" || !numPages || !restored) return;
     const root = containerRef.current;
     if (!root) return;
     const observer = new IntersectionObserver(
