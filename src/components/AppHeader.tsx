@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Shield } from "lucide-react";
+import { LogOut, Search, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { degreeLabel } from "@/lib/masonic";
 import logo from "@/assets/logo.png";
@@ -19,6 +21,7 @@ export function AppHeader({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [q, setQ] = useState("");
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -41,9 +44,33 @@ export function AppHeader({
           </span>
         </Link>
 
+        <form
+          className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-xs"
+          onSubmit={(e) => {
+            e.preventDefault();
+            navigate({
+              to: "/biblioteca",
+              search: { q: q.trim().slice(0, 100), autor: "", categoria: "", grau: 0 },
+            });
+          }}
+        >
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              className="h-9 pl-9"
+              type="search"
+              aria-label="Buscar obras"
+              placeholder="Buscar obras..."
+              value={q}
+              maxLength={100}
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </div>
+        </form>
 
         <div className="ml-auto flex items-center gap-2">
           {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
+
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
           ) : null}
