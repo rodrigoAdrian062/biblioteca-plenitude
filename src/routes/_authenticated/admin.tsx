@@ -430,7 +430,7 @@ function BooksAdmin() {
 
             <div
               key={b.id}
-              className="flex flex-wrap items-center gap-3 rounded-md border border-border/60 bg-card p-3"
+              className="grid grid-cols-[3rem_minmax(0,1fr)] items-start gap-3 rounded-md border border-border/60 bg-card p-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
             >
               <div className="h-16 w-12 shrink-0 overflow-hidden rounded border border-border/60 bg-secondary">
                 {b.cover_url ? (
@@ -446,19 +446,24 @@ function BooksAdmin() {
                   </div>
                 )}
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-card-foreground">
+              <div className="min-w-0">
+                <p className="break-words font-medium leading-snug text-card-foreground">
                   {catalogName(b.author, b.title)}
                 </p>
-                <p className="truncate text-xs text-muted-foreground">
+                <p className="break-words text-xs text-muted-foreground">
                   {b.category || "Sem categoria"}
                 </p>
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
+                    {scopeLabel(b.scope)}
+                  </Badge>
+                  <Badge variant="outline">{degreeLabel(b.min_degree)}</Badge>
+                  {!b.published ? <Badge variant="secondary">Rascunho</Badge> : null}
+                </div>
               </div>
-              <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
-                {scopeLabel(b.scope)}
-              </Badge>
-              <Badge variant="outline">{degreeLabel(b.min_degree)}</Badge>
-              {!b.published ? <Badge variant="secondary">Rascunho</Badge> : null}
+
+              <div className="col-span-2 flex justify-end gap-1 sm:col-span-1 sm:self-center">
+
 
               <Button
                 size="icon"
