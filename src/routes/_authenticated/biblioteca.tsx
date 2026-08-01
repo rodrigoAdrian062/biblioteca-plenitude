@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type LibrarySearch = {
+export type LibrarySearch = {
   q: string;
   autor: string;
   categoria: string;
@@ -64,7 +64,7 @@ function Library() {
   useEffect(() => {
     if (term === q) return;
     const id = setTimeout(() => {
-      void navigate({ search: (prev) => ({ ...prev, q: term.slice(0, 100) }) });
+      void navigate({ search: (prev: LibrarySearch) => ({ ...prev, q: term.slice(0, 100) }) });
     }, 300);
     return () => clearTimeout(id);
   }, [term, q, navigate]);
@@ -143,7 +143,7 @@ function Library() {
             <Select
               value={autor || ALL}
               onValueChange={(v) =>
-                void navigate({ search: (prev) => ({ ...prev, autor: v === ALL ? "" : v }) })
+                void navigate({ search: (prev: LibrarySearch) => ({ ...prev, autor: v === ALL ? "" : v }) })
               }
             >
               <SelectTrigger className="w-full sm:w-52" aria-label="Filtrar por autor">
@@ -162,7 +162,7 @@ function Library() {
             <Select
               value={categoria || ALL}
               onValueChange={(v) =>
-                void navigate({ search: (prev) => ({ ...prev, categoria: v === ALL ? "" : v }) })
+                void navigate({ search: (prev: LibrarySearch) => ({ ...prev, categoria: v === ALL ? "" : v }) })
               }
             >
               <SelectTrigger className="w-full sm:w-52" aria-label="Filtrar por categoria">
@@ -183,7 +183,7 @@ function Library() {
             <Button
               variant={!grau ? "default" : "outline"}
               size="sm"
-              onClick={() => void navigate({ search: (prev) => ({ ...prev, grau: 0 }) })}
+              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, grau: 0 }) })}
             >
               Todos
             </Button>
@@ -192,7 +192,7 @@ function Library() {
                 key={d.value}
                 variant={grau === d.value ? "default" : "outline"}
                 size="sm"
-                onClick={() => void navigate({ search: (prev) => ({ ...prev, grau: d.value }) })}
+                onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, grau: d.value }) })}
               >
                 {d.label}
               </Button>

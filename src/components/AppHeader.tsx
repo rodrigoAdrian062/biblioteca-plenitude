@@ -50,7 +50,7 @@ export function AppHeader({
             e.preventDefault();
             navigate({
               to: "/biblioteca",
-              search: (prev) => ({ ...prev, q: q.trim().slice(0, 100) }),
+              search: { q: q.trim().slice(0, 100), autor: "", categoria: "", grau: 0 },
             });
           }}
         >
