@@ -34,16 +34,31 @@ export default function PdfReader({ url, watermark }: Props) {
   const [scale, setScale] = useState(1);
   const [width, setWidth] = useState(800);
   const [mode, setMode] = useState<Mode>("vertical");
+  const [full, setFull] = useState(false);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const update = () => setWidth(Math.min(el.clientWidth - 24, 900));
+    const update = () => setWidth(Math.min(el.clientWidth - 24, full ? 1200 : 900));
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [full]);
+
+  useEffect(() => {
+    if (!full) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFull(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [full]);
 
   const onLoad = useCallback(({ numPages: total }: { numPages: number }) => {
     setNumPages(total);
