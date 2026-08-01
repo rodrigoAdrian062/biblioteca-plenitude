@@ -23,7 +23,9 @@ export function AppHeader({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { theme, toggle } = useTheme();
   const [q, setQ] = useState("");
+
 
   async function signOut() {
     await queryClient.cancelQueries();
