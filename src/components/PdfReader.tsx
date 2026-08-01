@@ -197,13 +197,25 @@ export default function PdfReader({ url, watermark }: Props) {
           >
             <Plus className="h-4 w-4" />
           </Button>
+
+          <Button
+            variant={full ? "default" : "outline"}
+            size="sm"
+            className="h-8 shrink-0 px-2"
+            aria-label={full ? "Sair da tela cheia" : "Ler em tela cheia"}
+            onClick={() => setFull((v) => !v)}
+          >
+            {full ? <X className="h-4 w-4 sm:mr-1" /> : <Maximize2 className="h-4 w-4 sm:mr-1" />}
+            <span className="hidden sm:inline">{full ? "Sair" : "Tela cheia"}</span>
+          </Button>
         </div>
       </div>
 
-
       <div
         ref={containerRef}
-        className="relative max-h-[80vh] w-full max-w-full overflow-auto p-2 select-none sm:p-3"
+        className={`relative w-full max-w-full overflow-auto p-2 select-none sm:p-3 ${
+          full ? "flex-1 min-h-0" : "max-h-[80vh]"
+        }`}
         onContextMenu={(e) => e.preventDefault()}
         onDragStart={(e) => e.preventDefault()}
       >
