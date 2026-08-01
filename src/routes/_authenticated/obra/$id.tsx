@@ -40,10 +40,10 @@ function BookReaderPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} />
 
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main className="mx-auto w-full max-w-5xl min-w-0 px-3 py-6 sm:px-4 sm:py-10">
         <Button asChild variant="ghost" size="sm" className="mb-4">
           <Link to="/biblioteca">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -60,14 +60,15 @@ function BookReaderPage() {
         ) : (
           <>
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h1 className="font-display text-3xl text-foreground">
+              <div className="min-w-0">
+                <h1 className="break-words font-display text-2xl text-foreground sm:text-3xl">
                   {catalogName(book.author, book.title)}
                 </h1>
                 {book.author ? (
-                  <p className="mt-1 text-sm text-muted-foreground">{book.author}</p>
+                  <p className="mt-1 break-words text-sm text-muted-foreground">{book.author}</p>
                 ) : null}
               </div>
+
               <div className="flex items-center gap-2">
                 <Badge variant={book.scope === "nao_maconico" ? "secondary" : "default"}>
                   {scopeLabel(book.scope)}
