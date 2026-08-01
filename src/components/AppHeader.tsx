@@ -99,6 +99,7 @@ export function AppHeader({
           </Button>
         </div>
       </div>
+    </header>
 
       {/* Menu inferior no celular */}
       <nav
@@ -144,6 +145,6 @@ export function AppHeader({
           </button>
         </div>
       </nav>
-    </header>
+    </>
   );
 }
