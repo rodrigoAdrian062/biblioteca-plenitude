@@ -61,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 function Library() {
   const { profile, isAdmin } = useSessionProfile();
   const navigate = useNavigate({ from: "/biblioteca" });
-  const { q, autor, categoria, grau } = Route.useSearch();
+  const { q, autor, categoria, grau, tema } = Route.useSearch();
   const [term, setTerm] = useState(q);
 
   useEffect(() => {
@@ -110,11 +110,13 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
-      return matchTerm && matchDegree && matchAuthor && matchCategory;
+      const matchScope = !tema || (b.scope ?? "maconico") === tema;
+      return matchTerm && matchDegree && matchAuthor && matchCategory && matchScope;
     });
-  }, [books, q, grau, autor, categoria]);
+  }, [books, q, grau, autor, categoria, tema]);
 
-  const hasFilters = Boolean(q || autor || categoria || grau);
+  const hasFilters = Boolean(q || autor || categoria || grau || tema);
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -188,6 +190,30 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">Tema</span>
+            <Button
+              variant={!tema ? "default" : "outline"}
+              size="sm"
+              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: "" }) })}
+            >
+              Todos
+            </Button>
+            {SCOPES.map((s) => (
+              <Button
+                key={s.value}
+                variant={tema === s.value ? "default" : "outline"}
+                size="sm"
+                onClick={() =>
+                  void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
+                }
+              >
+                {s.label}
+              </Button>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">Grau</span>
             <Button
               variant={!grau ? "default" : "outline"}
               size="sm"
@@ -210,13 +236,14 @@ function Library() {
                 variant="ghost"
                 size="sm"
                 onClick={() =>
-                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0 } })
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "" } })
                 }
               >
                 <X className="mr-1 h-4 w-4" />
                 Limpar filtros
               </Button>
             ) : null}
+
             <span className="ml-auto text-xs text-muted-foreground">
               {visible.length} obra{visible.length === 1 ? "" : "s"}
             </span>
@@ -250,16 +277,20 @@ function Library() {
                 </div>
                 <CardHeader className="gap-1 p-3 pb-1">
                   <div className="flex min-w-0 items-start justify-between gap-1.5">
-                    <CardTitle className="line-clamp-2 font-display text-sm leading-snug">
-                      {book.title}
+                    <CardTitle className="line-clamp-3 font-display text-sm leading-snug">
+                      {catalogName(book.author, book.title)}
                     </CardTitle>
                     <Badge variant="outline" className="shrink-0 px-1.5 text-[10px]">
                       {degreeLabel(book.min_degree)}
                     </Badge>
                   </div>
-                  {book.author ? (
-                    <p className="truncate text-xs text-muted-foreground">{book.author}</p>
-                  ) : null}
+                  <Badge
+                    variant={book.scope === "nao_maconico" ? "secondary" : "default"}
+                    className="w-fit px-1.5 text-[10px]"
+                  >
+                    {scopeLabel(book.scope)}
+                  </Badge>
+
                 </CardHeader>
                 <CardContent className="mt-auto space-y-2 p-3 pt-0">
                   {book.description ? (
