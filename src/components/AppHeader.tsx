@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BookOpen, LogOut, Shield } from "lucide-react";
+import { LogOut, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { degreeLabel } from "@/lib/masonic";
+import logo from "@/assets/logo.png";
+
 
 export function AppHeader({
   fullName,
