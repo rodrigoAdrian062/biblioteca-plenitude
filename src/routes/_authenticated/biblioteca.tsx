@@ -52,14 +52,6 @@ function Library() {
     });
   }, [books, term, degreeFilter]);
 
-  async function open(id: string) {
-    try {
-      const { url } = await getBookFileUrl({ data: { id } });
-      window.open(url, "_blank", "noopener,noreferrer");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível abrir a obra.");
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background">
