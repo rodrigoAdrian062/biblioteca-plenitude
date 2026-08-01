@@ -167,7 +167,16 @@ function BooksAdmin() {
     e.preventDefault();
     setSaving(true);
     try {
-      const payload: Record<string, unknown> = {
+      const payload: {
+        title: string;
+        author: string | null;
+        category: string | null;
+        description: string | null;
+        min_degree: number;
+        published: boolean;
+        file_path?: string;
+        cover_path?: string;
+      } = {
         title: form.title.trim(),
         author: form.author.trim() || null,
         category: form.category.trim() || null,
@@ -175,15 +184,15 @@ function BooksAdmin() {
         min_degree: form.min_degree,
         published: form.published,
       };
-      if (file) payload["file_path"] = await upload(file, "obras");
-      if (cover) payload["cover_path"] = await upload(cover, "capas");
+      if (file) payload.file_path = await upload(file, "obras");
+      if (cover) payload.cover_path = await upload(cover, "capas");
 
       if (editingId) {
         const { error } = await supabase.from("books").update(payload).eq("id", editingId);
         if (error) throw new Error(error.message);
       } else {
         if (!file) throw new Error("Selecione o arquivo da obra.");
-        const { error } = await supabase.from("books").insert(payload as never);
+        const { error } = await supabase.from("books").insert(payload);
         if (error) throw new Error(error.message);
       }
       toast.success(editingId ? "Obra atualizada." : "Obra publicada no acervo.");
