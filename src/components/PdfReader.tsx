@@ -273,6 +273,36 @@ export default function PdfReader({ url, watermark, storageKey }: Props) {
         </div>
       </div>
 
+      {resumedFrom ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 bg-accent/40 px-3 py-2 text-xs text-foreground">
+          <span>Leitura retomada na página {resumedFrom}.</span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2"
+              onClick={() => {
+                goTo(1);
+                setResumedFrom(null);
+              }}
+            >
+              Ir para o início
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              aria-label="Fechar aviso"
+              onClick={() => setResumedFrom(null)}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
+
+
       <div
         ref={containerRef}
         className={`relative w-full max-w-full overflow-auto p-2 select-none sm:p-3 ${
