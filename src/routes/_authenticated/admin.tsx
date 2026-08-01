@@ -39,6 +39,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+async function copyText(value: string, message: string) {
+  try {
+    await navigator.clipboard.writeText(value);
+    toast.success(message);
+  } catch {
+    toast.error("Não foi possível copiar.");
+  }
+}
+
+function credentialsMessage(info: { login: string; password: string }) {
+  return [
+    "Meu irmão, seguem suas credenciais de acesso à Biblioteca Plenitude:",
+    "",
+    `Login: ${info.login}`,
+    `Senha: ${info.password}`,
+    "",
+    `Acesse: ${typeof window !== "undefined" ? window.location.origin : ""}/auth`,
+    "Recomendamos alterar a senha em “Minha conta” após o primeiro acesso.",
+  ].join("\n");
+}
+
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
     const { data: auth } = await supabase.auth.getUser();
