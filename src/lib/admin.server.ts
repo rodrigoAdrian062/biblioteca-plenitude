@@ -56,8 +56,8 @@ export async function createMemberImpl(input: {
   password: string;
   full_name: string;
   degree: number;
-  lodge?: string | null;
-  is_admin?: boolean;
+  lodge?: string | null | undefined;
+  is_admin?: boolean | undefined;
 }) {
   const db = await admin();
   const { data, error } = await db.auth.admin.createUser({
@@ -86,19 +86,19 @@ export async function createMemberImpl(input: {
 
 export async function updateMemberImpl(input: {
   id: string;
-  full_name?: string;
-  degree?: number;
-  lodge?: string | null;
-  active?: boolean;
-  is_admin?: boolean;
-  password?: string;
+  full_name?: string | undefined;
+  degree?: number | undefined;
+  lodge?: string | null | undefined;
+  active?: boolean | undefined;
+  is_admin?: boolean | undefined;
+  password?: string | undefined;
 }) {
   const db = await admin();
   const patch: {
-    full_name?: string;
-    degree?: number;
-    lodge?: string | null;
-    active?: boolean;
+    full_name?: string | undefined;
+    degree?: number | undefined;
+    lodge?: string | null | undefined;
+    active?: boolean | undefined;
   } = {};
   if (input.full_name !== undefined) patch.full_name = input.full_name;
   if (input.degree !== undefined) patch.degree = input.degree;
