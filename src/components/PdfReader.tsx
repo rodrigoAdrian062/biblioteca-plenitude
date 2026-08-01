@@ -22,7 +22,7 @@ export default function PdfReader({ url, watermark }: Props) {
   const pageRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [numPages, setNumPages] = useState(0);
   const [page, setPage] = useState(1);
-  const [scale, setScale] = useState(1.1);
+  const [scale, setScale] = useState(1);
   const [width, setWidth] = useState(800);
   const [mode, setMode] = useState<Mode>("vertical");
 
@@ -153,7 +153,7 @@ export default function PdfReader({ url, watermark }: Props) {
 
       <div
         ref={containerRef}
-        className="relative max-h-[80vh] overflow-auto p-3 select-none"
+        className="relative max-h-[80vh] w-full max-w-full overflow-auto p-2 select-none sm:p-3"
         onContextMenu={(e) => e.preventDefault()}
         onDragStart={(e) => e.preventDefault()}
       >
