@@ -212,6 +212,7 @@ function Library() {
         fullName={profile?.full_name}
         degree={profile?.degree}
         isAdmin={isAdmin}
+        userId={profile?.id}
       />
 
       <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">

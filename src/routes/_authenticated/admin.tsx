@@ -93,7 +93,7 @@ function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} />
+      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} userId={profile?.id} />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <section className="rounded-2xl border border-border/60 bg-card/60 p-5 sm:p-6">
           <h1 className="font-display text-2xl sm:text-3xl">Administração</h1>
