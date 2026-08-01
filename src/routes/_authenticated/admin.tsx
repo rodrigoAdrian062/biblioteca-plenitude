@@ -686,22 +686,67 @@ function MembersAdmin() {
             <DialogTitle className="font-display">Credenciais do irmão</DialogTitle>
           </DialogHeader>
           {createdInfo ? (
-            <div className="space-y-2 text-sm">
+            <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">
                 Anote e entregue ao irmão. A senha não poderá ser exibida novamente.
               </p>
-              <p>
-                <span className="text-muted-foreground">Login: </span>
-                <span className="font-medium">{createdInfo.login}</span>
-              </p>
-              <p>
-                <span className="text-muted-foreground">Senha: </span>
-                <span className="font-medium">{createdInfo.password}</span>
-              </p>
+              <div className="flex items-center justify-between gap-2 rounded-md border border-border/60 p-2">
+                <span>
+                  <span className="text-muted-foreground">Login: </span>
+                  <span className="font-medium">{createdInfo.login}</span>
+                </span>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => copyText(createdInfo.login, "Login copiado")}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex items-center justify-between gap-2 rounded-md border border-border/60 p-2">
+                <span>
+                  <span className="text-muted-foreground">Senha: </span>
+                  <span className="font-medium">{createdInfo.password}</span>
+                </span>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => copyText(createdInfo.password, "Senha copiada")}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() =>
+                    copyText(credentialsMessage(createdInfo), "Mensagem copiada")
+                  }
+                >
+                  <Copy className="mr-2 h-4 w-4" /> Copiar mensagem
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      `https://wa.me/?text=${encodeURIComponent(credentialsMessage(createdInfo))}`,
+                      "_blank",
+                      "noopener,noreferrer",
+                    )
+                  }
+                >
+                  <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                </Button>
+              </div>
             </div>
           ) : null}
           <DialogFooter>
-            <Button onClick={() => setCreatedInfo(null)}>Fechar</Button>
+            <Button variant="ghost" onClick={() => setCreatedInfo(null)}>
+              Fechar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
