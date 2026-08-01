@@ -92,6 +92,7 @@ export async function updateMemberImpl(input: {
   active?: boolean | undefined;
   is_admin?: boolean | undefined;
   password?: string | undefined;
+  email?: string | undefined;
 }) {
   const db = await admin();
   const patch = {
@@ -110,6 +111,15 @@ export async function updateMemberImpl(input: {
     const { error } = await db.auth.admin.updateUserById(input.id, { password: input.password });
     if (error) throw new Error(error.message);
   }
+
+  if (input.email) {
+    const { error } = await db.auth.admin.updateUserById(input.id, {
+      email: input.email,
+      email_confirm: true,
+    });
+    if (error) throw new Error(error.message);
+  }
+
 
   if (input.is_admin !== undefined) {
     await db.from("user_roles").delete().eq("user_id", input.id);

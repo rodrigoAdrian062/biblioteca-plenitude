@@ -40,6 +40,7 @@ export const updateMember = createServerFn({ method: "POST" })
         active: z.boolean().optional(),
         is_admin: z.boolean().optional(),
         password: z.string().min(8).max(72).optional(),
+        email: z.string().trim().email().max(255).optional(),
       })
       .parse(data),
   )
