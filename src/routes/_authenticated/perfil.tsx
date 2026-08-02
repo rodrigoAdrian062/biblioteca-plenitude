@@ -44,6 +44,13 @@ function ProfilePage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (bloqueado) {
+      avisarErro(
+        "A conta BETA é compartilhada e não permite alterar login ou senha.",
+        "Dica: solicite uma conta pessoal ao Ir∴ Menezes.",
+      );
+      return;
+    }
     const current = emailToLogin(data?.email ?? "");
     if (password && password.length < 8) {
       avisarErro("A senha deve ter ao menos 8 caracteres.");
