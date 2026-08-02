@@ -62,7 +62,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 });
 
 function Library() {
-  const { profile, isAdmin } = useSessionProfile();
+  const { profile, isAdmin, isBeta } = useSessionProfile();
   const navigate = useNavigate({ from: "/biblioteca" });
   const { q, autor, categoria, grau, tema, fav } = Route.useSearch();
   const queryClient = useQueryClient();
@@ -230,6 +230,7 @@ function Library() {
         fullName={profile?.full_name}
         degree={profile?.degree}
         isAdmin={isAdmin}
+        isBeta={isBeta}
         userId={profile?.id}
       />
 

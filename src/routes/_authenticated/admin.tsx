@@ -90,11 +90,11 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 function AdminPage() {
-  const { profile, isAdmin, loading } = useSessionProfile();
+  const { profile, isAdmin, isBeta, loading } = useSessionProfile();
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} userId={profile?.id} />
+      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} isBeta={isBeta} userId={profile?.id} />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <section className="rounded-2xl border border-border/60 bg-card/60 p-5 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

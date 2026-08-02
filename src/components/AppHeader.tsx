@@ -17,11 +17,13 @@ export function AppHeader({
   fullName,
   degree,
   isAdmin,
+  isBeta,
   userId,
 }: {
   fullName?: string | undefined;
   degree?: number | undefined;
   isAdmin?: boolean | undefined;
+  isBeta?: boolean | undefined;
   userId?: string | undefined;
 }) {
   const navigate = useNavigate();
@@ -94,6 +96,15 @@ export function AppHeader({
           </Button>
           {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
 
+          {isBeta ? (
+            <Badge
+              variant="default"
+              className="hidden animate-pulse bg-primary text-primary-foreground sm:inline-flex"
+              title="Conta BETA de testes compartilhada"
+            >
+              BETA
+            </Badge>
+          ) : null}
 
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
@@ -143,8 +154,13 @@ export function AppHeader({
             className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
             activeProps={{ className: "active" }}
           >
-            <UserCog className="h-5 w-5" />
-            Conta
+            <span className="relative">
+              <UserCog className="h-5 w-5" />
+              {isBeta ? (
+                <span className="absolute -right-1 -top-1 flex h-2 w-2 rounded-full bg-primary" />
+              ) : null}
+            </span>
+            {isBeta ? "BETA" : "Conta"}
           </Link>
           {isAdmin ? (
             <Link
