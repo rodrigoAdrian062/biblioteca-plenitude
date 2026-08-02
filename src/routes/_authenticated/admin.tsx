@@ -376,7 +376,14 @@ function BooksAdmin() {
                 <Label>Tema do acervo</Label>
                 <Select
                   value={form.scope}
-                  onValueChange={(v) => setForm({ ...form, scope: v as BookScope })}
+                  onValueChange={(v) => {
+                    const scope = v as BookScope;
+                    setForm({
+                      ...form,
+                      scope,
+                      min_degree: scope === "nao_maconico" ? 0 : form.min_degree,
+                    });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
