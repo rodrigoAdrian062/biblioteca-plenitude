@@ -11,12 +11,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja.",
+          "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pelo Mestre Bibliotecário Ir.∴ Menezes.",
       },
       { property: "og:title", content: "Biblioteca Plenitude | Acervo por Grau" },
       {
         property: "og:description",
-        content: "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pela administração da Loja.",
+        content: "Acervo digital maçônico com acesso restrito por grau: Aprendiz, Companheiro e Mestre. Credenciais fornecidas pelo Mestre Bibliotecário Ir.∴ Menezes.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -39,7 +39,7 @@ function Landing() {
         <div className="gold-rule mx-auto my-6 h-px w-40" />
         <p className="mx-auto max-w-2xl text-muted-foreground">
           Acervo reservado aos irmãos da Loja. Cada irmão acessa somente as obras compatíveis com o
-          seu grau, com credenciais fornecidas pela administração.
+          seu grau, com credenciais fornecidas pelo Mestre Bibliotecário Ir.∴ Menezes.
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <Button asChild size="lg">
@@ -58,7 +58,7 @@ function Landing() {
           {
             icon: KeyRound,
             title: "Acesso controlado",
-            text: "Não há cadastro público. O administrador cria e gerencia cada credencial.",
+            text: "Não há cadastro público. O Mestre Bibliotecário Ir.∴ Menezes cria e gerencia cada credencial.",
           },
           {
             icon: ShieldCheck,
