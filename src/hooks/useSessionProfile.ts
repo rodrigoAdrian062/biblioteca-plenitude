@@ -26,6 +26,7 @@ export function useSessionProfile() {
         if (!alive) return;
         setProfile(null);
         setIsAdmin(false);
+        setIsBeta(false);
         setLoading(false);
         return;
       }
@@ -40,6 +41,7 @@ export function useSessionProfile() {
       if (!alive) return;
       setProfile(p ?? null);
       setIsAdmin((roles ?? []).some((r) => r.role === "admin"));
+      setIsBeta(isSharedTestAccount(current.user.email ?? ""));
       setLoading(false);
     };
 
