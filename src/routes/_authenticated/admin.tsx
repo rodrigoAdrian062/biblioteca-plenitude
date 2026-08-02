@@ -360,6 +360,7 @@ function BooksAdmin() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="0">Sem grau — liberado para todos</SelectItem>
                     {DEGREES.map((d) => (
                       <SelectItem key={d.value} value={String(d.value)}>
                         {d.label}
@@ -367,6 +368,9 @@ function BooksAdmin() {
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-muted-foreground">
+                  Use “Sem grau” para obras não-maçônicas: ficam visíveis a todos os irmãos.
+                </p>
               </div>
               <div className="space-y-2">
                 <Label>Tema do acervo</Label>
