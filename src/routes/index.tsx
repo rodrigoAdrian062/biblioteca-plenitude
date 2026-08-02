@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { KeyRound, Layers, ShieldCheck } from "lucide-react";
+import { KeyRound, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 
@@ -48,7 +48,7 @@ function Landing() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-5xl gap-4 px-6 pb-24 sm:grid-cols-3">
+      <section className="mx-auto grid max-w-5xl gap-4 px-6 pb-24 sm:grid-cols-2">
         {[
           {
             icon: Layers,
@@ -59,11 +59,6 @@ function Landing() {
             icon: KeyRound,
             title: "Acesso controlado",
             text: "Não há cadastro público. O Mestre Bibliotecário Ir.∴ Menezes cria e gerencia cada credencial.",
-          },
-          {
-            icon: ShieldCheck,
-            title: "Arquivos protegidos",
-            text: "Documentos entregues por links temporários, com registro de leitura.",
           },
         ].map((f) => (
           <div key={f.title} className="rounded-lg border border-border/60 bg-card p-6 text-left">
