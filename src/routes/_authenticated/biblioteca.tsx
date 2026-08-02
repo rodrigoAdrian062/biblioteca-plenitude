@@ -1,11 +1,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { BookOpen, Search, X, Heart, History } from "lucide-react";
+import { BookOpen, Search, X, Heart, History, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
-import { listFavorites, toggleFavorite, listHistory } from "@/lib/reading.functions";
+import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, catalogName, scopeLabel } from "@/lib/catalog";
 
@@ -99,6 +99,24 @@ function Library() {
   const favMutation = useMutation({
     mutationFn: (vars: { bookId: string; favorite: boolean }) => toggleFavorite({ data: vars }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["favorites"] }),
+  });
+
+  const clearMutation = useMutation({
+    mutationFn: (vars: { bookId?: string }) => clearProgress({ data: vars }),
+    onSuccess: (_res, vars) => {
+      try {
+        if (vars.bookId) {
+          localStorage.removeItem(`plenitude:leitura:${vars.bookId}`);
+        } else {
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith("plenitude:leitura:"))
+            .forEach((k) => localStorage.removeItem(k));
+        }
+      } catch {
+        /* ignore */
+      }
+      void queryClient.invalidateQueries({ queryKey: ["reading-history"] });
+    },
   });
 
   const favSet = useMemo(() => new Set(favorites), [favorites]);
@@ -367,43 +385,69 @@ function Library() {
 
         {history.length > 0 && !fav ? (
           <section className="mt-6 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5" aria-labelledby="continuar-lendo">
-            <div className="flex items-center gap-2">
-              <History className="h-4 w-4 text-primary" />
-              <h2 id="continuar-lendo" className="font-display text-lg text-foreground">
-                Continuar lendo
-              </h2>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <History className="h-4 w-4 text-primary" />
+                <h2 id="continuar-lendo" className="font-display text-lg text-foreground">
+                  Continuar lendo
+                </h2>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1 px-2 text-xs text-muted-foreground"
+                disabled={clearMutation.isPending}
+                onClick={() => {
+                  if (!window.confirm("Deseja limpar todo o histórico de leitura?")) return;
+                  clearMutation.mutate({});
+                }}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Limpar tudo
+              </Button>
             </div>
             <div className="gold-rule my-3 h-px w-24" />
             <div className="flex gap-3 overflow-x-auto pb-1">
               {history.map((h) => (
-                <Link
-                  key={h.book_id}
-                  to="/obra/$id"
-                  params={{ id: h.book_id }}
-                  className="flex w-56 shrink-0 gap-3 rounded-xl border border-border/60 bg-card p-2 transition-colors hover:border-primary/40"
-                >
-                  <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary">
-                    {h.cover_url ? (
-                      <img src={h.cover_url} alt={`Capa da obra ${h.title}`} loading="lazy" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-primary/50">
-                        <BookOpen className="h-5 w-5" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="line-clamp-2 text-xs font-medium text-foreground">
-                      {catalogName(h.author, h.title)}
-                    </p>
-                    <p className="mt-1 text-[11px] text-muted-foreground">
-                      Pág. {h.last_page}
-                      {h.total_pages ? `/${h.total_pages}` : ""}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {new Date(h.updated_at).toLocaleDateString("pt-BR")}
-                    </p>
-                  </div>
-                </Link>
+                <div key={h.book_id} className="relative w-56 shrink-0">
+                  <Link
+                    to="/obra/$id"
+                    params={{ id: h.book_id }}
+                    className="flex gap-3 rounded-xl border border-border/60 bg-card p-2 pr-7 transition-colors hover:border-primary/40"
+                  >
+                    <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary">
+                      {h.cover_url ? (
+                        <img src={h.cover_url} alt={`Capa da obra ${h.title}`} loading="lazy" className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-primary/50">
+                          <BookOpen className="h-5 w-5" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="line-clamp-2 text-xs font-medium text-foreground">
+                        {catalogName(h.author, h.title)}
+                      </p>
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        Pág. {h.last_page}
+                        {h.total_pages ? `/${h.total_pages}` : ""}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {new Date(h.updated_at).toLocaleDateString("pt-BR")}
+                      </p>
+                    </div>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1 h-6 w-6 text-muted-foreground hover:text-destructive"
+                    aria-label={`Remover ${h.title} do histórico`}
+                    disabled={clearMutation.isPending}
+                    onClick={() => clearMutation.mutate({ bookId: h.book_id })}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               ))}
             </div>
           </section>
