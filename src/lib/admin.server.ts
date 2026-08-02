@@ -185,6 +185,13 @@ export async function updateOwnCredentialsImpl(input: {
   password?: string | undefined;
 }) {
   const db = await admin();
+  const { isSharedTestAccount } = await import("./credentials");
+  const { data: current } = await db.auth.admin.getUserById(input.id);
+  if (isSharedTestAccount(current?.user?.email ?? "")) {
+    throw new Error(
+      "A conta BETA é compartilhada para testes e não permite alterar login ou senha. Dica: peça uma conta pessoal ao Ir∴ Menezes.",
+    );
+  }
   if (input.email) {
     const { error } = await db.auth.admin.updateUserById(input.id, {
       email: input.email,
