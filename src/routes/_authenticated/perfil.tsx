@@ -9,7 +9,7 @@ import { emailToLogin, isSharedTestAccount, loginToEmail } from "@/lib/credentia
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
