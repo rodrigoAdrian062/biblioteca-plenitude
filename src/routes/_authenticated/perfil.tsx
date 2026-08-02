@@ -5,7 +5,7 @@ import { avisarErro, avisarSucesso } from "@/lib/avisos";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { getOwnLogin, updateOwnCredentials } from "@/lib/admin.functions";
-import { emailToLogin, loginToEmail } from "@/lib/credentials";
+import { emailToLogin, isSharedTestAccount, loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
