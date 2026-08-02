@@ -71,7 +71,7 @@ function BookReaderPage() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
-      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} userId={profile?.id} />
+      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} isBeta={isBeta} userId={profile?.id} />
 
       <main className="mx-auto w-full max-w-5xl min-w-0 px-3 py-6 sm:px-4 sm:py-10">
         <Button asChild variant="ghost" size="sm" className="mb-4">
