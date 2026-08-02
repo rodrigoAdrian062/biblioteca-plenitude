@@ -96,6 +96,15 @@ export function AppHeader({
           </Button>
           {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
 
+          {isBeta ? (
+            <Badge
+              variant="default"
+              className="hidden animate-pulse bg-primary text-primary-foreground sm:inline-flex"
+              title="Conta BETA de testes compartilhada"
+            >
+              BETA
+            </Badge>
+          ) : null}
 
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
