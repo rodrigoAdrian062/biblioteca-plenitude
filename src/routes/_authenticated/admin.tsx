@@ -97,11 +97,21 @@ function AdminPage() {
       <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} userId={profile?.id} />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <section className="rounded-2xl border border-border/60 bg-card/60 p-5 sm:p-6">
-          <h1 className="font-display text-2xl sm:text-3xl">Administração</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Gerencie o acervo, os irmãos e acompanhe os números da Biblioteca Plenitude.
-          </p>
-          <div className="gold-rule mt-4 h-px w-24" />
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h1 className="font-display text-2xl sm:text-3xl">Administração</h1>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Gerencie o acervo, os irmãos e acompanhe os números da Biblioteca Plenitude.
+              </p>
+              <div className="gold-rule mt-4 h-px w-24" />
+            </div>
+            <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+              <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false }}>
+                <Library className="mr-1 h-4 w-4" />
+                Ir para a biblioteca
+              </Link>
+            </Button>
+          </div>
         </section>
 
         {loading ? (
