@@ -1,11 +1,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { BookOpen, Search, X, Heart, History } from "lucide-react";
+import { BookOpen, Search, X, Heart, History, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
-import { listFavorites, toggleFavorite, listHistory } from "@/lib/reading.functions";
+import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, catalogName, scopeLabel } from "@/lib/catalog";
 
