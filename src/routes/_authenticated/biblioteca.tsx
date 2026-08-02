@@ -101,6 +101,24 @@ function Library() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["favorites"] }),
   });
 
+  const clearMutation = useMutation({
+    mutationFn: (vars: { bookId?: string }) => clearProgress({ data: vars }),
+    onSuccess: (_res, vars) => {
+      try {
+        if (vars.bookId) {
+          localStorage.removeItem(`plenitude:leitura:${vars.bookId}`);
+        } else {
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith("plenitude:leitura:"))
+            .forEach((k) => localStorage.removeItem(k));
+        }
+      } catch {
+        /* ignore */
+      }
+      void queryClient.invalidateQueries({ queryKey: ["reading-history"] });
+    },
+  });
+
   const favSet = useMemo(() => new Set(favorites), [favorites]);
   const onToggleFavorite = (bookId: string, favorite: boolean) =>
     favMutation.mutate({ bookId, favorite });
