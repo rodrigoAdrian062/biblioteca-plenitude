@@ -154,8 +154,13 @@ export function AppHeader({
             className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
             activeProps={{ className: "active" }}
           >
-            <UserCog className="h-5 w-5" />
-            Conta
+            <span className="relative">
+              <UserCog className="h-5 w-5" />
+              {isBeta ? (
+                <span className="absolute -right-1 -top-1 flex h-2 w-2 rounded-full bg-primary" />
+              ) : null}
+            </span>
+            {isBeta ? "BETA" : "Conta"}
           </Link>
           {isAdmin ? (
             <Link
