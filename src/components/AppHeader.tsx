@@ -17,11 +17,13 @@ export function AppHeader({
   fullName,
   degree,
   isAdmin,
+  isBeta,
   userId,
 }: {
   fullName?: string | undefined;
   degree?: number | undefined;
   isAdmin?: boolean | undefined;
+  isBeta?: boolean | undefined;
   userId?: string | undefined;
 }) {
   const navigate = useNavigate();
