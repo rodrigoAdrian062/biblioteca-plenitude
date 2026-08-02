@@ -84,9 +84,16 @@ function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} userId={profile?.id} />
+      <AppHeader fullName={profile?.full_name} degree={profile?.degree} isAdmin={isAdmin} isBeta={isBeta} userId={profile?.id} />
       <main className="mx-auto max-w-lg px-4 py-10">
-        <h1 className="font-display text-3xl">Minha conta</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="font-display text-3xl">Minha conta</h1>
+          {isBeta ? (
+            <Badge variant="default" className="animate-pulse bg-primary text-primary-foreground">
+              BETA
+            </Badge>
+          ) : null}
+        </div>
         <div className="gold-rule my-4 h-px w-32" />
         <Card className="border-border/60">
           <CardHeader>
