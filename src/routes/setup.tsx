@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { avisarErro, avisarSucesso } from "@/lib/avisos";
 import { adminExists, bootstrapAdmin } from "@/lib/admin.functions";
 import { loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
@@ -55,11 +55,11 @@ function Setup() {
           lodge: null,
         },
       });
-      toast.success("Administrador criado. Faça login.");
+      avisarSucesso("Administrador criado.", "Dica: guarde o login e a senha; eles são necessários para entrar no painel.");
       await refetch();
       navigate({ to: "/auth" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao criar administrador.");
+      avisarErro(err, "Não foi possível criar o administrador.");
     } finally {
       setSaving(false);
     }

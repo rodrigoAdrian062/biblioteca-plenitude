@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { avisarErro, avisarSucesso } from "@/lib/avisos";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { getOwnLogin, updateOwnCredentials } from "@/lib/admin.functions";
@@ -45,11 +45,11 @@ function ProfilePage() {
     e.preventDefault();
     const current = emailToLogin(data?.email ?? "");
     if (password && password.length < 8) {
-      toast.error("A senha deve ter ao menos 8 caracteres.");
+      avisarErro("A senha deve ter ao menos 8 caracteres.");
       return;
     }
     if (password && password !== confirm) {
-      toast.error("As senhas não conferem.");
+      avisarErro("As senhas não conferem.");
       return;
     }
     setSaving(true);
@@ -60,12 +60,15 @@ function ProfilePage() {
           ...(password ? { password } : {}),
         },
       });
-      toast.success("Credenciais atualizadas.");
+      avisarSucesso(
+        "Credenciais atualizadas.",
+        "Dica: anote o novo login e senha. Você usará esses dados no próximo acesso.",
+      );
       setPassword("");
       setConfirm("");
       await refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao atualizar credenciais.");
+      avisarErro(err, "Não foi possível atualizar suas credenciais.");
     } finally {
       setSaving(false);
     }
