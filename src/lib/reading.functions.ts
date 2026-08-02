@@ -66,6 +66,23 @@ export const saveProgress = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/** Remove o histórico de leitura: uma obra específica ou todas */
+export const clearProgress = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ bookId: z.string().uuid().optional() }).parse(data ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    let query = context.supabase
+      .from("reading_progress")
+      .delete()
+      .eq("user_id", context.userId);
+    if (data.bookId) query = query.eq("book_id", data.bookId);
+    const { error } = await query;
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 /** Histórico de leitura recente com capa, página final e data */
 export const listHistory = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
