@@ -63,5 +63,5 @@ export function useSessionProfile() {
     };
   }, []);
 
-  return { session, profile, isAdmin, loading };
+  return { session, profile, isAdmin, isBeta, loading };
 }
