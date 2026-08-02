@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
+import { Construction, Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,13 +17,11 @@ export function AppHeader({
   fullName,
   degree,
   isAdmin,
-  isBeta,
   userId,
 }: {
   fullName?: string | undefined;
   degree?: number | undefined;
   isAdmin?: boolean | undefined;
-  isBeta?: boolean | undefined;
   userId?: string | undefined;
 }) {
   const navigate = useNavigate();
@@ -94,17 +92,17 @@ export function AppHeader({
           >
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
-          {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
+          <Badge
+            variant="outline"
+            className="hidden items-center gap-1 border-primary/40 text-primary sm:inline-flex"
+            title="Sistema em desenvolvimento — apenas teste"
+          >
+            <Construction className="h-3 w-3" />
+            <span className="hidden lg:inline">Em desenvolvimento</span>
+            <span className="lg:hidden">Teste</span>
+          </Badge>
 
-          {isBeta ? (
-            <Badge
-              variant="default"
-              className="hidden animate-pulse bg-primary text-primary-foreground sm:inline-flex"
-              title="Conta BETA de testes compartilhada"
-            >
-              BETA
-            </Badge>
-          ) : null}
+          {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
 
           {fullName ? (
             <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
@@ -154,13 +152,8 @@ export function AppHeader({
             className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
             activeProps={{ className: "active" }}
           >
-            <span className="relative">
-              <UserCog className="h-5 w-5" />
-              {isBeta ? (
-                <span className="absolute -right-1 -top-1 flex h-2 w-2 rounded-full bg-primary" />
-              ) : null}
-            </span>
-            {isBeta ? "BETA" : "Conta"}
+            <UserCog className="h-5 w-5" />
+            Conta
           </Link>
           {isAdmin ? (
             <Link
