@@ -31,6 +31,7 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 function ProfilePage() {
   const { profile, isAdmin } = useSessionProfile();
   const { data, refetch } = useQuery({ queryKey: ["own-login"], queryFn: () => getOwnLogin() });
+  const bloqueado = isSharedTestAccount(data?.email ?? "");
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
