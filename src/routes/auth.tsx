@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { avisarErro } from "@/lib/avisos";
 import { supabase } from "@/integrations/supabase/client";
@@ -172,11 +173,16 @@ function AuthPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading || isLocked}>
-              {isLocked
-                ? `Bloqueado (${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")})`
-                : loading
-                  ? "Entrando..."
-                  : "Entrar"}
+              {isLocked ? (
+                `Bloqueado (${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")})`
+              ) : loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Carregando...
+                </>
+              ) : (
+                "Entrar"
+              )}
             </Button>
             {isLocked ? (
               <p className="text-center text-xs text-destructive">
