@@ -1,5 +1,13 @@
 export const LOGIN_DOMAIN = "plenitude.local";
 
+/** Conta compartilhada de testes (BETA): não pode alterar login/senha. */
+export const SHARED_TEST_LOGIN = "visitante";
+
+export function isSharedTestAccount(loginOrEmail: string) {
+  const value = (loginOrEmail ?? "").trim().toLowerCase();
+  return value === SHARED_TEST_LOGIN || value === `${SHARED_TEST_LOGIN}@${LOGIN_DOMAIN}`;
+}
+
 function stripAccents(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
