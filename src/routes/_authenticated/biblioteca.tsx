@@ -230,6 +230,7 @@ function Library() {
         fullName={profile?.full_name}
         degree={profile?.degree}
         isAdmin={isAdmin}
+        isBeta={isBeta}
         userId={profile?.id}
       />
 

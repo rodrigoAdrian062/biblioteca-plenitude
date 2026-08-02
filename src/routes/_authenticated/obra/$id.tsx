@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/obra/$id")({
 
 function BookReaderPage() {
   const { id } = Route.useParams();
-  const { profile, isAdmin } = useSessionProfile();
+  const { profile, isAdmin, isBeta } = useSessionProfile();
 
   const queryClient = useQueryClient();
 
