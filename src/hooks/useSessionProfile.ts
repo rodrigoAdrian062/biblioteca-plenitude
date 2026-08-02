@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { isSharedTestAccount } from "@/lib/credentials";
 
 export type Profile = {
   id: string;
@@ -14,6 +15,7 @@ export function useSessionProfile() {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isBeta, setIsBeta] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
