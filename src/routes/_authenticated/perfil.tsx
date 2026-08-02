@@ -5,7 +5,7 @@ import { avisarErro, avisarSucesso } from "@/lib/avisos";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { getOwnLogin, updateOwnCredentials } from "@/lib/admin.functions";
-import { emailToLogin, loginToEmail } from "@/lib/credentials";
+import { emailToLogin, isSharedTestAccount, loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 function ProfilePage() {
   const { profile, isAdmin } = useSessionProfile();
   const { data, refetch } = useQuery({ queryKey: ["own-login"], queryFn: () => getOwnLogin() });
+  const bloqueado = isSharedTestAccount(data?.email ?? "");
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -43,6 +44,13 @@ function ProfilePage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (bloqueado) {
+      avisarErro(
+        "A conta BETA é compartilhada e não permite alterar login ou senha.",
+        "Dica: solicite uma conta pessoal ao Ir∴ Menezes.",
+      );
+      return;
+    }
     const current = emailToLogin(data?.email ?? "");
     if (password && password.length < 8) {
       avisarErro("A senha deve ter ao menos 8 caracteres.");
@@ -85,43 +93,54 @@ function ProfilePage() {
             <CardTitle className="font-display text-lg">Login e senha</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4" onSubmit={onSubmit}>
-              <div className="space-y-2">
-                <Label htmlFor="p-login">Login</Label>
-                <Input
-                  id="p-login"
-                  required
-                  maxLength={40}
-                  autoComplete="username"
-                  value={login}
-                  onChange={(e) => setLogin(e.target.value)}
-                />
+            {bloqueado ? (
+              <div className="rounded-md border border-border/60 bg-muted/40 p-4 text-sm text-muted-foreground">
+                <p className="font-medium text-foreground">Conta BETA (teste compartilhado)</p>
+                <p className="mt-1">
+                  Esta conta é usada por vários irmãos para testes, por isso a alteração de login e
+                  senha está desativada.
+                </p>
+                <p className="mt-1">Dica: peça sua conta pessoal ao Ir∴ Menezes.</p>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="p-pass">Nova senha</Label>
-                <Input
-                  id="p-pass"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Deixe em branco para manter a atual"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="p-pass2">Confirmar nova senha</Label>
-                <Input
-                  id="p-pass2"
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                />
-              </div>
-              <Button type="submit" disabled={saving}>
-                {saving ? "Salvando..." : "Salvar alterações"}
-              </Button>
-            </form>
+            ) : (
+              <form className="space-y-4" onSubmit={onSubmit}>
+                <div className="space-y-2">
+                  <Label htmlFor="p-login">Login</Label>
+                  <Input
+                    id="p-login"
+                    required
+                    maxLength={40}
+                    autoComplete="username"
+                    value={login}
+                    onChange={(e) => setLogin(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="p-pass">Nova senha</Label>
+                  <Input
+                    id="p-pass"
+                    type="password"
+                    autoComplete="new-password"
+                    placeholder="Deixe em branco para manter a atual"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="p-pass2">Confirmar nova senha</Label>
+                  <Input
+                    id="p-pass2"
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                  />
+                </div>
+                <Button type="submit" disabled={saving}>
+                  {saving ? "Salvando..." : "Salvar alterações"}
+                </Button>
+              </form>
+            )}
           </CardContent>
         </Card>
       </main>
