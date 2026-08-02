@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
-import { toast } from "sonner";
+import { avisarErro } from "@/lib/avisos";
 import { supabase } from "@/integrations/supabase/client";
 import { loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
@@ -102,7 +102,7 @@ function AuthPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (isLocked) {
-      toast.error("Muitas tentativas. Aguarde para tentar novamente.");
+      avisarErro("Muitas tentativas de acesso. Aguarde o tempo indicado para tentar novamente.");
       return;
     }
     setLoading(true);
@@ -114,10 +114,10 @@ function AuthPage() {
       setLoading(false);
       registerFailure();
       const left = Math.max(0, MAX_ATTEMPTS - readAttempts().count);
-      toast.error(
+      avisarErro(
         left > 0 && left <= 2
-          ? `Credenciais inválidas. ${left} tentativa(s) antes do bloqueio.`
-          : "Credenciais inválidas ou acesso suspenso.",
+          ? `Login ou senha incorretos. Restam ${left} tentativa(s) antes do bloqueio temporário.`
+          : error?.message ?? "Login ou senha incorretos.",
       );
       return;
     }

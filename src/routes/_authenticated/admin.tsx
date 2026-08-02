@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Copy, MessageCircle, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { avisarErro, avisarSucesso } from "@/lib/avisos";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,7 +47,7 @@ async function copyText(value: string, message: string) {
     await navigator.clipboard.writeText(value);
     toast.success(message);
   } catch {
-    toast.error("Não foi possível copiar.");
+    avisarErro("Não foi possível copiar.");
   }
 }
 
@@ -247,12 +248,12 @@ function BooksAdmin() {
         const { error } = await supabase.from("books").insert(payload);
         if (error) throw new Error(error.message);
       }
-      toast.success(editingId ? "Obra atualizada." : "Obra publicada no acervo.");
+      avisarSucesso(editingId ? "Obra atualizada." : "Obra publicada no acervo.", "Dica: os irmãos com o grau exigido já podem visualizá-la.");
       await queryClient.invalidateQueries({ queryKey: ["books"] });
       setOpen(false);
       reset();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao salvar a obra.");
+      avisarErro(err, "Não foi possível salvar a obra.");
     } finally {
       setSaving(false);
     }
@@ -262,10 +263,10 @@ function BooksAdmin() {
     if (!window.confirm("Remover esta obra do acervo? A ação não pode ser desfeita.")) return;
     const { error } = await supabase.from("books").delete().eq("id", id);
     if (error) {
-      toast.error(error.message);
+      avisarErro(error, "Não foi possível remover a obra.");
       return;
     }
-    toast.success("Obra removida.");
+    avisarSucesso("Obra removida.");
     await queryClient.invalidateQueries({ queryKey: ["books"] });
   }
 
@@ -568,14 +569,14 @@ function MembersAdmin() {
       if (realLogin !== form.login) {
         toast.info(`O login “${form.login}” já existia. Login criado: ${realLogin}`);
       } else {
-        toast.success("Irmão cadastrado.");
+        avisarSucesso("Irmão cadastrado.", "Dica: use os botões de copiar para enviar o login e a senha ao irmão.");
       }
       setOpen(false);
       setCreatedInfo({ login: realLogin, password: form.password });
       setForm({ login: "", password: "", full_name: "", degree: 1, is_admin: false });
       await invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => avisarErro(e, "Não foi possível cadastrar o irmão."),
   });
 
   const [editing, setEditing] = useState<{
@@ -596,19 +597,22 @@ function MembersAdmin() {
       is_admin?: boolean;
     }) => updateMember({ data: vars }),
     onSuccess: async () => {
-      toast.success("Cadastro atualizado.");
+      avisarSucesso(
+        "Cadastro atualizado.",
+        "Dica: se você alterou o login ou a senha, avise o irmão para usar os novos dados.",
+      );
       await invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => avisarErro(e, "Não foi possível atualizar o cadastro."),
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteMember({ data: { id } }),
     onSuccess: async () => {
-      toast.success("Irmão removido.");
+      avisarSucesso("Irmão removido.");
       await invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => avisarErro(e, "Não foi possível remover o irmão."),
   });
 
   return (
@@ -901,7 +905,7 @@ function MembersAdmin() {
                 const email = editing.email.trim() ? loginToEmail(editing.email) : "";
                 const password = editing.password;
                 if (password && password.length < 8) {
-                  toast.error("A senha deve ter ao menos 8 caracteres.");
+                  avisarErro("A senha deve ter ao menos 8 caracteres.");
                   return;
                 }
                 update.mutate(
