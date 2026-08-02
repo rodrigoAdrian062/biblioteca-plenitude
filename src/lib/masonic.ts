@@ -5,9 +5,11 @@ export const DEGREES = [
 ] as const;
 
 export function degreeLabel(degree: number): string {
+  if (degree === 0) return "Sem grau (todos)";
   return DEGREES.find((d) => d.value === degree)?.label ?? "Desconhecido";
 }
 
 export function degreeSymbol(degree: number): string {
+  if (degree === 0) return "—";
   return DEGREES.find((d) => d.value === degree)?.symbol ?? "?";
 }
