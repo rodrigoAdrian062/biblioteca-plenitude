@@ -637,12 +637,18 @@ function BookGrid({
                 {degreeLabel(book.min_degree)}
               </Badge>
             </div>
-            <Badge
-              variant={book.scope === "nao_maconico" ? "secondary" : "default"}
-              className="w-fit px-1.5 text-[10px]"
-            >
-              {scopeLabel(book.scope)}
-            </Badge>
+            <div className="flex flex-wrap items-center gap-1">
+              <Badge
+                variant={book.scope === "nao_maconico" ? "secondary" : "default"}
+                className="w-fit px-1.5 text-[10px]"
+              >
+                {scopeLabel(book.scope)}
+              </Badge>
+              <Badge variant="outline" className="w-fit px-1.5 text-[10px]">
+                {kindLabel(book.kind)}
+              </Badge>
+            </div>
+
           </CardHeader>
           <CardContent className="mt-auto space-y-2 p-3 pt-0">
             {book.description ? (
