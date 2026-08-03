@@ -67,7 +67,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 function Library() {
   const { profile, isAdmin } = useSessionProfile();
   const navigate = useNavigate({ from: "/biblioteca" });
-  const { q, autor, categoria, grau, tema, fav } = Route.useSearch();
+  const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
 
@@ -154,10 +154,12 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
+      const matchKind = !tipo || (b.kind ?? "livro") === tipo;
       const matchFav = !fav || favSet.has(b.id);
-      return matchTerm && matchDegree && matchAuthor && matchCategory && matchFav;
+      return matchTerm && matchDegree && matchAuthor && matchCategory && matchKind && matchFav;
     };
-  }, [q, grau, autor, categoria, fav, favSet]);
+  }, [q, grau, autor, categoria, tipo, fav, favSet]);
+
 
   const baseVisible = useMemo(() => books.filter(matchesBase), [books, matchesBase]);
 
