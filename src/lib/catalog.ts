@@ -9,6 +9,18 @@ export function scopeLabel(scope: string | null | undefined): string {
   return SCOPES.find((s) => s.value === scope)?.label ?? "Maçônico";
 }
 
+export const KINDS = [
+  { value: "livro", label: "Livro" },
+  { value: "artigo", label: "Artigo" },
+] as const;
+
+export type BookKind = (typeof KINDS)[number]["value"];
+
+export function kindLabel(kind: string | null | undefined): string {
+  return KINDS.find((k) => k.value === kind)?.label ?? "Livro";
+}
+
+
 const PARTICLES = new Set(["de", "da", "do", "das", "dos", "e", "di", "del", "van", "von", "la", "le"]);
 
 /**
