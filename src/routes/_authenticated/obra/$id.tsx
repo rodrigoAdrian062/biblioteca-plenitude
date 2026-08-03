@@ -9,7 +9,7 @@ import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { getBook } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, saveProgress } from "@/lib/reading.functions";
 import { degreeLabel } from "@/lib/masonic";
-import { catalogName, scopeLabel } from "@/lib/catalog";
+import { catalogName, scopeLabel, kindLabel } from "@/lib/catalog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -113,7 +113,9 @@ function BookReaderPage() {
                 <Badge variant={book.scope === "nao_maconico" ? "secondary" : "default"}>
                   {scopeLabel(book.scope)}
                 </Badge>
+                <Badge variant="outline">{kindLabel(book.kind)}</Badge>
                 <Badge variant="outline">{degreeLabel(book.min_degree)}</Badge>
+
               </div>
             </div>
 
