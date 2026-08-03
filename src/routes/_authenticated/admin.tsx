@@ -15,7 +15,7 @@ import {
 } from "@/lib/admin.functions";
 import { adminStats, listBooks } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
-import { SCOPES, catalogName, scopeLabel, type BookScope } from "@/lib/catalog";
+import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel, type BookScope, type BookKind } from "@/lib/catalog";
 
 import { emailToLogin, loginToEmail, suggestLogin, suggestPassword } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
@@ -179,6 +179,7 @@ type BookForm = {
   min_degree: number;
   published: boolean;
   scope: BookScope;
+  kind: BookKind;
 };
 
 const emptyBook: BookForm = {
@@ -189,7 +190,9 @@ const emptyBook: BookForm = {
   min_degree: 1,
   published: true,
   scope: "maconico",
+  kind: "livro",
 };
+
 
 
 function BooksAdmin() {
@@ -235,6 +238,7 @@ function BooksAdmin() {
         min_degree: number;
         published: boolean;
         scope: BookScope;
+        kind: BookKind;
         file_path?: string;
         cover_path?: string;
       } = {
@@ -245,7 +249,9 @@ function BooksAdmin() {
         min_degree: form.min_degree,
         published: form.published,
         scope: form.scope,
+        kind: form.kind,
       };
+
 
       if (file) payload.file_path = await upload(file, "obras");
       if (cover) payload.cover_path = await upload(cover, "capas");
@@ -399,6 +405,26 @@ function BooksAdmin() {
               </div>
 
               <div className="space-y-2">
+                <Label>Tipo da obra</Label>
+                <Select
+                  value={form.kind}
+                  onValueChange={(v) => setForm({ ...form, kind: v as BookKind })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {KINDS.map((k) => (
+                      <SelectItem key={k.value} value={k.value}>
+                        {k.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+
+              <div className="space-y-2">
                 <Label htmlFor="file">Arquivo (PDF/EPUB)</Label>
                 <Input
                   id="file"
@@ -491,9 +517,11 @@ function BooksAdmin() {
                   <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
                     {scopeLabel(b.scope)}
                   </Badge>
+                  <Badge variant="outline">{kindLabel(b.kind)}</Badge>
                   <Badge variant="outline">{degreeLabel(b.min_degree)}</Badge>
                   {!b.published ? <Badge variant="secondary">Rascunho</Badge> : null}
                 </div>
+
               </div>
 
               <div className="col-span-2 flex justify-end gap-1 sm:col-span-1 sm:self-center">
@@ -513,6 +541,8 @@ function BooksAdmin() {
                     min_degree: b.min_degree,
                     published: b.published,
                     scope: (b.scope as BookScope) ?? "maconico",
+                    kind: (b.kind as BookKind) ?? "livro",
+
                   });
 
                   setOpen(true);

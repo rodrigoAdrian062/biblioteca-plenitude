@@ -7,7 +7,7 @@ import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
-import { SCOPES, catalogName, scopeLabel } from "@/lib/catalog";
+import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel } from "@/lib/catalog";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ export type LibrarySearch = {
   categoria: string;
   grau: number;
   tema: string;
+  tipo: string;
   fav: boolean;
 };
 
@@ -42,8 +43,10 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
       search['tema'] === "maconico" || search['tema'] === "nao_maconico"
         ? (search['tema'] as string)
         : "",
+    tipo: search['tipo'] === "livro" || search['tipo'] === "artigo" ? (search['tipo'] as string) : "",
     fav: search['fav'] === true || search['fav'] === "true",
   }),
+
 
   head: () => ({
     meta: [
@@ -64,7 +67,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
 function Library() {
   const { profile, isAdmin } = useSessionProfile();
   const navigate = useNavigate({ from: "/biblioteca" });
-  const { q, autor, categoria, grau, tema, fav } = Route.useSearch();
+  const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
 
@@ -151,10 +154,12 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
+      const matchKind = !tipo || (b.kind ?? "livro") === tipo;
       const matchFav = !fav || favSet.has(b.id);
-      return matchTerm && matchDegree && matchAuthor && matchCategory && matchFav;
+      return matchTerm && matchDegree && matchAuthor && matchCategory && matchKind && matchFav;
     };
-  }, [q, grau, autor, categoria, fav, favSet]);
+  }, [q, grau, autor, categoria, tipo, fav, favSet]);
+
 
   const baseVisible = useMemo(() => books.filter(matchesBase), [books, matchesBase]);
 
@@ -166,6 +171,15 @@ function Library() {
     }
     return map;
   }, [baseVisible]);
+
+  const kindCounts = useMemo(() => {
+    const map: Record<string, number> = { livro: 0, artigo: 0 };
+    for (const b of books.filter(matchesBase)) {
+      const k = (b.kind ?? "livro") as string;
+      map[k] = (map[k] ?? 0) + 1;
+    }
+    return map;
+  }, [books, matchesBase]);
 
   const visible = useMemo(
     () => (tema ? baseVisible.filter((b) => (b.scope ?? "maconico") === tema) : baseVisible),
@@ -181,7 +195,7 @@ function Library() {
     [baseVisible],
   );
 
-  const hasFilters = Boolean(q || autor || categoria || grau || tema || fav);
+  const hasFilters = Boolean(q || autor || categoria || grau || tema || tipo || fav);
 
   // Filtros persistentes entre sessões
   useEffect(() => {
@@ -193,7 +207,13 @@ function Library() {
       const parsed = JSON.parse(saved) as Partial<LibrarySearch>;
       if (
         parsed &&
-        (parsed.q || parsed.autor || parsed.categoria || parsed.grau || parsed.tema || parsed.fav)
+        (parsed.q ||
+          parsed.autor ||
+          parsed.categoria ||
+          parsed.grau ||
+          parsed.tema ||
+          parsed.tipo ||
+          parsed.fav)
       ) {
         void navigate({
           search: () => ({
@@ -202,6 +222,7 @@ function Library() {
             categoria: parsed.categoria ?? "",
             grau: Number(parsed.grau) || 0,
             tema: parsed.tema ?? "",
+            tipo: parsed.tipo ?? "",
             fav: Boolean(parsed.fav),
           }),
           replace: true,
@@ -217,9 +238,10 @@ function Library() {
     if (typeof window === "undefined") return;
     window.localStorage.setItem(
       "acervo-filtros",
-      JSON.stringify({ q, autor, categoria, grau, tema, fav }),
+      JSON.stringify({ q, autor, categoria, grau, tema, tipo, fav }),
     );
-  }, [q, autor, categoria, grau, tema, fav]);
+  }, [q, autor, categoria, grau, tema, tipo, fav]);
+
 
 
 
@@ -331,6 +353,33 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tipo</span>
+            <Button
+              variant={!tipo ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: "" }) })}
+            >
+              Todos
+            </Button>
+            {KINDS.map((k) => (
+              <Button
+                key={k.value}
+                variant={tipo === k.value ? "default" : "outline"}
+                size="sm"
+                className="rounded-full"
+                onClick={() =>
+                  void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: k.value }) })
+                }
+              >
+                {k.label}s ({kindCounts[k.value] ?? 0})
+              </Button>
+            ))}
+          </div>
+
+
+
+          <div className="flex flex-wrap items-center gap-2">
             <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Minhas</span>
             <Button
               variant={fav ? "default" : "outline"}
@@ -371,7 +420,7 @@ function Library() {
                 size="sm"
                 className="ml-auto rounded-full"
                 onClick={() =>
-                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } })
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } })
                 }
               >
                 <X className="mr-1 h-4 w-4" />
@@ -483,7 +532,7 @@ function Library() {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } })
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } })
                 }
               >
                 <X className="mr-1 h-4 w-4" />
@@ -588,12 +637,18 @@ function BookGrid({
                 {degreeLabel(book.min_degree)}
               </Badge>
             </div>
-            <Badge
-              variant={book.scope === "nao_maconico" ? "secondary" : "default"}
-              className="w-fit px-1.5 text-[10px]"
-            >
-              {scopeLabel(book.scope)}
-            </Badge>
+            <div className="flex flex-wrap items-center gap-1">
+              <Badge
+                variant={book.scope === "nao_maconico" ? "secondary" : "default"}
+                className="w-fit px-1.5 text-[10px]"
+              >
+                {scopeLabel(book.scope)}
+              </Badge>
+              <Badge variant="outline" className="w-fit px-1.5 text-[10px]">
+                {kindLabel(book.kind)}
+              </Badge>
+            </div>
+
           </CardHeader>
           <CardContent className="mt-auto space-y-2 p-3 pt-0">
             {book.description ? (
