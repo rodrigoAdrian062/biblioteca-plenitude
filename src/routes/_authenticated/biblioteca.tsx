@@ -420,7 +420,7 @@ function Library() {
                 size="sm"
                 className="ml-auto rounded-full"
                 onClick={() =>
-                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } })
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } })
                 }
               >
                 <X className="mr-1 h-4 w-4" />
@@ -532,7 +532,7 @@ function Library() {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } })
+                  void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } })
                 }
               >
                 <X className="mr-1 h-4 w-4" />
