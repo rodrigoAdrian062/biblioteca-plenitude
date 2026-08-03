@@ -172,6 +172,15 @@ function Library() {
     return map;
   }, [baseVisible]);
 
+  const kindCounts = useMemo(() => {
+    const map: Record<string, number> = { livro: 0, artigo: 0 };
+    for (const b of books.filter(matchesBase)) {
+      const k = (b.kind ?? "livro") as string;
+      map[k] = (map[k] ?? 0) + 1;
+    }
+    return map;
+  }, [books, matchesBase]);
+
   const visible = useMemo(
     () => (tema ? baseVisible.filter((b) => (b.scope ?? "maconico") === tema) : baseVisible),
     [baseVisible, tema],
@@ -186,7 +195,7 @@ function Library() {
     [baseVisible],
   );
 
-  const hasFilters = Boolean(q || autor || categoria || grau || tema || fav);
+  const hasFilters = Boolean(q || autor || categoria || grau || tema || tipo || fav);
 
   // Filtros persistentes entre sessões
   useEffect(() => {
@@ -198,7 +207,13 @@ function Library() {
       const parsed = JSON.parse(saved) as Partial<LibrarySearch>;
       if (
         parsed &&
-        (parsed.q || parsed.autor || parsed.categoria || parsed.grau || parsed.tema || parsed.fav)
+        (parsed.q ||
+          parsed.autor ||
+          parsed.categoria ||
+          parsed.grau ||
+          parsed.tema ||
+          parsed.tipo ||
+          parsed.fav)
       ) {
         void navigate({
           search: () => ({
@@ -207,6 +222,7 @@ function Library() {
             categoria: parsed.categoria ?? "",
             grau: Number(parsed.grau) || 0,
             tema: parsed.tema ?? "",
+            tipo: parsed.tipo ?? "",
             fav: Boolean(parsed.fav),
           }),
           replace: true,
@@ -222,9 +238,10 @@ function Library() {
     if (typeof window === "undefined") return;
     window.localStorage.setItem(
       "acervo-filtros",
-      JSON.stringify({ q, autor, categoria, grau, tema, fav }),
+      JSON.stringify({ q, autor, categoria, grau, tema, tipo, fav }),
     );
-  }, [q, autor, categoria, grau, tema, fav]);
+  }, [q, autor, categoria, grau, tema, tipo, fav]);
+
 
 
 
