@@ -15,7 +15,7 @@ import {
 } from "@/lib/admin.functions";
 import { adminStats, listBooks } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
-import { SCOPES, catalogName, scopeLabel, type BookScope } from "@/lib/catalog";
+import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel, type BookScope, type BookKind } from "@/lib/catalog";
 
 import { emailToLogin, loginToEmail, suggestLogin, suggestPassword } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
@@ -238,6 +238,7 @@ function BooksAdmin() {
         min_degree: number;
         published: boolean;
         scope: BookScope;
+        kind: BookKind;
         file_path?: string;
         cover_path?: string;
       } = {
@@ -248,7 +249,9 @@ function BooksAdmin() {
         min_degree: form.min_degree,
         published: form.published,
         scope: form.scope,
+        kind: form.kind,
       };
+
 
       if (file) payload.file_path = await upload(file, "obras");
       if (cover) payload.cover_path = await upload(cover, "capas");
