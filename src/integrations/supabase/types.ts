@@ -57,6 +57,7 @@ export type Database = {
           external_url: string | null
           file_path: string | null
           id: string
+          kind: string
           min_degree: number
           published: boolean
           scope: string
@@ -73,6 +74,7 @@ export type Database = {
           external_url?: string | null
           file_path?: string | null
           id?: string
+          kind?: string
           min_degree?: number
           published?: boolean
           scope?: string
@@ -89,6 +91,7 @@ export type Database = {
           external_url?: string | null
           file_path?: string | null
           id?: string
+          kind?: string
           min_degree?: number
           published?: boolean
           scope?: string
