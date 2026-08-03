@@ -7,7 +7,7 @@ import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
-import { SCOPES, catalogName, scopeLabel } from "@/lib/catalog";
+import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel } from "@/lib/catalog";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ export type LibrarySearch = {
   categoria: string;
   grau: number;
   tema: string;
+  tipo: string;
   fav: boolean;
 };
 
@@ -42,8 +43,10 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
       search['tema'] === "maconico" || search['tema'] === "nao_maconico"
         ? (search['tema'] as string)
         : "",
+    tipo: search['tipo'] === "livro" || search['tipo'] === "artigo" ? (search['tipo'] as string) : "",
     fav: search['fav'] === true || search['fav'] === "true",
   }),
+
 
   head: () => ({
     meta: [
