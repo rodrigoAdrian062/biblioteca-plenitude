@@ -179,6 +179,7 @@ type BookForm = {
   min_degree: number;
   published: boolean;
   scope: BookScope;
+  kind: BookKind;
 };
 
 const emptyBook: BookForm = {
@@ -189,7 +190,9 @@ const emptyBook: BookForm = {
   min_degree: 1,
   published: true,
   scope: "maconico",
+  kind: "livro",
 };
+
 
 
 function BooksAdmin() {
