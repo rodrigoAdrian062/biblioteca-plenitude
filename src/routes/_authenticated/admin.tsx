@@ -521,6 +521,8 @@ function BooksAdmin() {
                     min_degree: b.min_degree,
                     published: b.published,
                     scope: (b.scope as BookScope) ?? "maconico",
+                    kind: (b.kind as BookKind) ?? "livro",
+
                   });
 
                   setOpen(true);
