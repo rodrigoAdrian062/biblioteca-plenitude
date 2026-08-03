@@ -405,6 +405,26 @@ function BooksAdmin() {
               </div>
 
               <div className="space-y-2">
+                <Label>Tipo da obra</Label>
+                <Select
+                  value={form.kind}
+                  onValueChange={(v) => setForm({ ...form, kind: v as BookKind })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {KINDS.map((k) => (
+                      <SelectItem key={k.value} value={k.value}>
+                        {k.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+
+              <div className="space-y-2">
                 <Label htmlFor="file">Arquivo (PDF/EPUB)</Label>
                 <Input
                   id="file"
