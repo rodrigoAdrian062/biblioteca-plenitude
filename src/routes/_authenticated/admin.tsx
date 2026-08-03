@@ -497,9 +497,11 @@ function BooksAdmin() {
                   <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
                     {scopeLabel(b.scope)}
                   </Badge>
+                  <Badge variant="outline">{kindLabel(b.kind)}</Badge>
                   <Badge variant="outline">{degreeLabel(b.min_degree)}</Badge>
                   {!b.published ? <Badge variant="secondary">Rascunho</Badge> : null}
                 </div>
+
               </div>
 
               <div className="col-span-2 flex justify-end gap-1 sm:col-span-1 sm:self-center">
