@@ -584,7 +584,7 @@ function Library() {
             ) : null}
           </div>
         ) : tema ? (
-          <BookGrid books={visible} className="mt-8" favSet={favSet} onToggleFavorite={onToggleFavorite} />
+          <BookGrid books={visible} view={view} className="mt-8" favSet={favSet} onToggleFavorite={onToggleFavorite} />natural
         ) : (
           <div className="mt-8 space-y-10">
             {sections
