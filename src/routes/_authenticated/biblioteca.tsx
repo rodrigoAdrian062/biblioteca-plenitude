@@ -70,6 +70,18 @@ function Library() {
   const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
+  const [view, setView] = useState<ViewMode>("grande");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("acervo-visualizacao");
+    if (saved === "grande" || saved === "compacto" || saved === "lista") setView(saved);
+  }, []);
+
+  function changeView(v: ViewMode) {
+    setView(v);
+    if (typeof window !== "undefined") window.localStorage.setItem("acervo-visualizacao", v);
+  }
 
   useEffect(() => {
     setTerm(q);
