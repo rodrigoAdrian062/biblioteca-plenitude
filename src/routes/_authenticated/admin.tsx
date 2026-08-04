@@ -193,6 +193,7 @@ type BookForm = {
   published: boolean;
   scope: BookScope;
   kind: BookKind;
+  external_url: string;
 };
 
 const emptyBook: BookForm = {
@@ -204,6 +205,7 @@ const emptyBook: BookForm = {
   published: true,
   scope: "maconico",
   kind: "livro",
+  external_url: "",
 };
 
 
@@ -281,6 +283,7 @@ function BooksAdmin() {
         kind: BookKind;
         file_path?: string;
         cover_path?: string;
+        external_url?: string | null;
       } = {
         title: form.title.trim(),
         author: form.author.trim() || null,
@@ -290,6 +293,7 @@ function BooksAdmin() {
         published: form.published,
         scope: form.scope,
         kind: form.kind,
+        external_url: form.external_url.trim() || null,
       };
 
 
