@@ -487,7 +487,7 @@ function BooksAdmin() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="file">Arquivo (PDF/EPUB)</Label>
+                <Label htmlFor="file">Arquivo PDF/EPUB (opcional se houver link)</Label>
                 <Input
                   id="file"
                   type="file"
