@@ -645,15 +645,15 @@ function BookGrid({
   onToggleFavorite: (bookId: string, favorite: boolean) => void;
   view?: ViewMode;
 }) {
-  if (view === "lista") {
+  if (view === "grande") {
     return (
-      <div className={`space-y-2 ${className}`}>
+      <div className={`grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 ${className}`}>
         {books.map((book) => (
           <div
             key={book.id}
-            className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5 transition-colors hover:border-primary/40"
+            className="flex flex-col items-center gap-3 rounded-xl border border-border/60 bg-card p-3 transition-colors hover:border-primary/40"
           >
-            <div className="h-16 w-12 shrink-0 overflow-hidden rounded bg-secondary">
+            <div className="aspect-[3/4] w-full overflow-hidden rounded bg-secondary">
               {book.cover_url ? (
                 <img
                   src={book.cover_url}
@@ -663,22 +663,22 @@ function BookGrid({
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-primary/50">
-                  <BookOpen className="h-5 w-5" />
+                  <BookOpen className="h-8 w-8" />
                 </div>
               )}
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 text-center">
               <div className="flex flex-col">
-                <p className="line-clamp-1 font-display text-sm leading-snug text-foreground">
+                <p className="line-clamp-2 font-display text-sm leading-snug text-foreground">
                   {book.title}
                 </p>
                 {book.author && (
-                  <p className="line-clamp-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  <p className="line-clamp-1 mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                     {book.author}
                   </p>
                 )}
               </div>
-              <div className="mt-1 flex flex-wrap items-center gap-1">
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
                 <Badge
                   variant={book.scope === "nao_maconico" ? "secondary" : "default"}
                   className="px-1.5 text-[10px]"
@@ -693,24 +693,24 @@ function BookGrid({
                 </Badge>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="mt-auto flex w-full items-center justify-center gap-2 pt-2">
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 aria-label={favSet.has(book.id) ? "Remover dos favoritos" : "Marcar como favorita"}
                 aria-pressed={favSet.has(book.id)}
-                className="h-8 w-8"
+                className="h-9 w-9"
                 onClick={() => onToggleFavorite(book.id, !favSet.has(book.id))}
               >
                 <Heart
                   className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
                 />
               </Button>
-              <Button asChild size="sm">
+              <Button asChild size="sm" className="flex-1">
                 <Link to="/obra/$id" params={{ id: book.id }}>
-                  <BookOpen className="h-4 w-4 sm:mr-1.5" />
-                  <span className="hidden sm:inline">Ler</span>
+                  <BookOpen className="mr-1.5 h-4 w-4" />
+                  Ler
                 </Link>
               </Button>
             </div>
@@ -719,6 +719,8 @@ function BookGrid({
       </div>
     );
   }
+
+  if (view === "lista") {
 
   if (view === "compacto") {
     return (
