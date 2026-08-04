@@ -275,19 +275,19 @@ function Library() {
       />
 
       <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
-        <section className="rounded-2xl border border-border/60 bg-card/60 p-5 sm:p-6">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:items-center sm:justify-between">
+        <section className="rounded-2xl border border-border/60 bg-card/60 p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4">
             <div className="min-w-0">
-              <h1 className="font-display text-2xl text-foreground sm:text-3xl">Acervo</h1>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <h1 className="font-display text-xl text-foreground sm:text-2xl uppercase tracking-tight">Acervo</h1>
+              <p className="mt-1 line-clamp-1 text-xs text-muted-foreground sm:text-sm">
                 {profile
-                  ? `Irmão ${profile.full_name} — obras liberadas até o grau de ${degreeLabel(profile.degree)}.`
-                  : "Carregando dados do irmão..."}
+                  ? `Ir∴ ${profile.full_name.split(' ')[0]} — Grau ${profile.degree}`
+                  : "Carregando..."}
               </p>
             </div>
-            <div className="flex shrink-0 flex-col items-end gap-2">
-              <Badge variant="outline">
-                {visible.length} obra{visible.length === 1 ? "" : "s"}
+            <div className="flex shrink-0 items-center gap-2">
+              <Badge variant="outline" className="h-6 px-2 text-[10px]">
+                {visible.length} {visible.length === 1 ? "obra" : "obras"}
               </Badge>
               <div
                 role="group"
@@ -312,7 +312,6 @@ function Library() {
               </div>
             </div>
           </div>
-          <div className="gold-rule mt-4 h-px w-24" />
         </section>
 
         <section className="mt-5 space-y-4 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5">
