@@ -34,11 +34,10 @@ export type LibrarySearch = {
 
 const ALL = "__all__";
 
-type ViewMode = "grande" | "compacto" | "lista";
+type ViewMode = "grande" | "lista";
 
 const VIEWS: { value: ViewMode; label: string; icon: typeof List }[] = [
   { value: "grande", label: "Grande", icon: LayoutGrid },
-  { value: "compacto", label: "Compacto", icon: Grid2x2 },
   { value: "lista", label: "Lista", icon: List },
 ];
 
@@ -79,12 +78,12 @@ function Library() {
   const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
-  const [view, setView] = useState<ViewMode>("compacto");
+  const [view, setView] = useState<ViewMode>("grande");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("acervo-visualizacao");
-    if (saved === "grande" || saved === "compacto" || saved === "lista") setView(saved);
+    if (saved === "grande" || saved === "lista") setView(saved);
   }, []);
 
   function changeView(v: ViewMode) {
