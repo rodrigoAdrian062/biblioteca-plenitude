@@ -53,7 +53,7 @@ export function AppHeader({
         </Link>
 
         <form
-          className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-xs"
+          className="order-last hidden w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-xs md:block"
           onSubmit={(e) => {
             e.preventDefault();
             navigate({
