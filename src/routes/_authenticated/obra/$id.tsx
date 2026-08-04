@@ -12,6 +12,7 @@ import { degreeLabel } from "@/lib/masonic";
 import { catalogName, scopeLabel, kindLabel } from "@/lib/catalog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PdfReader = lazy(() => import("@/components/PdfReader"));
 
@@ -82,7 +83,20 @@ function BookReaderPage() {
         </Button>
 
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Abrindo os trabalhos...</p>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <Skeleton className="h-9 w-3/4" />
+              <Skeleton className="h-5 w-1/4" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-24" />
+              <Skeleton className="h-9 w-24" />
+              <Skeleton className="h-9 w-24" />
+            </div>
+            <Skeleton className="h-px w-32" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-[600px] w-full rounded-xl" />
+          </div>
         ) : error || !book ? (
           <p className="text-sm text-destructive">
             {error instanceof Error ? error.message : "Obra indisponível para o seu grau."}

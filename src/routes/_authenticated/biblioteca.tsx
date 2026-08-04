@@ -12,6 +12,7 @@ import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel } from "@/lib/catalog
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -544,18 +545,20 @@ function Library() {
         ) : null}
 
         {isLoading ? (
-          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-xl border border-border/60 bg-card"
-                aria-hidden
-              >
-                <div className="aspect-[3/4] w-full animate-pulse bg-secondary" />
-                <div className="space-y-2 p-3">
-                  <div className="h-3 w-4/5 animate-pulse rounded bg-secondary" />
-                  <div className="h-3 w-2/5 animate-pulse rounded bg-secondary" />
-                  <div className="h-8 w-full animate-pulse rounded bg-secondary" />
+          <div className="mt-8 grid grid-cols-1 gap-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex gap-4 rounded-xl border border-border/40 bg-card/40 p-3">
+                <Skeleton className="h-20 w-14 shrink-0 rounded-lg" />
+                <div className="flex-1 space-y-2 py-1">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2 opacity-60" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-4 w-16 rounded-full" />
+                    <Skeleton className="h-4 w-16 rounded-full" />
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Skeleton className="h-9 w-20 rounded-lg" />
                 </div>
               </div>
             ))}
