@@ -33,6 +33,14 @@ export type LibrarySearch = {
 
 const ALL = "__all__";
 
+type ViewMode = "grande" | "compacto" | "lista";
+
+const VIEWS: { value: ViewMode; label: string; icon: typeof List }[] = [
+  { value: "grande", label: "Blocos", icon: LayoutGrid },
+  { value: "compacto", label: "Compacto", icon: Grid2x2 },
+  { value: "lista", label: "Lista", icon: List },
+];
+
 export const Route = createFileRoute("/_authenticated/biblioteca")({
   validateSearch: (search: Record<string, unknown>): LibrarySearch => ({
     q: typeof search['q'] === "string" ? search['q'] : "",
