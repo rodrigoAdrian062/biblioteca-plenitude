@@ -307,7 +307,7 @@ function BooksAdmin() {
         const { error } = await supabase.from("books").update(payload).eq("id", editingId);
         if (error) throw new Error(error.message);
       } else {
-        if (!file) throw new Error("Selecione o arquivo da obra.");
+        if (!file && !form.external_url.trim()) throw new Error("Selecione o arquivo da obra ou informe um link externo.");
         const { error } = await supabase.from("books").insert(payload);
         if (error) throw new Error(error.message);
       }
