@@ -128,7 +128,17 @@ function AuthPage() {
       _user_id: data.user.id,
       _role: "admin",
     });
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", data.user.id)
+      .single();
+
     setLoading(false);
+    const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : 'Irmão';
+    avisarSucesso(`Bem-vindo, Ir∴ ${firstName}!`, "Acesso autorizado à Biblioteca Plenitude.");
+    
     navigate({ to: isAdmin ? "/admin" : "/biblioteca", replace: true });
   }
 
