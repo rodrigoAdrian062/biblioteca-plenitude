@@ -766,7 +766,7 @@ function BookGrid({
   }
 
   return (
-    <div className={`grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 ${className}`}>
+    <div className={`grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 ${className}`}>
       {books.map((book) => (
         <Card key={book.id} className="group flex flex-col overflow-hidden border-border/60 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg">
           <div className="relative aspect-[3/4] w-full bg-secondary">
