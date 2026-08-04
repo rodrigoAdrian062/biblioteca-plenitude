@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import logo from "@/assets/logo.png";
-import { avisarErro } from "@/lib/avisos";
+import { avisarErro, avisarSucesso } from "@/lib/avisos";
 import { supabase } from "@/integrations/supabase/client";
 import { loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
@@ -128,7 +128,17 @@ function AuthPage() {
       _user_id: data.user.id,
       _role: "admin",
     });
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", data.user.id)
+      .single();
+
     setLoading(false);
+    const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : 'Irmão';
+    avisarSucesso(`Bem-vindo, Ir∴ ${firstName}!`, "Acesso autorizado à Biblioteca Plenitude.");
+    
     navigate({ to: isAdmin ? "/admin" : "/biblioteca", replace: true });
   }
 

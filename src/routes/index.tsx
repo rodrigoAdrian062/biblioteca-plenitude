@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: as obras no conputadro colocar em blocos mais menores">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: no login ao entrar mostrar carregando e quando entra aparecer mensagem bem vindo irmão e nome dele">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
