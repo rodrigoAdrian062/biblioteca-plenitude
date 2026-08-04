@@ -218,8 +218,35 @@ function BooksAdmin() {
     setEditingId(null);
   }
 
-  async function upload(f: File, folder: string) {
-    const ext = f.name.split(".").pop() ?? "bin";
+  async function resizeImage(file: File, maxWidth = 800): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = (maxWidth / width) * height;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Erro ao processar imagem"));
+        }, "image/jpeg", 0.85);
+      };
+      img.onerror = () => reject(new Error("Erro ao carregar imagem"));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  async function upload(f: File | Blob, folder: string, originalName?: string) {
+    const ext = originalName?.split(".").pop() ?? (f instanceof File ? f.name.split(".").pop() : "jpg") ?? "bin";
     const path = `${folder}/${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage.from("acervo").upload(path, f);
     if (error) throw new Error(error.message);
@@ -254,7 +281,10 @@ function BooksAdmin() {
 
 
       if (file) payload.file_path = await upload(file, "obras");
-      if (cover) payload.cover_path = await upload(cover, "capas");
+      if (cover) {
+        const resized = await resizeImage(cover);
+        payload.cover_path = await upload(resized, "capas", cover.name);
+      }
 
       if (editingId) {
         const { error } = await supabase.from("books").update(payload).eq("id", editingId);
