@@ -720,53 +720,6 @@ function BookGrid({
     );
   }
 
-  if (view === "lista") {
-
-  if (view === "compacto") {
-    return (
-      <div
-        className={`grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 xl:grid-cols-11 2xl:grid-cols-13 ${className}`}
-      >
-        {books.map((book) => (
-          <Link
-            key={book.id}
-            to="/obra/$id"
-            params={{ id: book.id }}
-            className="group overflow-hidden rounded-lg border border-border/60 bg-card transition-all hover:-translate-y-0.5 hover:border-primary/40"
-          >
-            <div className="relative aspect-[3/4] w-full bg-secondary">
-              {book.cover_url ? (
-                <img
-                  src={book.cover_url}
-                  alt={`Capa da obra ${book.title}`}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-primary/50">
-                  <BookOpen className="h-6 w-6" />
-                </div>
-              )}
-              {favSet.has(book.id) ? (
-                <Heart className="absolute right-1 top-1 h-3.5 w-3.5 fill-primary text-primary" />
-              ) : null}
-            </div>
-            <div className="p-1.5 pt-1 flex flex-col gap-0.5">
-              <p className="line-clamp-1 font-display text-[11px] leading-tight text-foreground">
-                {book.title}
-              </p>
-              {book.author && (
-                <p className="line-clamp-1 text-[9px] font-medium uppercase tracking-tight text-muted-foreground/80">
-                  {book.author}
-                </p>
-              )}
-            </div>
-          </Link>
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className={`grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 ${className}`}>
       {books.map((book) => (
