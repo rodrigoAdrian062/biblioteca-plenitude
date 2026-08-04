@@ -286,9 +286,32 @@ function Library() {
                   : "Carregando dados do irmão..."}
               </p>
             </div>
-            <Badge variant="outline" className="shrink-0">
-              {visible.length} obra{visible.length === 1 ? "" : "s"}
-            </Badge>
+            <div className="flex shrink-0 flex-col items-end gap-2">
+              <Badge variant="outline">
+                {visible.length} obra{visible.length === 1 ? "" : "s"}
+              </Badge>
+              <div
+                role="group"
+                aria-label="Modo de visualização"
+                className="flex items-center gap-0.5 rounded-full border border-border/60 bg-background/60 p-0.5"
+              >
+                {VIEWS.map((v) => (
+                  <Button
+                    key={v.value}
+                    type="button"
+                    size="icon"
+                    variant={view === v.value ? "default" : "ghost"}
+                    className="h-7 w-7 rounded-full"
+                    aria-label={`Visualizar em ${v.label.toLowerCase()}`}
+                    aria-pressed={view === v.value}
+                    title={v.label}
+                    onClick={() => changeView(v.value)}
+                  >
+                    <v.icon className="h-3.5 w-3.5" />
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="gold-rule mt-4 h-px w-24" />
         </section>
