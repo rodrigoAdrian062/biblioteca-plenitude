@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -115,7 +116,15 @@ function AdminPage() {
         </section>
 
         {loading ? (
-          <p className="mt-6 text-sm text-muted-foreground">Verificando permissões...</p>
+          <div className="mt-6 space-y-4">
+            <Skeleton className="h-10 w-48" />
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Skeleton className="h-24 rounded-2xl" />
+              <Skeleton className="h-24 rounded-2xl" />
+              <Skeleton className="h-24 rounded-2xl" />
+            </div>
+            <Skeleton className="h-64 rounded-2xl" />
+          </div>
         ) : !isAdmin ? (
           <p className="mt-6 text-sm text-muted-foreground">
             Acesso restrito à administração da Loja.
