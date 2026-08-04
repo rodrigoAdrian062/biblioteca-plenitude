@@ -704,12 +704,21 @@ function BookGrid({
                 className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
               />
             </Button>
-            <Button asChild size="sm">
-              <Link to="/obra/$id" params={{ id: book.id }}>
-                <BookOpen className="h-4 w-4 sm:mr-1.5" />
-                <span className="hidden sm:inline">Ler</span>
-              </Link>
-            </Button>
+            {book.external_url ? (
+              <Button asChild size="sm">
+                <a href={book.external_url} target="_blank" rel="noopener noreferrer">
+                  <BookOpen className="h-4 w-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline">Acessar</span>
+                </a>
+              </Button>
+            ) : (
+              <Button asChild size="sm">
+                <Link to="/obra/$id" params={{ id: book.id }}>
+                  <BookOpen className="h-4 w-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline">Ler</span>
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       ))}
