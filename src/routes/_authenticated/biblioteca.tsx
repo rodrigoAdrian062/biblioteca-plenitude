@@ -721,13 +721,13 @@ function BookGrid({
 
   if (view === "grande") {
     return (
-      <div className={`grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 ${className}`}>
+      <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${className}`}>
         {books.map((book) => (
           <div
             key={book.id}
-            className="flex flex-col items-center gap-3 rounded-xl border border-border/60 bg-card p-3 transition-colors hover:border-primary/40"
+            className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3 transition-colors hover:border-primary/40"
           >
-            <div className="aspect-[3/4] w-full overflow-hidden rounded bg-secondary">
+            <div className="h-24 w-16 shrink-0 overflow-hidden rounded bg-secondary">
               {book.cover_url ? (
                 <img
                   src={book.cover_url}
@@ -741,7 +741,7 @@ function BookGrid({
                 </div>
               )}
             </div>
-            <div className="min-w-0 flex-1 text-center">
+            <div className="min-w-0 flex-1 text-left">
               <div className="flex flex-col">
                 <p className="line-clamp-2 font-display text-sm leading-snug text-foreground">
                   {book.title}
@@ -752,7 +752,7 @@ function BookGrid({
                   </p>
                 )}
               </div>
-              <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
+              <div className="mt-2 flex flex-wrap items-center justify-start gap-1">
                 <Badge
                   variant={book.scope === "nao_maconico" ? "secondary" : "default"}
                   className="px-1.5 text-[10px]"
@@ -767,7 +767,7 @@ function BookGrid({
                 </Badge>
               </div>
             </div>
-            <div className="mt-auto flex w-full items-center justify-center gap-2 pt-2">
+            <div className="flex shrink-0 items-center gap-1">
               <Button
                 type="button"
                 variant="ghost"
@@ -781,7 +781,7 @@ function BookGrid({
                   className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
                 />
               </Button>
-              <Button asChild size="sm" className="flex-1">
+              <Button asChild size="sm">
                 <Link to="/obra/$id" params={{ id: book.id }}>
                   <BookOpen className="mr-1.5 h-4 w-4" />
                   Ler
