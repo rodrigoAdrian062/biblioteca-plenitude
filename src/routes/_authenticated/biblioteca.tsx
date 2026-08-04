@@ -51,7 +51,7 @@ export const Route = createFileRoute("/_authenticated/biblioteca")({
       search['tema'] === "maconico" || search['tema'] === "nao_maconico"
         ? (search['tema'] as string)
         : "",
-    tipo: search['tipo'] === "livro" || search['tipo'] === "artigo" ? (search['tipo'] as string) : "",
+    tipo: typeof search['tipo'] === "string" ? search['tipo'] : "",
     fav: search['fav'] === true || search['fav'] === "true",
   }),
 
@@ -193,7 +193,8 @@ function Library() {
   }, [baseVisible]);
 
   const kindCounts = useMemo(() => {
-    const map: Record<string, number> = { livro: 0, artigo: 0 };
+    const map: Record<string, number> = {};
+    KINDS.forEach(k => map[k.value] = 0);
     for (const b of books.filter(matchesBase)) {
       const k = (b.kind ?? "livro") as string;
       map[k] = (map[k] ?? 0) + 1;
