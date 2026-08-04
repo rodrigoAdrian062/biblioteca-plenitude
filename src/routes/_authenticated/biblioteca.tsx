@@ -635,7 +635,7 @@ function BookGrid({
   className = "",
   favSet,
   onToggleFavorite,
-  view = "grande",
+  view = "lista",
 }: {
   books: BookItem[];
   className?: string;
