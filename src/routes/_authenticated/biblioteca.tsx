@@ -644,7 +644,7 @@ function BookGrid({
   view?: ViewMode;
 }) {
   return (
-    <div className={`grid grid-cols-1 gap-3 lg:grid-cols-3 ${className}`}>
+    <div className={`grid grid-cols-1 gap-3 md:grid-cols-3 ${className}`}>
       {books.map((book) => (
         <div
           key={book.id}
