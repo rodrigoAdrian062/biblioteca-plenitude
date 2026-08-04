@@ -34,11 +34,10 @@ export type LibrarySearch = {
 
 const ALL = "__all__";
 
-type ViewMode = "grande" | "compacto" | "lista";
+type ViewMode = "grande" | "lista";
 
 const VIEWS: { value: ViewMode; label: string; icon: typeof List }[] = [
   { value: "grande", label: "Grande", icon: LayoutGrid },
-  { value: "compacto", label: "Compacto", icon: Grid2x2 },
   { value: "lista", label: "Lista", icon: List },
 ];
 
@@ -79,12 +78,12 @@ function Library() {
   const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
-  const [view, setView] = useState<ViewMode>("compacto");
+  const [view, setView] = useState<ViewMode>("grande");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("acervo-visualizacao");
-    if (saved === "grande" || saved === "compacto" || saved === "lista") setView(saved);
+    if (saved === "grande" || saved === "lista") setView(saved);
   }, []);
 
   function changeView(v: ViewMode) {
@@ -720,19 +719,15 @@ function BookGrid({
     );
   }
 
-  if (view === "compacto") {
+  if (view === "grande") {
     return (
-      <div
-        className={`grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 xl:grid-cols-11 2xl:grid-cols-13 ${className}`}
-      >
+      <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${className}`}>
         {books.map((book) => (
-          <Link
+          <div
             key={book.id}
-            to="/obra/$id"
-            params={{ id: book.id }}
-            className="group overflow-hidden rounded-lg border border-border/60 bg-card transition-all hover:-translate-y-0.5 hover:border-primary/40"
+            className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3 transition-colors hover:border-primary/40"
           >
-            <div className="relative aspect-[3/4] w-full bg-secondary">
+            <div className="h-24 w-16 shrink-0 overflow-hidden rounded bg-secondary">
               {book.cover_url ? (
                 <img
                   src={book.cover_url}
@@ -742,107 +737,62 @@ function BookGrid({
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-primary/50">
-                  <BookOpen className="h-6 w-6" />
+                  <BookOpen className="h-8 w-8" />
                 </div>
               )}
-              {favSet.has(book.id) ? (
-                <Heart className="absolute right-1 top-1 h-3.5 w-3.5 fill-primary text-primary" />
-              ) : null}
             </div>
-            <div className="p-1.5 pt-1 flex flex-col gap-0.5">
-              <p className="line-clamp-1 font-display text-[11px] leading-tight text-foreground">
-                {book.title}
-              </p>
-              {book.author && (
-                <p className="line-clamp-1 text-[9px] font-medium uppercase tracking-tight text-muted-foreground/80">
-                  {book.author}
+            <div className="min-w-0 flex-1 text-left">
+              <div className="flex flex-col">
+                <p className="line-clamp-2 font-display text-sm leading-snug text-foreground">
+                  {book.title}
                 </p>
-              )}
+                {book.author && (
+                  <p className="line-clamp-1 mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {book.author}
+                  </p>
+                )}
+              </div>
+              <div className="mt-2 flex flex-wrap items-center justify-start gap-1">
+                <Badge
+                  variant={book.scope === "nao_maconico" ? "secondary" : "default"}
+                  className="px-1.5 text-[10px]"
+                >
+                  {scopeLabel(book.scope)}
+                </Badge>
+                <Badge variant="outline" className="px-1.5 text-[10px]">
+                  {kindLabel(book.kind)}
+                </Badge>
+                <Badge variant="outline" className="px-1.5 text-[10px]">
+                  {degreeLabel(book.min_degree)}
+                </Badge>
+              </div>
             </div>
-          </Link>
+            <div className="flex shrink-0 items-center gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={favSet.has(book.id) ? "Remover dos favoritos" : "Marcar como favorita"}
+                aria-pressed={favSet.has(book.id)}
+                className="h-9 w-9"
+                onClick={() => onToggleFavorite(book.id, !favSet.has(book.id))}
+              >
+                <Heart
+                  className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                />
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/obra/$id" params={{ id: book.id }}>
+                  <BookOpen className="mr-1.5 h-4 w-4" />
+                  Ler
+                </Link>
+              </Button>
+            </div>
+          </div>
         ))}
       </div>
     );
   }
 
-  return (
-    <div className={`grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 ${className}`}>
-      {books.map((book) => (
-        <Card key={book.id} className="group flex flex-col overflow-hidden border-border/60 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg">
-          <div className="relative aspect-[3/4] w-full bg-secondary">
-            <Button
-              type="button"
-              variant="secondary"
-              size="icon"
-              aria-label={favSet.has(book.id) ? "Remover dos favoritos" : "Marcar como favorita"}
-              aria-pressed={favSet.has(book.id)}
-              className="absolute right-1.5 top-1.5 z-10 h-8 w-8 rounded-full opacity-90"
-              onClick={() => onToggleFavorite(book.id, !favSet.has(book.id))}
-            >
-              <Heart
-                className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
-              />
-            </Button>
-            {book.cover_url ? (
-              <img
-                src={book.cover_url}
-                alt={`Capa da obra ${book.title}`}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-primary/50">
-                <BookOpen className="h-8 w-8" />
-              </div>
-            )}
-          </div>
-          <CardHeader className="gap-1 p-3 pb-1">
-            <div className="flex min-w-0 items-start justify-between gap-1.5">
-              <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-                <CardTitle className="line-clamp-2 font-display text-sm leading-snug">
-                  {book.title}
-                </CardTitle>
-                {book.author && (
-                  <p className="line-clamp-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                    {book.author}
-                  </p>
-                )}
-              </div>
-              <Badge variant="outline" className="shrink-0 px-1.5 text-[10px]">
-                {degreeLabel(book.min_degree)}
-              </Badge>
-            </div>
-            <div className="flex flex-wrap items-center gap-1">
-              <Badge
-                variant={book.scope === "nao_maconico" ? "secondary" : "default"}
-                className="w-fit px-1.5 text-[10px]"
-              >
-                {scopeLabel(book.scope)}
-              </Badge>
-              <Badge variant="outline" className="w-fit px-1.5 text-[10px]">
-                {kindLabel(book.kind)}
-              </Badge>
-            </div>
-
-          </CardHeader>
-          <CardContent className="mt-auto space-y-2 p-3 pt-0">
-            {book.description ? (
-              <p className="line-clamp-2 text-xs text-muted-foreground">{book.description}</p>
-            ) : null}
-            {book.category ? (
-              <Badge variant="secondary" className="text-[10px]">
-                {book.category}
-              </Badge>
-            ) : null}
-            <Button asChild className="w-full" size="sm">
-              <Link to="/obra/$id" params={{ id: book.id }}>
-                <BookOpen className="mr-1.5 h-4 w-4" />
-                Ler
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
+  return null;
 }
