@@ -37,6 +37,8 @@ const ALL = "__all__";
 type ViewMode = "grande" | "compacto" | "lista";
 
 const VIEWS: { value: ViewMode; label: string; icon: typeof List }[] = [
+  { value: "grande", label: "Grande", icon: LayoutGrid },
+  { value: "compacto", label: "Compacto", icon: Grid2x2 },
   { value: "lista", label: "Lista", icon: List },
 ];
 
@@ -77,7 +79,7 @@ function Library() {
   const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
-  const [view, setView] = useState<ViewMode>("lista");
+  const [view, setView] = useState<ViewMode>("compacto");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -721,7 +723,7 @@ function BookGrid({
   if (view === "compacto") {
     return (
       <div
-        className={`grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 ${className}`}
+        className={`grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-9 ${className}`}
       >
         {books.map((book) => (
           <Link
