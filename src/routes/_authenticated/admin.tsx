@@ -399,6 +399,7 @@ function BooksAdmin() {
                 <Textarea
                   id="description"
                   maxLength={1000}
+                  className="min-h-[100px]"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
@@ -475,6 +476,7 @@ function BooksAdmin() {
                 <Label htmlFor="external_url">Link da página (opcional)</Label>
                 <Input
                   id="external_url"
+                  type="url"
                   placeholder="https://exemplo.com/arquivo"
                   value={form.external_url}
                   onChange={(e) => setForm({ ...form, external_url: e.target.value })}
