@@ -22,6 +22,7 @@ export default defineConfig({
               if (id.includes("lucide-react") || id.includes("sonner")) return "vendor-ui";
               return "vendor";
             }
+            return undefined;
           },
         },
       },
