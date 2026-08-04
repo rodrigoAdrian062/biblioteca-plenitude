@@ -323,11 +323,9 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
 
       <div
         ref={containerRef}
-        className={`relative w-full max-w-full overflow-auto p-2 select-none sm:p-3 ${
+        className={`relative w-full max-w-full overflow-auto p-2 sm:p-3 ${
           full ? "flex-1 min-h-0" : "max-h-[80vh]"
         }`}
-        onContextMenu={(e) => e.preventDefault()}
-        onDragStart={(e) => e.preventDefault()}
       >
         <Document
           file={url}
