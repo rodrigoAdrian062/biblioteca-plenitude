@@ -52,29 +52,8 @@ export function AppHeader({
           </span>
         </Link>
 
-        <form
-          className="order-last hidden w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-xs md:block"
-          onSubmit={(e) => {
-            e.preventDefault();
-            navigate({
-              to: "/biblioteca",
-              search: { q: q.trim().slice(0, 100), autor: "", categoria: "", grau: 0, tema: "", fav: false },
-            });
-          }}
-        >
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              className="h-9 pl-9"
-              type="search"
-              aria-label="Buscar obras"
-              placeholder="Buscar obras..."
-              value={q}
-              maxLength={100}
-              onChange={(e) => setQ(e.target.value)}
-            />
-          </div>
-        </form>
+        {/* Busca removida do topo conforme solicitado */}
+
 
         <div className="ml-auto flex items-center gap-2">
           {userId && !isAdmin ? (
