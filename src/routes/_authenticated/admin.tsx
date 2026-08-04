@@ -159,9 +159,13 @@ function StatsPanel() {
     { label: "Obras no acervo", value: data?.books ?? 0 },
     { label: "Leituras registradas", value: data?.reads ?? 0 },
   ];
+  const isLoadingStats = useQuery({ queryKey: ["admin-stats"], queryFn: () => adminStats() }).isLoading;
+
   return (
     <div className="grid gap-4 sm:grid-cols-3">
-      {cards.map((c) => (
+      {isLoadingStats ? (
+        [1, 2, 3].map(i => <Skeleton key={i} className="h-24 rounded-2xl" />)
+      ) : cards.map((c) => (
         <Card
           key={c.label}
           className="rounded-2xl border-border/60 bg-card/60 transition-colors hover:border-primary/40"
@@ -520,7 +524,21 @@ function BooksAdmin() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Carregando...</p>
+        <div className="space-y-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="grid grid-cols-[3rem_minmax(0,1fr)] items-start gap-3 rounded-md border border-border/60 bg-card p-3">
+              <Skeleton className="h-16 w-12 rounded border border-border/60" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+                <div className="flex gap-1.5">
+                  <Skeleton className="h-4 w-16 rounded-full" />
+                  <Skeleton className="h-4 w-16 rounded-full" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="space-y-2">
           {books
@@ -809,7 +827,23 @@ function MembersAdmin() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Carregando...</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-2xl border border-border/60 bg-card/60 p-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Skeleton className="h-9 flex-1 rounded-md" />
+                <Skeleton className="h-9 w-20 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="space-y-2">
           {members.map((m) => (
