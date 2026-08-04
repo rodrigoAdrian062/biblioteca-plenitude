@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Construction, Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
+import { Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,15 +92,6 @@ export function AppHeader({
           >
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
-          <Badge
-            variant="outline"
-            className="hidden items-center gap-1 border-primary/40 text-primary sm:inline-flex"
-            title="Sistema em desenvolvimento — apenas teste"
-          >
-            <Construction className="h-3 w-3" />
-            <span className="hidden lg:inline">Em desenvolvimento</span>
-            <span className="lg:hidden">Teste</span>
-          </Badge>
 
           {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
 
