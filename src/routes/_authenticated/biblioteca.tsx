@@ -741,7 +741,7 @@ function BookGrid({
                 </div>
               )}
             </div>
-            <div className="min-w-0 flex-1 text-left">
+            <div className="hidden min-w-0 flex-1 text-left sm:block">
               <div className="flex flex-col">
                 <p className="line-clamp-2 font-display text-sm leading-snug text-foreground">
                   {book.title}
