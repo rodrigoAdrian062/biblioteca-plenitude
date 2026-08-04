@@ -664,9 +664,16 @@ function BookGrid({
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="line-clamp-2 font-display text-sm leading-snug text-foreground">
-                {catalogName(book.author, book.title)}
-              </p>
+              <div className="flex flex-col">
+                <p className="line-clamp-1 font-display text-sm leading-snug text-foreground">
+                  {book.title}
+                </p>
+                {book.author && (
+                  <p className="line-clamp-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {book.author}
+                  </p>
+                )}
+              </div>
               <div className="mt-1 flex flex-wrap items-center gap-1">
                 <Badge
                   variant={book.scope === "nao_maconico" ? "secondary" : "default"}
@@ -738,9 +745,16 @@ function BookGrid({
                 <Heart className="absolute right-1 top-1 h-3.5 w-3.5 fill-primary text-primary" />
               ) : null}
             </div>
-            <p className="line-clamp-2 p-1.5 text-[11px] leading-tight text-foreground">
-              {catalogName(book.author, book.title)}
-            </p>
+            <div className="p-1.5 pt-1 flex flex-col gap-0.5">
+              <p className="line-clamp-1 font-display text-[11px] leading-tight text-foreground">
+                {book.title}
+              </p>
+              {book.author && (
+                <p className="line-clamp-1 text-[9px] font-medium uppercase tracking-tight text-muted-foreground/80">
+                  {book.author}
+                </p>
+              )}
+            </div>
           </Link>
         ))}
       </div>
@@ -780,9 +794,16 @@ function BookGrid({
           </div>
           <CardHeader className="gap-1 p-3 pb-1">
             <div className="flex min-w-0 items-start justify-between gap-1.5">
-              <CardTitle className="line-clamp-3 font-display text-sm leading-snug">
-                {catalogName(book.author, book.title)}
-              </CardTitle>
+              <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                <CardTitle className="line-clamp-2 font-display text-sm leading-snug">
+                  {book.title}
+                </CardTitle>
+                {book.author && (
+                  <p className="line-clamp-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {book.author}
+                  </p>
+                )}
+              </div>
               <Badge variant="outline" className="shrink-0 px-1.5 text-[10px]">
                 {degreeLabel(book.min_degree)}
               </Badge>
