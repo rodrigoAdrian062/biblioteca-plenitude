@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 
 function ProfilePage() {
   const { profile, isAdmin } = useSessionProfile();
-  const { data, refetch } = useQuery({ queryKey: ["own-login"], queryFn: () => getOwnLogin() });
+  const { data, refetch, isLoading } = useQuery({ queryKey: ["own-login"], queryFn: () => getOwnLogin() });
   const bloqueado = isSharedTestAccount(data?.email ?? "");
 
   const [login, setLogin] = useState("");
@@ -94,7 +94,23 @@ function ProfilePage() {
             <CardTitle className="font-display text-lg">Login e senha</CardTitle>
           </CardHeader>
           <CardContent>
-            {bloqueado ? (
+            {isLoading ? (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <Skeleton className="h-10 w-32" />
+              </div>
+            ) : bloqueado ? (
               <div className="rounded-md border border-border/60 bg-muted/40 p-4 text-sm text-muted-foreground">
                 <p className="font-medium text-foreground">Conta BETA (teste compartilhado)</p>
                 <p className="mt-1">

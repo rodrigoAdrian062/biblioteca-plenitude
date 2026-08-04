@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, BellRing, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -48,7 +49,7 @@ export function NotificationsBell({
   const [firstSeenAt, setFirstSeenAt] = useState<number | null>(null);
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
 
-  const { data: books } = useQuery({
+  const { data: books, isLoading } = useQuery({
     queryKey: ["books"],
     queryFn: () => listBooks(),
     refetchInterval: 60_000,
@@ -169,7 +170,19 @@ export function NotificationsBell({
         </div>
 
         <ScrollArea className="max-h-72">
-          {count === 0 ? (
+          {isLoading ? (
+            <div className="space-y-2 px-3 py-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-2 py-2">
+                  <div className="flex-1 space-y-1">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                  <Skeleton className="h-7 w-7 rounded-md" />
+                </div>
+              ))}
+            </div>
+          ) : count === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-muted-foreground">
               Nenhuma novidade por enquanto.
             </p>
