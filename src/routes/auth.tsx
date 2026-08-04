@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import logo from "@/assets/logo.png";
-import { avisarErro } from "@/lib/avisos";
+import { avisarErro, avisarSucesso } from "@/lib/avisos";
 import { supabase } from "@/integrations/supabase/client";
 import { loginToEmail } from "@/lib/credentials";
 import { Button } from "@/components/ui/button";
