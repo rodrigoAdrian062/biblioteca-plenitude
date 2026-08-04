@@ -634,12 +634,120 @@ function BookGrid({
   className = "",
   favSet,
   onToggleFavorite,
+  view = "grande",
 }: {
   books: BookItem[];
   className?: string;
   favSet: Set<string>;
   onToggleFavorite: (bookId: string, favorite: boolean) => void;
+  view?: ViewMode;
 }) {
+  if (view === "lista") {
+    return (
+      <div className={`space-y-2 ${className}`}>
+        {books.map((book) => (
+          <div
+            key={book.id}
+            className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5 transition-colors hover:border-primary/40"
+          >
+            <div className="h-16 w-12 shrink-0 overflow-hidden rounded bg-secondary">
+              {book.cover_url ? (
+                <img
+                  src={book.cover_url}
+                  alt={`Capa da obra ${book.title}`}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-primary/50">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="line-clamp-2 font-display text-sm leading-snug text-foreground">
+                {catalogName(book.author, book.title)}
+              </p>
+              <div className="mt-1 flex flex-wrap items-center gap-1">
+                <Badge
+                  variant={book.scope === "nao_maconico" ? "secondary" : "default"}
+                  className="px-1.5 text-[10px]"
+                >
+                  {scopeLabel(book.scope)}
+                </Badge>
+                <Badge variant="outline" className="px-1.5 text-[10px]">
+                  {kindLabel(book.kind)}
+                </Badge>
+                <Badge variant="outline" className="px-1.5 text-[10px]">
+                  {degreeLabel(book.min_degree)}
+                </Badge>
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={favSet.has(book.id) ? "Remover dos favoritos" : "Marcar como favorita"}
+                aria-pressed={favSet.has(book.id)}
+                className="h-8 w-8"
+                onClick={() => onToggleFavorite(book.id, !favSet.has(book.id))}
+              >
+                <Heart
+                  className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                />
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/obra/$id" params={{ id: book.id }}>
+                  <BookOpen className="h-4 w-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline">Ler</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (view === "compacto") {
+    return (
+      <div
+        className={`grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 ${className}`}
+      >
+        {books.map((book) => (
+          <Link
+            key={book.id}
+            to="/obra/$id"
+            params={{ id: book.id }}
+            className="group overflow-hidden rounded-lg border border-border/60 bg-card transition-all hover:-translate-y-0.5 hover:border-primary/40"
+          >
+            <div className="relative aspect-[3/4] w-full bg-secondary">
+              {book.cover_url ? (
+                <img
+                  src={book.cover_url}
+                  alt={`Capa da obra ${book.title}`}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-primary/50">
+                  <BookOpen className="h-6 w-6" />
+                </div>
+              )}
+              {favSet.has(book.id) ? (
+                <Heart className="absolute right-1 top-1 h-3.5 w-3.5 fill-primary text-primary" />
+              ) : null}
+            </div>
+            <p className="line-clamp-2 p-1.5 text-[11px] leading-tight text-foreground">
+              {catalogName(book.author, book.title)}
+            </p>
+          </Link>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className={`grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 ${className}`}>
       {books.map((book) => (
