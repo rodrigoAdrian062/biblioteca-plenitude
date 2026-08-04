@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: em tela maiores nao aparece nome do livro e autor">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: remover grande deixar apenas em lista e no computar deixar 3 colunas do mesmo tamnaho da lista">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
