@@ -616,7 +616,7 @@ function Library() {
                     </div>
                   </div>
                   <div className="gold-rule my-3 h-px w-full" />
-                  <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={s.books} />
+                  <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} view={view} books={s.books} />
                 </section>
               ))}
           </div>
