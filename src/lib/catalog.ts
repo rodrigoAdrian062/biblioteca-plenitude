@@ -12,6 +12,8 @@ export function scopeLabel(scope: string | null | undefined): string {
 export const KINDS = [
   { value: "livro", label: "Livro" },
   { value: "artigo", label: "Artigo" },
+  { value: "peca_arquitetura", label: "Peça de Arquitetura" },
+  { value: "outros", label: "Outros" },
 ] as const;
 
 export type BookKind = (typeof KINDS)[number]["value"];
