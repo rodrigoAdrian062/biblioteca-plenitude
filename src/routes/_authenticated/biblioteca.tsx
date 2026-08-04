@@ -36,8 +36,6 @@ const ALL = "__all__";
 type ViewMode = "grande" | "compacto" | "lista";
 
 const VIEWS: { value: ViewMode; label: string; icon: typeof List }[] = [
-  { value: "grande", label: "Blocos", icon: LayoutGrid },
-  { value: "compacto", label: "Compacto", icon: Grid2x2 },
   { value: "lista", label: "Lista", icon: List },
 ];
 
@@ -78,7 +76,7 @@ function Library() {
   const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
-  const [view, setView] = useState<ViewMode>("grande");
+  const [view, setView] = useState<ViewMode>("lista");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
