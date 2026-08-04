@@ -13,6 +13,7 @@ export const KINDS = [
   { value: "livro", label: "Livro" },
   { value: "artigo", label: "Artigo" },
   { value: "peca_arquitetura", label: "Peça de Arquitetura" },
+  { value: "trabalho_maconico", label: "Trabalho Maçônico" },
   { value: "outros", label: "Outros" },
 ] as const;
 

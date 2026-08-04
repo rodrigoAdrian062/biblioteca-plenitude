@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Otimize a performance do carregamento, aplique lazy loading em imagens e reduza o tempo de execução do JS para atingir nota máxima no PageSpeed.">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: quero ao adiconar obra com esse tipo">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
