@@ -472,6 +472,19 @@ function BooksAdmin() {
 
 
               <div className="space-y-2">
+                <Label htmlFor="external_url">Link da página (opcional)</Label>
+                <Input
+                  id="external_url"
+                  placeholder="https://exemplo.com/arquivo"
+                  value={form.external_url}
+                  onChange={(e) => setForm({ ...form, external_url: e.target.value })}
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Se informado, o sistema abrirá este link em uma nova aba em vez de abrir o PDF interno.
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="file">Arquivo (PDF/EPUB)</Label>
                 <Input
                   id="file"
@@ -603,7 +616,7 @@ function BooksAdmin() {
                     published: b.published,
                     scope: (b.scope as BookScope) ?? "maconico",
                     kind: (b.kind as BookKind) ?? "livro",
-
+                    external_url: b.external_url ?? "",
                   });
 
                   setOpen(true);
