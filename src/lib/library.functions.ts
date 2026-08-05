@@ -107,6 +107,7 @@ export const resetAccessLogs = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
 
+    const { admin } = await import("./admin.server");
     const db = await admin();
     const { error } = await db
       .from("book_access_logs")
