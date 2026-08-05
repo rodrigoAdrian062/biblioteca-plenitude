@@ -671,6 +671,7 @@ function BookGrid({
                   src={book.cover_url}
                   alt={`Capa da obra ${book.title}`}
                   loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
               ) : (
