@@ -13,7 +13,7 @@ import {
   listMembers,
   updateMember,
 } from "@/lib/admin.functions";
-import { adminStats, listBooks, getGlobalSettings, updateGlobalSetting } from "@/lib/library.functions";
+import { adminStats, listBooks, getGlobalSettings, updateGlobalSetting, resetAccessLogs } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel, type BookScope, type BookKind } from "@/lib/catalog";
 
@@ -159,36 +159,84 @@ function AdminPage() {
 }
 
 function StatsPanel() {
-  const { data } = useQuery({ queryKey: ["admin-stats"], queryFn: () => adminStats() });
+  const queryClient = useQueryClient();
+  const { data, isLoading: isLoadingStats } = useQuery({ 
+    queryKey: ["admin-stats"], 
+    queryFn: () => adminStats() 
+  });
+
+  const resetLogs = useMutation({
+    mutationFn: () => resetAccessLogs(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
+      avisarSucesso("Histórico de leituras reiniciado.", "Dica: o contador de leituras agora está em zero.");
+    },
+    onError: (err: any) => avisarErro(err, "Erro ao resetar leituras."),
+  });
+
+  const handleReset = () => {
+    if (window.confirm("Deseja realmente zerar todas as leituras registradas? Esta ação não pode ser desfeita.")) {
+      resetLogs.mutate();
+    }
+  };
+
   const cards = [
     { label: "Irmãos cadastrados", value: data?.members ?? 0 },
     { label: "Obras no acervo", value: data?.books ?? 0 },
     { label: "Leituras registradas", value: data?.reads ?? 0 },
   ];
-  const isLoadingStats = useQuery({ queryKey: ["admin-stats"], queryFn: () => adminStats() }).isLoading;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      {isLoadingStats ? (
-        [1, 2, 3].map(i => <Skeleton key={i} className="h-24 rounded-2xl" />)
-      ) : cards.map((c) => (
-        <Card
-          key={c.label}
-          className="rounded-2xl border-border/60 bg-card/60 transition-colors hover:border-primary/40"
-        >
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-normal uppercase tracking-wide text-muted-foreground">
-              {c.label}
-            </CardTitle>
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-3">
+        {isLoadingStats ? (
+          [1, 2, 3].map(i => <Skeleton key={i} className="h-24 rounded-2xl" />)
+        ) : cards.map((c) => (
+          <Card
+            key={c.label}
+            className="rounded-2xl border-border/60 bg-card/60 transition-colors hover:border-primary/40"
+          >
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-normal uppercase tracking-wide text-muted-foreground">
+                {c.label}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-display text-3xl text-primary">{c.value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {!isLoadingStats && (
+        <Card className="rounded-2xl border-border/60 bg-card/60">
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Manutenção do Sistema</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="font-display text-3xl text-primary">{c.value}</p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">Zerar contador de leituras</p>
+                <p className="text-xs text-muted-foreground">
+                  Remove todos os registros de acesso às obras. Isso não afeta o progresso individual dos irmãos.
+                </p>
+              </div>
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                onClick={handleReset}
+                disabled={resetLogs.isPending}
+              >
+                {resetLogs.isPending ? "Reiniciando..." : "Resetar Leituras"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
-      ))}
+      )}
     </div>
   );
 }
+
 
 type BookForm = {
   title: string;

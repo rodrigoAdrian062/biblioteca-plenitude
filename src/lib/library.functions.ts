@@ -101,6 +101,22 @@ export const getBook = createServerFn({ method: "POST" })
     };
   });
 
+export const resetAccessLogs = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    await assertAdmin(context.supabase, context.userId);
+
+    const { error } = await (context.supabase as any)
+      .from("book_access_logs")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000"); // Delete all
+
+    if (error) throw error;
+    return { success: true };
+  });
+
+
 export const adminStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
