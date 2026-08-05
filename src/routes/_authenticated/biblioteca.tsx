@@ -290,27 +290,6 @@ function Library() {
               <Badge variant="outline" className="h-6 px-2 text-[10px]">
                 {visible.length} {visible.length === 1 ? "obra" : "obras"}
               </Badge>
-              <div
-                role="group"
-                aria-label="Modo de visualização"
-                className="flex items-center gap-0.5 rounded-full border border-border/60 bg-background/60 p-0.5"
-              >
-                {VIEWS.map((v) => (
-                  <Button
-                    key={v.value}
-                    type="button"
-                    size="icon"
-                    variant={view === v.value ? "default" : "ghost"}
-                    className="h-7 w-7 rounded-full"
-                    aria-label={`Visualizar em ${v.label.toLowerCase()}`}
-                    aria-pressed={view === v.value}
-                    title={v.label}
-                    onClick={() => changeView(v.value)}
-                  >
-                    <v.icon className="h-3.5 w-3.5" />
-                  </Button>
-                ))}
-              </div>
             </div>
           </div>
         </section>
