@@ -36,9 +36,6 @@ const ALL = "__all__";
 
 type ViewMode = "lista";
 
-const VIEWS: { value: ViewMode; label: string; icon: typeof List }[] = [
-  { value: "lista", label: "Lista", icon: List },
-];
 
 export const Route = createFileRoute("/_authenticated/biblioteca")({
   validateSearch: (search: Record<string, unknown>): LibrarySearch => ({
