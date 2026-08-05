@@ -191,6 +191,7 @@ type BookForm = {
   description: string;
   min_degree: number;
   published: boolean;
+  watermark_enabled: boolean;
   scope: BookScope;
   kind: BookKind;
   external_url: string;
@@ -203,6 +204,7 @@ const emptyBook: BookForm = {
   description: "",
   min_degree: 1,
   published: true,
+  watermark_enabled: true,
   scope: "maconico",
   kind: "livro",
   external_url: "",
@@ -279,6 +281,7 @@ function BooksAdmin() {
         description: string | null;
         min_degree: number;
         published: boolean;
+        watermark_enabled: boolean;
         scope: BookScope;
         kind: BookKind;
         file_path?: string;
@@ -291,6 +294,7 @@ function BooksAdmin() {
         description: form.description.trim() || null,
         min_degree: form.min_degree,
         published: form.published,
+        watermark_enabled: form.watermark_enabled,
         scope: form.scope,
         kind: form.kind,
         external_url: form.external_url.trim() || null,
@@ -479,6 +483,25 @@ function BooksAdmin() {
                   type="url"
                   placeholder="https://exemplo.com/arquivo"
                   value={form.external_url}
+                  onChange={(e) => setForm({ ...form, external_url: e.target.value })}
+                />
+              </div>
+
+              <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-3">
+                <div className="space-y-0.5">
+                  <Label htmlFor="watermark-toggle">Marca d'água</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Exibe o nome do irmão sobre o PDF para proteção.
+                  </p>
+                </div>
+                <Switch
+                  id="watermark-toggle"
+                  checked={form.watermark_enabled}
+                  onCheckedChange={(v) => setForm({ ...form, watermark_enabled: v })}
+                />
+              </div>
+
+              <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-3">
                   onChange={(e) => setForm({ ...form, external_url: e.target.value })}
                 />
                 <p className="text-[10px] text-muted-foreground">
