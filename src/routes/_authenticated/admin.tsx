@@ -489,15 +489,6 @@ function BooksAdmin() {
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                 />
               </div>
-                        {d.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  Use “Sem grau” para obras não-maçônicas: ficam visíveis a todos os irmãos.
-                </p>
-              </div>
               <div className="space-y-2">
                 <Label>Tema do acervo</Label>
                 <Select
