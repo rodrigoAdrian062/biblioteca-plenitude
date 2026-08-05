@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { BookOpen, Search, X, Heart, History, Trash2, List } from "lucide-react";
+import { BookOpen, Search, X, Heart, History, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
@@ -81,11 +81,6 @@ function Library() {
     const saved = window.localStorage.getItem("acervo-visualizacao");
     if (saved === "lista") setView(saved);
   }, []);
-
-  function changeView(v: ViewMode) {
-    setView(v);
-    if (typeof window !== "undefined") window.localStorage.setItem("acervo-visualizacao", v);
-  }
 
   useEffect(() => {
     setTerm(q);
