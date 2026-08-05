@@ -63,6 +63,7 @@ export type Database = {
           scope: string
           title: string
           updated_at: string
+          watermark_enabled: boolean
         }
         Insert: {
           author?: string | null
@@ -80,6 +81,7 @@ export type Database = {
           scope?: string
           title: string
           updated_at?: string
+          watermark_enabled?: boolean
         }
         Update: {
           author?: string | null
@@ -97,6 +99,7 @@ export type Database = {
           scope?: string
           title?: string
           updated_at?: string
+          watermark_enabled?: boolean
         }
         Relationships: []
       }

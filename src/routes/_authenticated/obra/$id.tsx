@@ -151,7 +151,7 @@ function BookReaderPage() {
                 <Suspense fallback={<p className="text-sm text-muted-foreground">Carregando leitor...</p>}>
                   <PdfReader
                     url={book.file_url}
-                    watermark={profile?.full_name}
+                    watermark={book.watermark_enabled ? profile?.full_name : undefined}
                     storageKey={id}
                     initialPage={entry?.last_page}
                     onProgress={handleProgress}

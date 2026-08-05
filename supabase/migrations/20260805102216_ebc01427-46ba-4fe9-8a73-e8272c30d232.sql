@@ -1,0 +1,1 @@
+ALTER TABLE public.books ADD COLUMN watermark_enabled boolean NOT NULL DEFAULT true;
