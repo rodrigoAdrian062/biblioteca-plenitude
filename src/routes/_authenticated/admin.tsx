@@ -13,7 +13,7 @@ import {
   listMembers,
   updateMember,
 } from "@/lib/admin.functions";
-import { adminStats, listBooks } from "@/lib/library.functions";
+import { adminStats, listBooks, getGlobalSettings, updateGlobalSetting } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel, type BookScope, type BookKind } from "@/lib/catalog";
 
@@ -135,6 +135,8 @@ function AdminPage() {
               <TabsTrigger value="acervo">Acervo</TabsTrigger>
               <TabsTrigger value="irmaos">Irmãos</TabsTrigger>
               <TabsTrigger value="painel">Painel</TabsTrigger>
+              <TabsTrigger value="config">Configurações</TabsTrigger>
+
             </TabsList>
             <TabsContent value="acervo" className="mt-5">
               <BooksAdmin />
@@ -145,6 +147,10 @@ function AdminPage() {
             <TabsContent value="painel" className="mt-5">
               <StatsPanel />
             </TabsContent>
+            <TabsContent value="config" className="mt-5">
+              <SettingsAdmin />
+            </TabsContent>
+
           </Tabs>
         )}
       </main>
@@ -204,7 +210,7 @@ const emptyBook: BookForm = {
   description: "",
   min_degree: 1,
   published: true,
-  watermark_enabled: true,
+  watermark_enabled: false,
   scope: "maconico",
   kind: "livro",
   external_url: "",
@@ -1129,3 +1135,49 @@ function MembersAdmin() {
     </section>
   );
 }
+
+function SettingsAdmin() {
+  const queryClient = useQueryClient();
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ["global-settings"],
+    queryFn: () => getGlobalSettings(),
+  });
+
+  const updateSetting = useMutation({
+    mutationFn: (vars: { key: string; value: any }) => updateGlobalSetting({ data: vars }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["global-settings"] });
+      avisarSucesso("Configuração atualizada.");
+    },
+    onError: (err: any) => avisarErro(err, "Erro ao atualizar configuração."),
+  });
+
+  if (isLoading) return <Skeleton className="h-64 rounded-2xl" />;
+
+  const watermarkGlobal = settings?.watermark_enabled === true;
+
+  return (
+    <Card className="rounded-2xl border-border/60 bg-card/60">
+      <CardHeader>
+        <CardTitle className="font-display">Configurações Gerais</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-4">
+          <div className="space-y-1">
+            <Label className="text-base">Marca d'água global</Label>
+            <p className="text-sm text-muted-foreground">
+              Se ativado, as obras com marca d'água individual habilitada exibirão o nome do irmão. 
+              Se desativado, nenhuma obra exibirá marca d'água, independente da configuração individual.
+            </p>
+          </div>
+          <Switch
+            checked={watermarkGlobal}
+            onCheckedChange={(v) => updateSetting.mutate({ key: "watermark_enabled", value: v })}
+            disabled={updateSetting.isPending}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+

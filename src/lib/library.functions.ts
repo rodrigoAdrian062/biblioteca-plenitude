@@ -1,6 +1,33 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabase } from "@/integrations/supabase/client";
+
+export const getGlobalSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase.from("global_settings").select("*");
+    if (error) throw error;
+    return (data || []).reduce((acc: Record<string, any>, curr) => {
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {});
+  });
+
+export const updateGlobalSetting = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) => z.object({ key: z.string(), value: z.any() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    await assertAdmin(context.supabase, context.userId);
+
+    const { error } = await context.supabase
+      .from("global_settings")
+      .upsert({ key: data.key, value: data.value, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    return { success: true };
+  });
+
 
 export const listBooks = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
