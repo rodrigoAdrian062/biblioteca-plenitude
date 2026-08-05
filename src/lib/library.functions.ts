@@ -110,7 +110,7 @@ export const resetAccessLogs = createServerFn({ method: "POST" })
     const { error } = await (context.supabase as any)
       .from("book_access_logs")
       .delete()
-      .neq("id", "00000000-0000-0000-0000-000000000000"); // Delete all
+      .not("id", "is", null); // Garante que deleta todos os registros de forma compatível
 
     if (error) throw error;
     return { success: true };
