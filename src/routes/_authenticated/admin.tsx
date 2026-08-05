@@ -501,14 +501,6 @@ function BooksAdmin() {
                 />
               </div>
 
-              <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-3">
-                  onChange={(e) => setForm({ ...form, external_url: e.target.value })}
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Se informado, o sistema abrirá este link em uma nova aba em vez de abrir o PDF interno.
-                </p>
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="file">Arquivo PDF/EPUB (opcional se houver link)</Label>
                 <Input
