@@ -2,6 +2,32 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+export const getGlobalSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    // We use any casting here to bypass generated type limitations until they refresh
+    const { data, error } = await (context.supabase as any).from("global_settings").select("*");
+    if (error) throw error;
+    return (data || []).reduce((acc: Record<string, any>, curr: any) => {
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {});
+  });
+
+export const updateGlobalSetting = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) => z.object({ key: z.string(), value: z.any() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    await assertAdmin(context.supabase, context.userId);
+
+    const { error } = await (context.supabase as any)
+      .from("global_settings")
+      .upsert({ key: data.key, value: data.value, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    return { success: true };
+  });
+
 export const listBooks = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

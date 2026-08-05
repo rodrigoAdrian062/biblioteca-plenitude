@@ -6,7 +6,7 @@ import { ClientOnly } from "@tanstack/react-router";
 import { ArrowLeft, Heart } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
-import { getBook } from "@/lib/library.functions";
+import { getBook, getGlobalSettings } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, saveProgress } from "@/lib/reading.functions";
 import { degreeLabel } from "@/lib/masonic";
 import { catalogName, scopeLabel, kindLabel } from "@/lib/catalog";
@@ -39,10 +39,22 @@ function BookReaderPage() {
 
   const queryClient = useQueryClient();
 
-  const { data: book, isLoading, error } = useQuery({
-    queryKey: ["book", id],
-    queryFn: () => getBook({ data: { id } }),
+  const { data: readerData, isLoading, error } = useQuery({
+    queryKey: ["book-reader", id],
+    queryFn: async () => {
+      const [book, settings] = await Promise.all([
+        getBook({ data: { id } }),
+        getGlobalSettings(),
+      ]);
+      return { book, settings };
+    },
   });
+
+  const book = readerData?.book;
+  const settings = readerData?.settings;
+
+  const isWatermarkEnabled = settings?.["watermark_enabled"] === true && book?.watermark_enabled;
+
 
   const { data: favorites = [] } = useQuery({
     queryKey: ["favorites"],
@@ -151,7 +163,7 @@ function BookReaderPage() {
                 <Suspense fallback={<p className="text-sm text-muted-foreground">Carregando leitor...</p>}>
                   <PdfReader
                     url={book.file_url}
-                    watermark={book.watermark_enabled ? profile?.full_name : undefined}
+                    watermark={isWatermarkEnabled ? profile?.full_name : undefined}
                     storageKey={id}
                     initialPage={entry?.last_page}
                     onProgress={handleProgress}
