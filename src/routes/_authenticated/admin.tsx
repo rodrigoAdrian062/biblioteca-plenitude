@@ -13,7 +13,7 @@ import {
   listMembers,
   updateMember,
 } from "@/lib/admin.functions";
-import { adminStats, listBooks, getGlobalSettings, updateGlobalSetting } from "@/lib/library.functions";
+import { adminStats, listBooks, getGlobalSettings, updateGlobalSetting, resetAccessLogs } from "@/lib/library.functions";
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel, type BookScope, type BookKind } from "@/lib/catalog";
 
