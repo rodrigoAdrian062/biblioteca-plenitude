@@ -322,6 +322,7 @@ function Library() {
               <Input
                 className="pl-9"
                 type="search"
+                inputMode="search"
                 aria-label="Buscar por título, autor ou categoria"
                 placeholder="Buscar por título, autor ou categoria"
                 value={term}
