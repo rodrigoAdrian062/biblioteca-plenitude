@@ -235,7 +235,7 @@ function BooksAdmin() {
     setEditingId(null);
   }
 
-  async function resizeImage(file: File, maxWidth = 800): Promise<Blob> {
+  async function resizeImage(file: File, maxWidth = 300): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
