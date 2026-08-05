@@ -624,13 +624,14 @@ function BooksAdmin() {
                 aria-label="Editar obra"
                 onClick={() => {
                   setEditingId(b.id);
-                  setForm({
+                   setForm({
                     title: b.title,
                     author: b.author ?? "",
                     category: b.category ?? "",
                     description: b.description ?? "",
                     min_degree: b.min_degree,
                     published: b.published,
+                    watermark_enabled: b.watermark_enabled ?? true,
                     scope: (b.scope as BookScope) ?? "maconico",
                     kind: (b.kind as BookKind) ?? "livro",
                     external_url: b.external_url ?? "",
