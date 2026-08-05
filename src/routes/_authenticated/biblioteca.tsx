@@ -322,6 +322,7 @@ function Library() {
               <Input
                 className="pl-9"
                 type="search"
+                inputMode="search"
                 aria-label="Buscar por título, autor ou categoria"
                 placeholder="Buscar por título, autor ou categoria"
                 value={term}
@@ -670,6 +671,7 @@ function BookGrid({
                   src={book.cover_url}
                   alt={`Capa da obra ${book.title}`}
                   loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
               ) : (
