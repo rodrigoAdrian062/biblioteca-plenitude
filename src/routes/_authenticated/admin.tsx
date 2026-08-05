@@ -1154,7 +1154,7 @@ function SettingsAdmin() {
 
   if (isLoading) return <Skeleton className="h-64 rounded-2xl" />;
 
-  const watermarkGlobal = settings?.watermark_enabled === true;
+  const watermarkGlobal = settings?.["watermark_enabled"] === true;
 
   return (
     <Card className="rounded-2xl border-border/60 bg-card/60">
