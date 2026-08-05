@@ -135,7 +135,6 @@ function AdminPage() {
               <TabsTrigger value="acervo">Acervo</TabsTrigger>
               <TabsTrigger value="irmaos">Irmãos</TabsTrigger>
               <TabsTrigger value="painel">Painel</TabsTrigger>
-              <TabsTrigger value="config">Configurações</TabsTrigger>
 
             </TabsList>
             <TabsContent value="acervo" className="mt-5">
@@ -146,9 +145,6 @@ function AdminPage() {
             </TabsContent>
             <TabsContent value="painel" className="mt-5">
               <StatsPanel />
-            </TabsContent>
-            <TabsContent value="config" className="mt-5">
-              <SettingsAdmin />
             </TabsContent>
 
           </Tabs>
@@ -209,29 +205,40 @@ function StatsPanel() {
       </div>
 
       {!isLoadingStats && (
-        <Card className="rounded-2xl border-border/60 bg-card/60">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Manutenção do Sistema</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Zerar contador de leituras</p>
-                <p className="text-xs text-muted-foreground">
-                  Remove todos os registros de acesso às obras. Isso não afeta o progresso individual dos irmãos.
-                </p>
+        <div className="grid gap-6">
+          <Card className="rounded-2xl border-border/60 bg-card/60">
+            <CardHeader>
+              <CardTitle className="text-sm font-medium">Configurações Globais</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GlobalWatermarkControl />
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl border-border/60 bg-card/60">
+            <CardHeader>
+              <CardTitle className="text-sm font-medium">Manutenção do Sistema</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Zerar contador de leituras</p>
+                  <p className="text-xs text-muted-foreground">
+                    Remove todos os registros de acesso às obras. Isso não afeta o progresso individual dos irmãos.
+                  </p>
+                </div>
+                <Button 
+                  variant="destructive" 
+                  size="sm" 
+                  onClick={handleReset}
+                  disabled={resetLogs.isPending}
+                >
+                  {resetLogs.isPending ? "Reiniciando..." : "Resetar Leituras"}
+                </Button>
               </div>
-              <Button 
-                variant="destructive" 
-                size="sm" 
-                onClick={handleReset}
-                disabled={resetLogs.isPending}
-              >
-                {resetLogs.isPending ? "Reiniciando..." : "Resetar Leituras"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );
@@ -1184,7 +1191,7 @@ function MembersAdmin() {
   );
 }
 
-function SettingsAdmin() {
+function GlobalWatermarkControl() {
   const queryClient = useQueryClient();
   const { data: settings, isLoading } = useQuery({
     queryKey: ["global-settings"],
@@ -1200,32 +1207,25 @@ function SettingsAdmin() {
     onError: (err: any) => avisarErro(err, "Erro ao atualizar configuração."),
   });
 
-  if (isLoading) return <Skeleton className="h-64 rounded-2xl" />;
+  if (isLoading) return <Skeleton className="h-20 w-full" />;
 
   const watermarkGlobal = settings?.["watermark_enabled"] === true;
 
   return (
-    <Card className="rounded-2xl border-border/60 bg-card/60">
-      <CardHeader>
-        <CardTitle className="font-display">Configurações Gerais</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-4">
-          <div className="space-y-1">
-            <Label className="text-base">Marca d'água global</Label>
-            <p className="text-sm text-muted-foreground">
-              Se ativado, as obras com marca d'água individual habilitada exibirão o nome do irmão. 
-              Se desativado, nenhuma obra exibirá marca d'água, independente da configuração individual.
-            </p>
-          </div>
-          <Switch
-            checked={watermarkGlobal}
-            onCheckedChange={(v) => updateSetting.mutate({ key: "watermark_enabled", value: v })}
-            disabled={updateSetting.isPending}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-4">
+      <div className="space-y-1">
+        <Label className="text-base">Marca d'água global</Label>
+        <p className="text-sm text-muted-foreground">
+          Se ativado, as obras com marca d'água habilitada individualmente exibirão o nome do irmão.
+        </p>
+      </div>
+      <Switch
+        checked={watermarkGlobal}
+        onCheckedChange={(v) => updateSetting.mutate({ key: "watermark_enabled", value: v })}
+        disabled={updateSetting.isPending}
+      />
+    </div>
   );
 }
+
 
