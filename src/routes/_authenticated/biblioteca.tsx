@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { BookOpen, Search, X, Heart, History, Trash2, LayoutGrid, Grid2x2, List } from "lucide-react";
+import { BookOpen, Search, X, Heart, History, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
@@ -36,9 +36,6 @@ const ALL = "__all__";
 
 type ViewMode = "lista";
 
-const VIEWS: { value: ViewMode; label: string; icon: typeof List }[] = [
-  { value: "lista", label: "Lista", icon: List },
-];
 
 export const Route = createFileRoute("/_authenticated/biblioteca")({
   validateSearch: (search: Record<string, unknown>): LibrarySearch => ({
@@ -84,11 +81,6 @@ function Library() {
     const saved = window.localStorage.getItem("acervo-visualizacao");
     if (saved === "lista") setView(saved);
   }, []);
-
-  function changeView(v: ViewMode) {
-    setView(v);
-    if (typeof window !== "undefined") window.localStorage.setItem("acervo-visualizacao", v);
-  }
 
   useEffect(() => {
     setTerm(q);
@@ -290,27 +282,6 @@ function Library() {
               <Badge variant="outline" className="h-6 px-2 text-[10px]">
                 {visible.length} {visible.length === 1 ? "obra" : "obras"}
               </Badge>
-              <div
-                role="group"
-                aria-label="Modo de visualização"
-                className="flex items-center gap-0.5 rounded-full border border-border/60 bg-background/60 p-0.5"
-              >
-                {VIEWS.map((v) => (
-                  <Button
-                    key={v.value}
-                    type="button"
-                    size="icon"
-                    variant={view === v.value ? "default" : "ghost"}
-                    className="h-7 w-7 rounded-full"
-                    aria-label={`Visualizar em ${v.label.toLowerCase()}`}
-                    aria-pressed={view === v.value}
-                    title={v.label}
-                    onClick={() => changeView(v.value)}
-                  >
-                    <v.icon className="h-3.5 w-3.5" />
-                  </Button>
-                ))}
-              </div>
             </div>
           </div>
         </section>
