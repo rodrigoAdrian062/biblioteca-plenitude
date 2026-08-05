@@ -450,13 +450,23 @@ function BooksAdmin() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">Categoria</Label>
-                  <Input
-                    id="category"
-                    maxLength={80}
-                    value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  />
+                  <Label htmlFor="min_degree">Grau (Categoria)</Label>
+                  <Select
+                    value={String(form.min_degree)}
+                    onValueChange={(v) => setForm({ ...form, min_degree: Number(v) })}
+                  >
+                    <SelectTrigger id="min_degree">
+                      <SelectValue placeholder="Selecione o grau" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Sem grau (liberado para todos)</SelectItem>
+                      {DEGREES.map((d) => (
+                        <SelectItem key={d.value} value={String(d.value)}>
+                          {d.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="space-y-2">
@@ -470,26 +480,14 @@ function BooksAdmin() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Grau mínimo</Label>
-                <Select
-                  value={String(form.min_degree)}
-                  onValueChange={(v) => setForm({ ...form, min_degree: Number(v) })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">Sem grau — liberado para todos</SelectItem>
-                    {DEGREES.map((d) => (
-                      <SelectItem key={d.value} value={String(d.value)}>
-                        {d.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  Use “Sem grau” para obras não-maçônicas: ficam visíveis a todos os irmãos.
-                </p>
+                <Label htmlFor="category">Assunto / Tags</Label>
+                <Input
+                  id="category"
+                  maxLength={80}
+                  placeholder="Ex: História, Simbolismo, Ritualística..."
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                />
               </div>
               <div className="space-y-2">
                 <Label>Tema do acervo</Label>
