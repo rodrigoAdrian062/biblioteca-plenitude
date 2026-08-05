@@ -107,10 +107,11 @@ export const resetAccessLogs = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
 
-    const { error } = await (context.supabase as any)
+    const db = await admin();
+    const { error } = await db
       .from("book_access_logs")
       .delete()
-      .not("id", "is", null); // Garante que deleta todos os registros de forma compatível
+      .neq("action", "impossible_action_value"); // Força o delete de todos os registros ignorando RLS via admin client
 
     if (error) throw error;
     return { success: true };
