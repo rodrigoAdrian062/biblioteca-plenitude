@@ -494,11 +494,6 @@ function Library() {
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-[8px] text-muted-foreground">Sem Capa</div>
                       )}
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-primary/50">
-                          <BookOpen className="h-5 w-5" />
-                        </div>
-                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="line-clamp-2 text-xs font-medium text-foreground">
