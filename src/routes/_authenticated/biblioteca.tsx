@@ -480,9 +480,20 @@ function Library() {
                     params={{ id: h.book_id }}
                     className="flex gap-3 rounded-xl border border-border/60 bg-card p-2 pr-7 transition-colors hover:border-primary/40"
                   >
-                    <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary">
+                    <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary relative">
                       {h.cover_url ? (
-                        <img src={h.cover_url} alt={`Capa da obra ${h.title}`} loading="lazy" className="h-full w-full object-cover" />
+                        <img 
+                          src={h.cover_url} 
+                          alt={`Capa da obra ${h.title}`} 
+                          loading="lazy" 
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/100x150?text=Capa';
+                          }}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[8px] text-muted-foreground">Sem Capa</div>
+                      )}
                       ) : (
                         <div className="flex h-full items-center justify-center text-primary/50">
                           <BookOpen className="h-5 w-5" />
