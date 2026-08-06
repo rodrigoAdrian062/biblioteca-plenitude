@@ -40,7 +40,7 @@ export function useSessionProfile() {
       ]);
       if (!alive) return;
       setProfile(p ?? null);
-      setIsAdmin(roles?.role === "admin");
+      setIsAdmin(roles?.role === "admin" || (roles as any)?.user_roles?.role === "admin");
       setIsBeta(isSharedTestAccount(current.user.email ?? ""));
       setLoading(false);
     };
