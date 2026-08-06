@@ -297,7 +297,7 @@ function MembersAdmin() {
     login: "",
     password: "",
     full_name: "",
-    degree: 1,
+    degree: "1",
     is_admin: false,
   });
   const [createdInfo, setCreatedInfo] = useState<{ login: string; password: string } | null>(null);
@@ -329,7 +329,7 @@ function MembersAdmin() {
           email: loginToEmail(form.login),
           password: form.password,
           full_name: form.full_name.trim(),
-          degree: form.degree,
+          degree: Number(form.degree),
           is_admin: form.is_admin,
         },
       }),
@@ -343,7 +343,7 @@ function MembersAdmin() {
       }
       setOpen(false);
       setCreatedInfo({ login: realLogin, password: form.password });
-      setForm({ login: "", password: "", full_name: "", degree: 1, is_admin: false });
+      setForm({ login: "", password: "", full_name: "", degree: "1", is_admin: false });
       await invalidate();
     },
     onError: (e: Error) => avisarErro(e, "Não foi possível cadastrar o irmão."),
@@ -455,18 +455,16 @@ function MembersAdmin() {
               <div className="space-y-2">
                 <Label>Grau</Label>
                 <Select
-                  value={String(form.degree)}
-                  onValueChange={(v) => setForm({ ...form, degree: Number(v) })}
+                  value={form.degree}
+                  onValueChange={(v) => setForm({ ...form, degree: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEGREES.map((d) => (
-                      <SelectItem key={d.value} value={String(d.value)}>
-                        {d.label}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="1">Aprendiz</SelectItem>
+                    <SelectItem value="2">Companheiro</SelectItem>
+                    <SelectItem value="3">Mestre</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -573,11 +571,9 @@ function MembersAdmin() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEGREES.map((d) => (
-                      <SelectItem key={d.value} value={String(d.value)}>
-                        {d.label}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="1">Aprendiz</SelectItem>
+                    <SelectItem value="2">Companheiro</SelectItem>
+                    <SelectItem value="3">Mestre</SelectItem>
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-2">
