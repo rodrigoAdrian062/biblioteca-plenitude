@@ -476,52 +476,53 @@ function Library() {
             <div className="gold-rule my-3 h-px w-24" />
             <div className="flex gap-3 overflow-x-auto pb-1">
               {history.map((h) => (
-                <div key={h.book_id} className="relative w-56 shrink-0">
-                  <div key={h.book_id} className="relative w-56 shrink-0 group">
-                    <Link
-                      to="/obra/$id"
-                      params={{ id: h.book_id }}
-                      className="flex gap-3 rounded-xl border border-border/60 bg-card p-2 pr-7 transition-colors hover:border-primary/40"
-                    >
-                      <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary relative">
-                        {h.cover_url ? (
-                          <img 
-                            src={h.cover_url} 
-                            alt={`Capa da obra ${h.title}`} 
-                            loading="lazy" 
-                            className="h-full w-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://placehold.co/100x150?text=Capa';
-                            }}
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-[8px] text-muted-foreground">Sem Capa</div>
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="line-clamp-2 text-xs font-medium text-foreground">
-                          {catalogName(h.author, h.title)}
-                        </p>
-                        <p className="mt-1 text-[11px] text-muted-foreground">
-                          Pág. {h.last_page}
-                          {h.total_pages ? `/${h.total_pages}` : ""}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {new Date(h.updated_at).toLocaleDateString("pt-BR")}
-                        </p>
-                      </div>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-1 top-1 h-6 w-6 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
-                      aria-label={`Remover ${h.title} do histórico`}
-                      disabled={clearMutation.isPending}
-                      onClick={() => clearMutation.mutate({ bookId: h.book_id })}
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
+                <div key={h.book_id} className="relative w-56 shrink-0 group">
+                  <Link
+                    to="/obra/$id"
+                    params={{ id: h.book_id }}
+                    className="flex gap-3 rounded-xl border border-border/60 bg-card p-2 pr-7 transition-colors hover:border-primary/40"
+                  >
+                    <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary relative">
+                      {h.cover_url ? (
+                        <img 
+                          src={h.cover_url} 
+                          alt={`Capa da obra ${h.title}`} 
+                          loading="lazy" 
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/100x150?text=Capa';
+                          }}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[8px] text-muted-foreground">Sem Capa</div>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="line-clamp-2 text-xs font-medium text-foreground">
+                        {catalogName(h.author, h.title)}
+                      </p>
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        Pág. {h.last_page}
+                        {h.total_pages ? `/${h.total_pages}` : ""}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {new Date(h.updated_at).toLocaleDateString("pt-BR")}
+                      </p>
+                    </div>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1 h-6 w-6 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
+                    aria-label={`Remover ${h.title} do histórico`}
+                    disabled={clearMutation.isPending}
+                    onClick={() => clearMutation.mutate({ bookId: h.book_id })}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </section>
         ) : null}
 
