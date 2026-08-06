@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Nenhuma obra disponível para o seu grau no momento. corrigir">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: erro persiste e as obras nao esta aparecendo">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
