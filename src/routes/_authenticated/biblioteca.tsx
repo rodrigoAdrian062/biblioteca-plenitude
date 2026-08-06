@@ -35,8 +35,6 @@ export type LibrarySearch = {
 
 const ALL = "__all__";
 
-type ViewMode = "lista";
-
 
 export const Route = createFileRoute("/_authenticated/biblioteca")({
   validateSearch: (search: Record<string, unknown>): LibrarySearch => ({
@@ -75,13 +73,6 @@ function Library() {
   const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
-  const [view, setView] = useState<ViewMode>("lista");
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const saved = window.localStorage.getItem("acervo-visualizacao");
-    if (saved === "lista") setView(saved);
-  }, []);
 
   useEffect(() => {
     setTerm(q);
