@@ -59,7 +59,7 @@ export const getBookFileUrl = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    if (!book) throw new Error("Acervo indisponível para o seu grau.");
+    if (!book) throw new Error("Obra indisponível para o seu grau.");
 
     await context.supabase
       .from("book_access_logs")
@@ -85,7 +85,7 @@ export const getBook = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    if (!book) throw new Error("Acervo indisponível para o seu grau.");
+    if (!book) throw new Error("Obra indisponível para o seu grau.");
 
     await context.supabase
       .from("book_access_logs")
