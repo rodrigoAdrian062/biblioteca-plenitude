@@ -97,7 +97,17 @@ function Library() {
 
   const { data: books = [], isLoading, error: booksError } = useQuery({
     queryKey: ["books"],
-    queryFn: () => listBooks(),
+    queryFn: async () => {
+      console.log("[Library] Fetching books...");
+      try {
+        const result = await listBooks();
+        console.log(`[Library] Fetched ${result.length} books successfully.`);
+        return result;
+      } catch (err) {
+        console.error("[Library] Error fetching books:", err);
+        throw err;
+      }
+    },
     retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
@@ -524,7 +534,25 @@ function Library() {
           </section>
         ) : null}
 
-        {isLoading ? (
+        {booksError ? (
+          <div className="mt-8 rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-center">
+            <h3 className="text-lg font-medium text-destructive">Erro ao carregar obras</h3>
+            <p className="mt-1 text-sm text-destructive/80">
+              {booksError instanceof Error ? booksError.message : "Ocorreu um problema na comunicação com o banco de dados."}
+            </p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 border-destructive/50 text-destructive hover:bg-destructive/10"
+              onClick={() => {
+                console.log("[Library] Retrying fetch...");
+                void queryClient.invalidateQueries({ queryKey: ["books"] });
+              }}
+            >
+              Tentar novamente
+            </Button>
+          </div>
+        ) : isLoading ? (
           <div className="mt-8 grid grid-cols-1 gap-4">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="flex gap-4 rounded-xl border border-border/40 bg-card/40 p-3">
