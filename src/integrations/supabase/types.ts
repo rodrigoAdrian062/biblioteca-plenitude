@@ -241,7 +241,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "member"
