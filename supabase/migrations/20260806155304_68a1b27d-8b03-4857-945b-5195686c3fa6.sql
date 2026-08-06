@@ -1,0 +1,1 @@
+UPDATE public.profiles SET degree = 3 WHERE full_name = 'Rodrigo';
