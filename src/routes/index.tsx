@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: quero ao adiconar obra com esse tipo">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: quando abre uma obra diz Obra indisponível para o seu grau. corrige se e aprendiz apenas obras de aprendis, se conpnheiro obras de aprendiz e conheiro se e mestre e todas">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
