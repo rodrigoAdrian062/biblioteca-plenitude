@@ -124,10 +124,13 @@ function AuthPage() {
     }
     writeAttempts({ count: 0, first: 0, lockedUntil: 0 });
 
-    const { data: isAdmin } = await supabase.rpc("has_role", {
-      _user_id: data.user.id,
-      _role: "admin",
-    });
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    const isAdmin = !!roleData;
 
     const { data: profile } = await supabase
       .from("profiles")

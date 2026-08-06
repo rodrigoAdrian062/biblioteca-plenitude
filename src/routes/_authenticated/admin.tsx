@@ -68,10 +68,13 @@ export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) throw redirect({ to: "/auth" });
-    const { data: isAdmin, error } = await supabase.rpc("has_role", {
-      _user_id: auth.user.id,
-      _role: "admin",
-    });
+    const { data: roleData, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", auth.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    const isAdmin = !!roleData;
     if (error || !isAdmin) throw redirect({ to: "/biblioteca", search: { q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false } });
   },
   head: () => ({
