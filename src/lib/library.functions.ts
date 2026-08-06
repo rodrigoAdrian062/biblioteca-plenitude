@@ -84,8 +84,8 @@ export const getBook = createServerFn({ method: "POST" })
       .select("*")
       .eq("id", data.id)
       .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!book) throw new Error("Obra indisponível para o seu grau.");
+    if (error) throw new Error("Erro ao buscar obra: " + error.message);
+    if (!book) throw new Error("Esta obra não existe ou não está disponível para o seu grau.");
 
     await context.supabase
       .from("book_access_logs")
