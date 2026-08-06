@@ -456,7 +456,7 @@ function MembersAdmin() {
                 <Label>Grau</Label>
                 <Select
                   value={form.degree}
-                  onValueChange={(v) => setForm({ ...form, degree: Number(v) })}
+                  onValueChange={(v) => setForm({ ...form, degree: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
