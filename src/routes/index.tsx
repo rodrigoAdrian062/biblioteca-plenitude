@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: erro persiste  Erro ao carregar obras&#10;infinite recursion detected in policy for relation &quot;user_roles&quot;">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: oque esta acontecendo voce IA nao consegue resolver os erros e sempre perssite">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
