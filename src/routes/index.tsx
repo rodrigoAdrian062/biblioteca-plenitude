@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: sistema esta todo bugado corrige nao esta aparecendo as obras e admim nao esta aparecendo corretamento">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: quero que restaura o sistema para o dia 4/08">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
