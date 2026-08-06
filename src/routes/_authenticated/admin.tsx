@@ -74,8 +74,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
       .select("role")
       .eq("user_id", auth.user.id)
       .eq("role", "admin")
-      .maybeSingle();
-    const isAdmin = !!roleData;
+      .limit(1);
+    
+    const rolesArray = Array.isArray(roleData) ? roleData : (roleData ? [roleData] : []);
+    const isAdmin = rolesArray.some((r: any) => r.role === "admin");
     if (error || !isAdmin) throw redirect({ to: "/biblioteca", search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } });
   },
   head: () => ({

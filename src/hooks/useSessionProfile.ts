@@ -36,11 +36,12 @@ export function useSessionProfile() {
           .select("id, full_name, degree, lodge, active")
           .eq("id", current.user.id)
           .maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", current.user.id).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", current.user.id).limit(1),
       ]);
       if (!alive) return;
       setProfile(p ?? null);
-      setIsAdmin(roles?.role === "admin");
+      const userRoles = Array.isArray(roles) ? roles : (roles ? [roles] : []);
+      setIsAdmin(userRoles.some((r: any) => r.role === "admin"));
       setIsBeta(isSharedTestAccount(current.user.email ?? ""));
       setLoading(false);
     };
