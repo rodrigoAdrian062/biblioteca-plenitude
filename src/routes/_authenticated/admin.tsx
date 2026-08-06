@@ -71,12 +71,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
     if (!auth.user) throw redirect({ to: "/auth" });
     const { data: roleData, error } = await supabase
       .from("user_roles")
-      .select("role")
-      .eq("user_id", auth.user.id)
-      .eq("role", "admin")
-      .limit(1);
+      .select("*")
+      .eq("user_id", auth.user.id);
     
-    const rolesArray = Array.isArray(roleData) ? roleData : (roleData ? [roleData] : []);
+    const rolesArray = roleData || [];
     const isAdmin = rolesArray.some((r: any) => r.role === "admin");
     if (error || !isAdmin) throw redirect({ to: "/biblioteca", search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } });
   },
