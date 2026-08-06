@@ -297,7 +297,7 @@ function MembersAdmin() {
     login: "",
     password: "",
     full_name: "",
-    degree: 1,
+    degree: "1",
     is_admin: false,
   });
   const [createdInfo, setCreatedInfo] = useState<{ login: string; password: string } | null>(null);
@@ -343,7 +343,7 @@ function MembersAdmin() {
       }
       setOpen(false);
       setCreatedInfo({ login: realLogin, password: form.password });
-      setForm({ login: "", password: "", full_name: "", degree: 1, is_admin: false });
+      setForm({ login: "", password: "", full_name: "", degree: "1", is_admin: false });
       await invalidate();
     },
     onError: (e: Error) => avisarErro(e, "Não foi possível cadastrar o irmão."),
@@ -455,7 +455,7 @@ function MembersAdmin() {
               <div className="space-y-2">
                 <Label>Grau</Label>
                 <Select
-                  value={String(form.degree)}
+                  value={form.degree}
                   onValueChange={(v) => setForm({ ...form, degree: Number(v) })}
                 >
                   <SelectTrigger>
