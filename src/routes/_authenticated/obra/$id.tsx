@@ -110,9 +110,16 @@ function BookReaderPage() {
             <Skeleton className="h-[600px] w-full rounded-xl" />
           </div>
         ) : error || !book ? (
-          <p className="text-sm text-destructive">
-            {error instanceof Error ? error.message : "Obra indisponível para o seu grau."}
-          </p>
+          <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center">
+            <p className="text-sm font-medium text-destructive">
+              {error instanceof Error && error.message.includes("indisponível") 
+                ? "Esta obra é restrita a um grau superior ao seu." 
+                : "Não foi possível carregar esta obra no momento."}
+            </p>
+            <Button asChild variant="outline" size="sm" className="mt-4">
+              <Link to="/biblioteca">Voltar ao acervo</Link>
+            </Button>
+          </div>
         ) : (
           <>
             <div className="flex flex-wrap items-start justify-between gap-3">
