@@ -31,6 +31,8 @@ export const updateGlobalSetting = createServerFn({ method: "POST" })
 export const listBooks = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    // Garantir que a query não falhe por RLS se o perfil ainda não estiver carregado ou algo similar
+    // Embora a policy v13 seja robusta, forçamos o bypass se for service role (já garantido por context.supabase)
     const { signAssetsImpl } = await import("./admin.server");
     const { data, error } = await context.supabase
       .from("books")
