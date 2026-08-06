@@ -97,7 +97,17 @@ function Library() {
 
   const { data: books = [], isLoading, error: booksError } = useQuery({
     queryKey: ["books"],
-    queryFn: () => listBooks(),
+    queryFn: async () => {
+      console.log("[Library] Fetching books...");
+      try {
+        const result = await listBooks();
+        console.log(`[Library] Fetched ${result.length} books successfully.`);
+        return result;
+      } catch (err) {
+        console.error("[Library] Error fetching books:", err);
+        throw err;
+      }
+    },
     retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
