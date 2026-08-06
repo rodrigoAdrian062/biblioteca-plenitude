@@ -95,9 +95,11 @@ function Library() {
     return () => clearTimeout(id);
   }, [term, q, navigate]);
 
-  const { data: books = [], isLoading } = useQuery({
+  const { data: books = [], isLoading, error: booksError } = useQuery({
     queryKey: ["books"],
     queryFn: () => listBooks(),
+    retry: 2,
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
   const { data: favorites = [] } = useQuery({

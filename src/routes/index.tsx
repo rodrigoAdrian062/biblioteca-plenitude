@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: sistema nao esta carregando as obras">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Verifique e corrija a consulta no front-end para carregar corretamente a lista de obras da API do Supabase.">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
