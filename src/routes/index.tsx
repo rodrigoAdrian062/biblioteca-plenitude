@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: os acervos nao esta mais aparecendo">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: faz correçao completa no sistema o admim nao aparece corretamente">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
