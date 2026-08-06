@@ -241,15 +241,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      current_degree: { Args: never; Returns: number }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      is_admin: { Args: { check_user_id: string }; Returns: boolean }
+      [_ in never]: never
     }
     Enums: {
       app_role: "admin" | "member"
