@@ -7,7 +7,7 @@ import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
 import { DEGREES } from "@/lib/masonic";
-import { SCOPES, KINDS } from "@/lib/catalog";
+import { SCOPES, KINDS, catalogName } from "@/lib/catalog";
 import { BookGrid } from "@/features/library/BookGrid";
 
 import { Button } from "@/components/ui/button";
