@@ -88,7 +88,10 @@ function BookReaderPage() {
 
       <main className="mx-auto w-full max-w-5xl min-w-0 px-3 py-6 sm:px-4 sm:py-10">
         <Button asChild variant="ghost" size="sm" className="mb-4">
-          <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false }}>
+          <Link 
+            to="/biblioteca" 
+            search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar ao acervo
           </Link>
@@ -115,7 +118,7 @@ function BookReaderPage() {
               {error instanceof Error ? error.message : "Obra indisponível para o seu grau."}
             </p>
             <Button asChild variant="outline" size="sm" className="mt-4">
-              <Link to="/biblioteca">Voltar ao acervo</Link>
+              <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}>Voltar ao acervo</Link>
             </Button>
           </div>
         ) : (

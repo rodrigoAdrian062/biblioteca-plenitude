@@ -6,8 +6,9 @@ import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
-import { DEGREES, degreeLabel } from "@/lib/masonic";
-import { SCOPES, KINDS, catalogName, scopeLabel, kindLabel } from "@/lib/catalog";
+import { DEGREES } from "@/lib/masonic";
+import { SCOPES, KINDS, catalogName } from "@/lib/catalog";
+import { BookGrid } from "@/features/library/BookGrid";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,8 +34,6 @@ export type LibrarySearch = {
 };
 
 const ALL = "__all__";
-
-type ViewMode = "lista";
 
 
 export const Route = createFileRoute("/_authenticated/biblioteca")({
@@ -74,13 +73,6 @@ function Library() {
   const { q, autor, categoria, grau, tema, tipo, fav } = Route.useSearch();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState(q);
-  const [view, setView] = useState<ViewMode>("lista");
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const saved = window.localStorage.getItem("acervo-visualizacao");
-    if (saved === "lista") setView(saved);
-  }, []);
 
   useEffect(() => {
     setTerm(q);
@@ -484,10 +476,11 @@ function Library() {
             <div className="gold-rule my-3 h-px w-24" />
             <div className="flex gap-3 overflow-x-auto pb-1">
               {history.map((h) => (
-                <div key={h.book_id} className="relative w-56 shrink-0">
+                <div key={h.book_id} className="relative w-56 shrink-0 group">
                   <Link
                     to="/obra/$id"
-                    params={{ id: h.book_id }}
+                      params={{ id: h.book_id }}
+                      search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
                     className="flex gap-3 rounded-xl border border-border/60 bg-card p-2 pr-7 transition-colors hover:border-primary/40"
                   >
                     <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary relative">
@@ -521,7 +514,7 @@ function Library() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-1 top-1 h-6 w-6 text-muted-foreground hover:text-destructive"
+                    className="absolute right-1 top-1 h-6 w-6 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
                     aria-label={`Remover ${h.title} do histórico`}
                     disabled={clearMutation.isPending}
                     onClick={() => clearMutation.mutate({ bookId: h.book_id })}
@@ -593,7 +586,7 @@ function Library() {
             ) : null}
           </div>
         ) : tema ? (
-          <BookGrid books={visible} view={view} className="mt-8" favSet={favSet} onToggleFavorite={onToggleFavorite} />
+          <BookGrid books={visible} favSet={favSet} onToggleFavorite={onToggleFavorite} className="mt-8" />
         ) : (
           <div className="mt-8 space-y-10">
             {sections
@@ -625,7 +618,7 @@ function Library() {
                     </div>
                   </div>
                   <div className="gold-rule my-3 h-px w-full" />
-                  <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} view={view} books={s.books} />
+                  <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={s.books} />
                 </section>
               ))}
           </div>
@@ -636,128 +629,3 @@ function Library() {
   );
 }
 
-type BookItem = Awaited<ReturnType<typeof listBooks>>[number];
-
-function BookGrid({
-  books,
-  className = "",
-  favSet,
-  onToggleFavorite,
-  view = "lista",
-}: {
-  books: BookItem[];
-  className?: string;
-  favSet: Set<string>;
-  onToggleFavorite: (bookId: string, favorite: boolean) => void;
-  view?: ViewMode;
-}) {
-  const [limit, setLimit] = useState(15); // Default higher for desktop
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-
-  // Se for celular, o limite inicial é 5 conforme solicitado
-  useEffect(() => {
-    if (isMobile) {
-      setLimit(5);
-    }
-  }, [isMobile]);
-
-  const visibleBooks = books.slice(0, limit);
-  const hasMore = books.length > limit;
-
-  return (
-    <div className="space-y-6">
-      <div className={`grid grid-cols-1 gap-3 md:grid-cols-3 ${className}`}>
-        {visibleBooks.map((book) => (
-          <div
-            key={book.id}
-            className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5 transition-colors hover:border-primary/40"
-          >
-            <div className="h-16 w-12 shrink-0 overflow-hidden rounded bg-secondary">
-              {book.cover_url ? (
-                <img
-                  src={book.cover_url}
-                  alt={`Capa da obra ${book.title}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-primary/50">
-                  <BookOpen className="h-5 w-5" />
-                </div>
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-col">
-                <p className="line-clamp-1 font-display text-sm leading-snug text-foreground">
-                  {book.title}
-                </p>
-                {book.author && (
-                  <p className="line-clamp-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                    {book.author}
-                  </p>
-                )}
-              </div>
-              <div className="mt-1 flex flex-wrap items-center gap-1">
-                <Badge
-                  variant={book.scope === "nao_maconico" ? "secondary" : "default"}
-                  className="px-1.5 text-[10px]"
-                >
-                  {scopeLabel(book.scope)}
-                </Badge>
-                <Badge variant="outline" className="px-1.5 text-[10px]">
-                  {kindLabel(book.kind)}
-                </Badge>
-                <Badge variant="outline" className="px-1.5 text-[10px]">
-                  {degreeLabel(book.min_degree)}
-                </Badge>
-              </div>
-            </div>
-            <div className="flex shrink-0 items-center gap-1">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={favSet.has(book.id) ? "Remover dos favoritos" : "Marcar como favorita"}
-                aria-pressed={favSet.has(book.id)}
-                className="h-8 w-8"
-                onClick={() => onToggleFavorite(book.id, !favSet.has(book.id))}
-              >
-                <Heart
-                  className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
-                />
-              </Button>
-              {book.external_url ? (
-                <Button asChild size="sm">
-                  <a href={book.external_url} target="_blank" rel="noopener noreferrer">
-                    <BookOpen className="h-4 w-4 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Acessar</span>
-                  </a>
-                </Button>
-              ) : (
-                <Button asChild size="sm">
-                  <Link to="/obra/$id" params={{ id: book.id }}>
-                    <BookOpen className="h-4 w-4 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Ler</span>
-                  </Link>
-                </Button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      {hasMore && (
-        <div className="flex justify-center py-4">
-          <Button 
-            variant="outline" 
-            onClick={() => setLimit(prev => prev + (isMobile ? 5 : 15))}
-            className="rounded-full px-8"
-          >
-            Carregar mais obras
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}

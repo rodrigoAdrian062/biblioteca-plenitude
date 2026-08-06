@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Erro ao carregar obras\ninfinite recursion detected in policy for relation \&quot;user_roles\&quot; fassa uma revisao completa no codigo para resolver esse erro">
+    <div className="min-h-screen bg-background">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
