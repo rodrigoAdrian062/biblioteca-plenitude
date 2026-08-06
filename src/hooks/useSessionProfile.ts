@@ -30,18 +30,24 @@ export function useSessionProfile() {
         setLoading(false);
         return;
       }
-      const [{ data: p }, { data: roles }] = await Promise.all([
+      const [{ data: p }, { data: roles, error: rolesErr }] = await Promise.all([
         supabase
           .from("profiles")
           .select("id, full_name, degree, lodge, active")
           .eq("id", current.user.id)
           .maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", current.user.id).limit(1),
+        supabase.from("user_roles").select("role").eq("user_id", current.user.id),
       ]);
+
       if (!alive) return;
+      if (rolesErr) {
+        console.error("Erro ao carregar permissões:", rolesErr);
+      }
+      
       setProfile(p ?? null);
-      const userRoles = Array.isArray(roles) ? roles : (roles ? [roles] : []);
-      setIsAdmin(userRoles.some((r: any) => r.role === "admin"));
+      const rolesData = roles || [];
+      const isUserAdmin = rolesData.some((r: any) => r.role === "admin");
+      setIsAdmin(isUserAdmin);
       setIsBeta(isSharedTestAccount(current.user.email ?? ""));
       setLoading(false);
     };
