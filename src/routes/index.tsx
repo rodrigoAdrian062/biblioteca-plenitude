@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: quando abre uma obra diz Obra indisponível para o seu grau. corrige se e aprendiz apenas obras de aprendis, se conpnheiro obras de aprendiz e conheiro se e mestre e todas">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Obra indisponível para o seu grau. ao abir uma obra o grau ja e definido no cadastro do irmao nao pode aparecer mensagem e tanbem nao esta abirndo a obra">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
