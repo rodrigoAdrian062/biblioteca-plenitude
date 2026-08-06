@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: nao esta abrindo as obras">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: erro persiste e as obras nao abre nao abre os pdf  ontem funcionava agora nao mais">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
