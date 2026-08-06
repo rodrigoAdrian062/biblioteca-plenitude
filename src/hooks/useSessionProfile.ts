@@ -30,14 +30,15 @@ export function useSessionProfile() {
         setLoading(false);
         return;
       }
-      const [{ data: p }, { data: roles }] = await Promise.all([
+      const [{ data: p }, { data: roles, error: rolesError }] = await Promise.all([
         supabase
           .from("profiles")
           .select("id, full_name, degree, lodge, active")
           .eq("id", current.user.id)
           .maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", current.user.id).limit(1),
+        supabase.from("user_roles").select("role").eq("user_id", current.user.id),
       ]);
+      if (rolesError) console.error("[useSessionProfile] Error fetching roles:", rolesError);
       if (!alive) return;
       setProfile(p ?? null);
       const userRoles = Array.isArray(roles) ? roles : (roles ? [roles] : []);
