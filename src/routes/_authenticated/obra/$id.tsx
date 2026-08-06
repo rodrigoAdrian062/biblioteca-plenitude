@@ -112,7 +112,7 @@ function BookReaderPage() {
         ) : error || !book ? (
           <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center">
             <p className="text-sm font-medium text-destructive">
-              {error instanceof Error ? error.message : "Não foi possível carregar esta obra no momento."}
+              {error instanceof Error ? error.message : "Obra indisponível para o seu grau."}
             </p>
             <Button asChild variant="outline" size="sm" className="mt-4">
               <Link to="/biblioteca">Voltar ao acervo</Link>
