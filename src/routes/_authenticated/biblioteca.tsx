@@ -479,7 +479,8 @@ function Library() {
                 <div key={h.book_id} className="relative w-56 shrink-0 group">
                   <Link
                     to="/obra/$id"
-                    params={{ id: h.book_id }}
+                      params={{ id: h.book_id }}
+                      search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
                     className="flex gap-3 rounded-xl border border-border/60 bg-card p-2 pr-7 transition-colors hover:border-primary/40"
                   >
                     <div className="h-20 w-14 shrink-0 overflow-hidden rounded bg-secondary relative">

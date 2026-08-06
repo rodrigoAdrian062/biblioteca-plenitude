@@ -123,7 +123,11 @@ export function BookGrid({
                 </Button>
               ) : (
                 <Button asChild size="sm">
-                  <Link to="/obra/$id" params={{ id: book.id }}>
+                  <Link 
+                    to="/obra/$id" 
+                    params={{ id: book.id }}
+                    search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
+                  >
                     <BookOpen className="h-4 w-4 sm:mr-1.5" />
                     <span className="hidden sm:inline">Ler</span>
                   </Link>
