@@ -71,12 +71,21 @@ export const Route = createFileRoute("/_authenticated/admin")({
     if (!auth.user) throw redirect({ to: "/auth" });
     const { data: roleData, error } = await supabase
       .from("user_roles")
-      .select("*")
+      .select("role")
       .eq("user_id", auth.user.id);
     
-    const rolesArray = roleData || [];
-    const isAdmin = rolesArray.some((r: any) => r.role === "admin");
-    if (error || !isAdmin) throw redirect({ to: "/biblioteca", search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } });
+    const isAdmin = (roleData || []).some((r: any) => r.role === "admin");
+    
+    if (error) {
+      console.error("Erro na verificação de admin (route):", error);
+    }
+
+    if (!isAdmin) {
+      throw redirect({ 
+        to: "/biblioteca", 
+        search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } 
+      });
+    }
   },
   head: () => ({
     meta: [
