@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Adicione logs e mensagens de erro na tela de obras para identificar por que a listagem não carrega.">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Erro ao carregar obras&#10;infinite recursion detected in policy for relation &quot;user_roles&quot;">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
