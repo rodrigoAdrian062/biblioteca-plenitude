@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: nao seja burro corrige tudo certo">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: tem muitas obras cadastradas esta no banco de dados mais nao esta aparecendo no sistema">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
