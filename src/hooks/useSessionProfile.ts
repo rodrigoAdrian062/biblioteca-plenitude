@@ -44,10 +44,16 @@ export function useSessionProfile() {
         console.error("Erro ao carregar permissões:", rolesErr);
       }
       
-      setProfile(p ?? null);
       const rolesData = roles || [];
-      
       const isUserAdmin = rolesData.some((r: any) => r.role === "admin");
+      
+      console.log("Verificação de Admin:", {
+        userId: current.user.id,
+        roles: rolesData,
+        isAdmin: isUserAdmin
+      });
+
+      setProfile(p ?? null);
       setIsAdmin(isUserAdmin);
       setIsBeta(isSharedTestAccount(current.user.email ?? ""));
       setLoading(false);
