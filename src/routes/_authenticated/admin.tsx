@@ -329,7 +329,7 @@ function MembersAdmin() {
           email: loginToEmail(form.login),
           password: form.password,
           full_name: form.full_name.trim(),
-          degree: form.degree,
+          degree: Number(form.degree),
           is_admin: form.is_admin,
         },
       }),
