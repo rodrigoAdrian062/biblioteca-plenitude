@@ -73,7 +73,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
       .from("user_roles")
       .select("role")
       .eq("user_id", auth.user.id)
-      .eq("role", "admin");
+      .eq("role", "admin")
+      .limit(1);
     
     const rolesArray = Array.isArray(roleData) ? roleData : (roleData ? [roleData] : []);
     const isAdmin = rolesArray.some((r: any) => r.role === "admin");
