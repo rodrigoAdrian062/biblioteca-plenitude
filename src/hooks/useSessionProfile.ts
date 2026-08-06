@@ -36,7 +36,7 @@ export function useSessionProfile() {
           .select("id, full_name, degree, lodge, active")
           .eq("id", current.user.id)
           .maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", current.user.id),
+        supabase.from("user_roles").select("*").eq("user_id", current.user.id),
       ]);
 
       if (!alive) return;
