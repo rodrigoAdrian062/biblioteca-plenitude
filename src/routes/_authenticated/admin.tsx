@@ -462,11 +462,9 @@ function MembersAdmin() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEGREES.map((d) => (
-                      <SelectItem key={d.value} value={String(d.value)}>
-                        {d.label}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="1">Aprendiz</SelectItem>
+                    <SelectItem value="2">Companheiro</SelectItem>
+                    <SelectItem value="3">Mestre</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -573,11 +571,9 @@ function MembersAdmin() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEGREES.map((d) => (
-                      <SelectItem key={d.value} value={String(d.value)}>
-                        {d.label}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="1">Aprendiz</SelectItem>
+                    <SelectItem value="2">Companheiro</SelectItem>
+                    <SelectItem value="3">Mestre</SelectItem>
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-2">
