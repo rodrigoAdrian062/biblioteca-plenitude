@@ -46,7 +46,6 @@ export function useSessionProfile() {
       
       setProfile(p ?? null);
       const rolesData = roles || [];
-      alert(`Roles: ${JSON.stringify(rolesData)} para ${current.user.id}`);
       console.log("Roles detectadas para o usuário:", current.user.id, rolesData);
       const isUserAdmin = rolesData.some((r: any) => r.role === "admin");
       setIsAdmin(isUserAdmin);
