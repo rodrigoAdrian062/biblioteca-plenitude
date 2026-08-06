@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: Analise o código, identifique bugs e vulnerabilidades de segurança. Corrija-os aplicando tratamento de erros robusto e explique as melhorias. e verifica porque ao ler obra nao esta abrindo o leitor de pdf">
+    <div className="min-h-screen bg-background" data-instruction="Execute esta instrucao no projeto: nao esta aparecendo mais as obras corrige estou com login do adm e nao aparece nada">
       <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
         <img
           src={logo}
