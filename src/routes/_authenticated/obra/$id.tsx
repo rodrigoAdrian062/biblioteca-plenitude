@@ -115,7 +115,7 @@ function BookReaderPage() {
               {error instanceof Error ? error.message : "Obra indisponível para o seu grau."}
             </p>
             <Button asChild variant="outline" size="sm" className="mt-4">
-              <Link to="/biblioteca">Voltar ao acervo</Link>
+              <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}>Voltar ao acervo</Link>
             </Button>
           </div>
         ) : (

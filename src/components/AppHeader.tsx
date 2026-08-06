@@ -41,7 +41,7 @@ export function AppHeader({
     <>
     <header className="border-b border-border/60 bg-card/40 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-        <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false }} className="flex min-w-0 items-center gap-2">
+        <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }} className="flex min-w-0 items-center gap-2">
           <img
             src={logo}
             alt="Logo A.R.L.S. Plenitude nº 4759"
@@ -111,6 +111,7 @@ export function AppHeader({
         <div className="grid grid-cols-4 items-stretch">
           <Link
             to="/biblioteca"
+            search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
             className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
             activeProps={{ className: "active" }}
           >
