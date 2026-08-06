@@ -111,7 +111,7 @@ function AdminPage() {
               <div className="gold-rule mt-4 h-px w-24" />
             </div>
             <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
-              <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", fav: false }}>
+              <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}>
                 <Library className="mr-1 h-4 w-4" />
                 Ir para a biblioteca
               </Link>
@@ -248,249 +248,47 @@ function StatsPanel() {
   );
 }
 
+function GlobalWatermarkControl() {
+  const queryClient = useQueryClient();
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ["global-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("global_settings").select("*");
+      if (error) throw error;
+      return data.reduce((acc: any, curr) => ({ ...acc, [curr.key]: curr.value }), {});
+    },
+  });
 
-              <div className="space-y-2">
-                <Label htmlFor="category">Assunto / Tags</Label>
-                <Input
-                  id="category"
-                  maxLength={80}
-                  placeholder="Ex: História, Simbolismo, Ritualística..."
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Tema do acervo</Label>
-                <Select
-                  value={form.scope}
-                  onValueChange={(v) => {
-                    const scope = v as BookScope;
-                    setForm({
-                      ...form,
-                      scope,
-                      min_degree: scope === "nao_maconico" ? 0 : form.min_degree,
-                    });
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SCOPES.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+  const updateSetting = useMutation({
+    mutationFn: (vars: { key: string; value: any }) => updateGlobalSetting({ data: vars }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["global-settings"] });
+      avisarSucesso("Configuração atualizada.");
+    },
+    onError: (err: any) => avisarErro(err, "Erro ao atualizar configuração."),
+  });
 
-              <div className="space-y-2">
-                <Label>Tipo da obra</Label>
-                <Select
-                  value={form.kind}
-                  onValueChange={(v) => setForm({ ...form, kind: v as BookKind })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {KINDS.map((k) => (
-                      <SelectItem key={k.value} value={k.value}>
-                        {k.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+  if (isLoading) return <Skeleton className="h-20 w-full" />;
 
+  const watermarkGlobal = settings?.["watermark_enabled"] === true;
 
-              <div className="space-y-2">
-                <Label htmlFor="external_url">Link da página (opcional)</Label>
-                <Input
-                  id="external_url"
-                  type="url"
-                  placeholder="https://exemplo.com/arquivo"
-                  value={form.external_url}
-                  onChange={(e) => setForm({ ...form, external_url: e.target.value })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-3">
-                <div className="space-y-0.5">
-                  <Label htmlFor="watermark-toggle">Marca d'água</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Exibe o nome do irmão sobre o PDF para proteção.
-                  </p>
-                </div>
-                <Switch
-                  id="watermark-toggle"
-                  checked={form.watermark_enabled}
-                  onCheckedChange={(v) => setForm({ ...form, watermark_enabled: v })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="file">Arquivo PDF/EPUB (opcional se houver link)</Label>
-                <Input
-                  id="file"
-                  type="file"
-                  accept=".pdf,.epub"
-                  onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cover">Capa (imagem)</Label>
-                <Input
-                  id="cover"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setCover(e.target.files?.[0] ?? null)}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="published"
-                  checked={form.published}
-                  onCheckedChange={(v) => setForm({ ...form, published: v })}
-                />
-                <Label htmlFor="published">Publicada no acervo</Label>
-              </div>
-              <DialogFooter>
-                <Button type="submit" disabled={saving}>
-                  {saving ? "Salvando..." : "Salvar"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+  return (
+    <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-4">
+      <div className="space-y-1">
+        <Label className="text-base">Marca d'água global</Label>
+        <p className="text-sm text-muted-foreground">
+          Se ativado, as obras com marca d'água habilitada individualmente exibirão o nome do irmão.
+        </p>
       </div>
-
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <Button
-          size="sm"
-          variant={scopeFilter === "todos" ? "default" : "outline"}
-          onClick={() => setScopeFilter("todos")}
-        >
-          Todos
-        </Button>
-        {SCOPES.map((s) => (
-          <Button
-            key={s.value}
-            size="sm"
-            variant={scopeFilter === s.value ? "default" : "outline"}
-            onClick={() => setScopeFilter(s.value)}
-          >
-            {s.label}
-          </Button>
-        ))}
-      </div>
-
-      {isLoading ? (
-        <div className="space-y-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="grid grid-cols-[3rem_minmax(0,1fr)] items-start gap-3 rounded-md border border-border/60 bg-card p-3">
-              <Skeleton className="h-16 w-12 rounded border border-border/60" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
-                <div className="flex gap-1.5">
-                  <Skeleton className="h-4 w-16 rounded-full" />
-                  <Skeleton className="h-4 w-16 rounded-full" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {books
-            .filter((b) => scopeFilter === "todos" || (b.scope ?? "maconico") === scopeFilter)
-            .map((b) => (
-
-            <div
-              key={b.id}
-              className="grid grid-cols-[3rem_minmax(0,1fr)] items-start gap-3 rounded-md border border-border/60 bg-card p-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
-            >
-              <div className="h-16 w-12 shrink-0 overflow-hidden rounded border border-border/60 bg-secondary">
-                {b.cover_url ? (
-                  <img
-                    src={b.cover_url}
-                    alt={`Capa da obra ${b.title}`}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-primary/50">
-                    <BookOpen className="h-4 w-4" />
-                  </div>
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="break-words font-medium leading-snug text-card-foreground">
-                  {catalogName(b.author, b.title)}
-                </p>
-                <p className="break-words text-xs text-muted-foreground">
-                  {b.category || "Sem categoria"}
-                </p>
-                <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                  <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
-                    {scopeLabel(b.scope)}
-                  </Badge>
-                  <Badge variant="outline">{kindLabel(b.kind)}</Badge>
-                  <Badge variant="outline">{degreeLabel(b.min_degree)}</Badge>
-                  {!b.published ? <Badge variant="secondary">Rascunho</Badge> : null}
-                </div>
-
-              </div>
-
-              <div className="col-span-2 flex justify-end gap-1 sm:col-span-1 sm:self-center">
-
-
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Editar obra"
-                onClick={() => {
-                  setEditingId(b.id);
-                   setForm({
-                    title: b.title,
-                    author: b.author ?? "",
-                    category: b.category ?? "",
-                    description: b.description ?? "",
-                    min_degree: b.min_degree,
-                    published: b.published,
-                    watermark_enabled: b.watermark_enabled ?? true,
-                    scope: (b.scope as BookScope) ?? "maconico",
-                    kind: (b.kind as BookKind) ?? "livro",
-                    external_url: b.external_url ?? "",
-                  });
-
-                  setOpen(true);
-                }}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Remover obra"
-                onClick={() => void remove(b.id)}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-              </div>
-            </div>
-
-          ))}
-          {books.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nenhuma obra cadastrada ainda.</p>
-          ) : null}
-        </div>
-      )}
-    </section>
+      <Switch
+        checked={watermarkGlobal}
+        onCheckedChange={(v) => updateSetting.mutate({ key: "watermark_enabled", value: v })}
+        disabled={updateSetting.isPending}
+      />
+    </div>
   );
 }
+
 
 function MembersAdmin() {
   const queryClient = useQueryClient();
@@ -959,41 +757,5 @@ function MembersAdmin() {
   );
 }
 
-function GlobalWatermarkControl() {
-  const queryClient = useQueryClient();
-  const { data: settings, isLoading } = useQuery({
-    queryKey: ["global-settings"],
-    queryFn: () => getGlobalSettings(),
-  });
-
-  const updateSetting = useMutation({
-    mutationFn: (vars: { key: string; value: any }) => updateGlobalSetting({ data: vars }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["global-settings"] });
-      avisarSucesso("Configuração atualizada.");
-    },
-    onError: (err: any) => avisarErro(err, "Erro ao atualizar configuração."),
-  });
-
-  if (isLoading) return <Skeleton className="h-20 w-full" />;
-
-  const watermarkGlobal = settings?.["watermark_enabled"] === true;
-
-  return (
-    <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-4">
-      <div className="space-y-1">
-        <Label className="text-base">Marca d'água global</Label>
-        <p className="text-sm text-muted-foreground">
-          Se ativado, as obras com marca d'água habilitada individualmente exibirão o nome do irmão.
-        </p>
-      </div>
-      <Switch
-        checked={watermarkGlobal}
-        onCheckedChange={(v) => updateSetting.mutate({ key: "watermark_enabled", value: v })}
-        disabled={updateSetting.isPending}
-      />
-    </div>
-  );
-}
 
 
