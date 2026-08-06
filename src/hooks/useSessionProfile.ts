@@ -46,7 +46,7 @@ export function useSessionProfile() {
       
       setProfile(p ?? null);
       const rolesData = roles || [];
-      console.log("Roles detectadas para o usuário:", current.user.id, rolesData);
+      
       const isUserAdmin = rolesData.some((r: any) => r.role === "admin");
       setIsAdmin(isUserAdmin);
       setIsBeta(isSharedTestAccount(current.user.email ?? ""));
