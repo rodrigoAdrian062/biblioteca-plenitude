@@ -71,7 +71,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     if (!auth.user) throw redirect({ to: "/auth" });
     const { data: roleData, error } = await supabase
       .from("user_roles")
-      .select("role")
+      .select("*")
       .eq("user_id", auth.user.id);
     
     const rolesArray = roleData || [];
