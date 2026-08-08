@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, BookOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { listBooks } from "@/lib/library.functions";
 import { avisarErro, avisarSucesso } from "@/lib/avisos";
@@ -64,6 +64,7 @@ export function BooksAdmin() {
   const [cover, setCover] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [scopeFilter, setScopeFilter] = useState<BookScope | "todos">("todos");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books"],
@@ -362,24 +363,35 @@ export function BooksAdmin() {
         </Dialog>
       </div>
 
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <Button
-          size="sm"
-          variant={scopeFilter === "todos" ? "default" : "outline"}
-          onClick={() => setScopeFilter("todos")}
-        >
-          Todos
-        </Button>
-        {SCOPES.map((s) => (
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
-            key={s.value}
             size="sm"
-            variant={scopeFilter === s.value ? "default" : "outline"}
-            onClick={() => setScopeFilter(s.value)}
+            variant={scopeFilter === "todos" ? "default" : "outline"}
+            onClick={() => setScopeFilter("todos")}
           >
-            {s.label}
+            Todos
           </Button>
-        ))}
+          {SCOPES.map((s) => (
+            <Button
+              key={s.value}
+              size="sm"
+              variant={scopeFilter === s.value ? "default" : "outline"}
+              onClick={() => setScopeFilter(s.value)}
+            >
+              {s.label}
+            </Button>
+          ))}
+        </div>
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Procurar obras, autores ou músicas..."
+            className="h-9 pl-9"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       {isLoading ? (
@@ -401,7 +413,14 @@ export function BooksAdmin() {
       ) : (
         <div className="space-y-2">
           {books
-            .filter((b) => scopeFilter === "todos" || (b.scope ?? "maconico") === scopeFilter)
+            .filter((b) => {
+              const matchesScope = scopeFilter === "todos" || (b.scope ?? "maconico") === scopeFilter;
+              const matchesSearch = !searchTerm || 
+                b.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                b.author?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                b.category?.toLowerCase().includes(searchTerm.toLowerCase());
+              return matchesScope && matchesSearch;
+            })
             .map((b) => (
             <div
               key={b.id}
