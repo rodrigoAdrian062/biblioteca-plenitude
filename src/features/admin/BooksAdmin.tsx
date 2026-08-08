@@ -65,6 +65,7 @@ export function BooksAdmin() {
   const [saving, setSaving] = useState(false);
   const [scopeFilter, setScopeFilter] = useState<BookScope | "todos">("todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const [duplicateWarning, setDuplicateWarning] = useState(false);
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books"],
@@ -76,7 +77,18 @@ export function BooksAdmin() {
     setFile(null);
     setCover(null);
     setEditingId(null);
+    setDuplicateWarning(false);
   }
+
+  const checkDuplicate = async (title: string) => {
+    if (!title.trim() || editingId) return;
+    const { data } = await supabase
+      .from("books")
+      .select("id")
+      .ilike("title", title.trim())
+      .maybeSingle();
+    setDuplicateWarning(!!data);
+  };
 
   async function resizeImage(file: File, maxWidth = 300): Promise<Blob> {
     return new Promise((resolve, reject) => {
@@ -212,10 +224,18 @@ export function BooksAdmin() {
                   id="title"
                   required
                   maxLength={200}
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                />
-              </div>
+                   value={form.title}
+                   onChange={(e) => {
+                     setForm({ ...form, title: e.target.value });
+                     checkDuplicate(e.target.value);
+                   }}
+                 />
+                 {duplicateWarning && (
+                   <p className="text-xs font-medium text-destructive">
+                     ⚠️ Esta obra já existe na biblioteca.
+                   </p>
+                 )}
+               </div>
               <p className="rounded-md border border-border/60 bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
                 Nome padronizado:{" "}
                 <span className="font-medium text-card-foreground">
