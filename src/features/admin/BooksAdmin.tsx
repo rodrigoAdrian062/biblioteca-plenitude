@@ -450,9 +450,6 @@ export function BooksAdmin() {
                 <p className="break-words font-medium leading-snug text-card-foreground">
                   {catalogName(b.author, b.title)}
                 </p>
-                <p className="break-words text-xs text-muted-foreground">
-                  {b.category || "Sem categoria"}
-                </p>
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
                     {scopeLabel(b.scope)}
