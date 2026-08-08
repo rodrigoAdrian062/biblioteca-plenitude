@@ -51,7 +51,7 @@ const emptyBook: BookForm = {
   published: true,
   watermark_enabled: false,
   scope: "maconico",
-  kind: "livro",
+  kind: "arquivo",
   external_url: "",
 };
 

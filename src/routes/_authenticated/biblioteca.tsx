@@ -169,7 +169,7 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
-      const matchKind = !tipo || (b.kind ?? "livro") === tipo;
+      const matchKind = !tipo || (b.kind ?? "arquivo") === tipo;
       const matchFav = !fav || favSet.has(b.id);
       return matchTerm && matchDegree && matchAuthor && matchCategory && matchKind && matchFav;
     };
@@ -191,7 +191,7 @@ function Library() {
     const map: Record<string, number> = {};
     KINDS.forEach(k => map[k.value] = 0);
     for (const b of books.filter(matchesBase)) {
-      const k = (b.kind ?? "livro") as string;
+      const k = (b.kind ?? "arquivo") as string;
       map[k] = (map[k] ?? 0) + 1;
     }
     return map;
@@ -386,11 +386,12 @@ function Library() {
                 key={k.value}
                 variant={tipo === k.value ? "default" : "outline"}
                 size="sm"
-                className="rounded-full"
+                className="rounded-full flex items-center gap-2"
                 onClick={() =>
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: k.value }) })
                 }
               >
+                <div className={`w-2 h-2 rounded-full ${tipo === k.value ? 'bg-primary shadow-[0_0_8px_rgba(246,172,25,0.6)]' : 'bg-muted-foreground/40'}`} />
                 {k.label} ({kindCounts[k.value] ?? 0})
               </Button>
             ))}
