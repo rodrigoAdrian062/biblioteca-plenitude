@@ -372,7 +372,7 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Arquivos</span>
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tipo</span>
             <Button
               variant={!tipo ? "default" : "outline"}
               size="sm"
@@ -386,11 +386,12 @@ function Library() {
                 key={k.value}
                 variant={tipo === k.value ? "default" : "outline"}
                 size="sm"
-                className="rounded-full"
+                className="rounded-full flex items-center gap-2"
                 onClick={() =>
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: k.value }) })
                 }
               >
+                <div className={`w-2 h-2 rounded-full ${tipo === k.value ? 'bg-primary shadow-[0_0_8px_rgba(246,172,25,0.6)]' : 'bg-muted-foreground/40'}`} />
                 {k.label} ({kindCounts[k.value] ?? 0})
               </Button>
             ))}
