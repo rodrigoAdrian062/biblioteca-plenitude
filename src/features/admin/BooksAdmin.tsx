@@ -264,16 +264,6 @@ export function BooksAdmin() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="category">Assunto / Tags</Label>
-                <Input
-                  id="category"
-                  maxLength={80}
-                  placeholder="Ex: História, Simbolismo, Ritualística..."
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
                 <Label>Tema do acervo</Label>
                 <Select
                   value={form.scope}
