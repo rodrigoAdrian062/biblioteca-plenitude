@@ -115,8 +115,24 @@ export function BooksAdmin() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const isNew = !editingId;
     setSaving(true);
     try {
+      const titleTrimmed = form.title.trim();
+      
+      // Check for duplicates only when creating a new book
+      if (isNew) {
+        const { data: existing } = await supabase
+          .from("books")
+          .select("id")
+          .ilike("title", titleTrimmed)
+          .maybeSingle();
+
+        if (existing) {
+          throw new Error("Esta obra já está cadastrada na biblioteca.");
+        }
+      }
+
       const payload: any = {
         title: form.title.trim(),
         author: form.author.trim() || null,
