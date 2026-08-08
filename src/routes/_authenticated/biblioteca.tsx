@@ -169,7 +169,7 @@ function Library() {
       const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
-      const matchKind = !tipo || (b.kind ?? "livro") === tipo;
+      const matchKind = !tipo || (b.kind ?? "arquivo") === tipo;
       const matchFav = !fav || favSet.has(b.id);
       return matchTerm && matchDegree && matchAuthor && matchCategory && matchKind && matchFav;
     };
@@ -191,7 +191,7 @@ function Library() {
     const map: Record<string, number> = {};
     KINDS.forEach(k => map[k.value] = 0);
     for (const b of books.filter(matchesBase)) {
-      const k = (b.kind ?? "livro") as string;
+      const k = (b.kind ?? "arquivo") as string;
       map[k] = (map[k] ?? 0) + 1;
     }
     return map;
