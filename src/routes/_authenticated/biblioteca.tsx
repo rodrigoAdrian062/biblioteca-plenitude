@@ -372,7 +372,7 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tipo</span>
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Arquivos</span>
             <Button
               variant={!tipo ? "default" : "outline"}
               size="sm"
