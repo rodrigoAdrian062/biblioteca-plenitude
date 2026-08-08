@@ -346,7 +346,7 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tema</span>
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tema do acervo</span>
             <Button
               variant={!tema ? "default" : "outline"}
               size="sm"
