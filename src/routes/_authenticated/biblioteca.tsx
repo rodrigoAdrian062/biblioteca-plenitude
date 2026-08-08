@@ -346,7 +346,7 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tema</span>
+            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tema do acervo</span>
             <Button
               variant={!tema ? "default" : "outline"}
               size="sm"
@@ -365,7 +365,7 @@ function Library() {
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
                 }
               >
-                <div className={`w-2 h-2 rounded-full ${s.value === 'maconico' ? 'bg-primary shadow-[0_0_8px_rgba(246,172,25,0.6)]' : 'bg-muted-foreground/40'}`} />
+                <div className={`w-2 h-2 rounded-full ${tema === s.value ? 'bg-primary shadow-[0_0_8px_rgba(246,172,25,0.6)]' : 'bg-muted-foreground/40'}`} />
                 {s.label} ({counts[s.value] ?? 0})
               </Button>
             ))}
