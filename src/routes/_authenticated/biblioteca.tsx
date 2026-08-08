@@ -360,11 +360,12 @@ function Library() {
                 key={s.value}
                 variant={tema === s.value ? "default" : "outline"}
                 size="sm"
-                className="rounded-full"
+                className="rounded-full flex items-center gap-2"
                 onClick={() =>
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
                 }
               >
+                <div className={`w-2 h-2 rounded-full ${s.value === 'maconico' ? 'bg-primary shadow-[0_0_8px_rgba(246,172,25,0.6)]' : 'bg-muted-foreground/40'}`} />
                 {s.label} ({counts[s.value] ?? 0})
               </Button>
             ))}
