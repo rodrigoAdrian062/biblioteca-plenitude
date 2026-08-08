@@ -390,7 +390,7 @@ function Library() {
                   void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: k.value }) })
                 }
               >
-                {k.label === "Outros" ? "Outros" : `${k.label}s`} ({kindCounts[k.value] ?? 0})
+                {k.label} ({kindCounts[k.value] ?? 0})
               </Button>
             ))}
           </div>
