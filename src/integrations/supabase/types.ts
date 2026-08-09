@@ -54,6 +54,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          download_enabled: boolean
           external_url: string | null
           file_path: string | null
           id: string
@@ -72,6 +73,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          download_enabled?: boolean
           external_url?: string | null
           file_path?: string | null
           id?: string
@@ -90,6 +92,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          download_enabled?: boolean
           external_url?: string | null
           file_path?: string | null
           id?: string
