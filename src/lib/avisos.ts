@@ -81,8 +81,10 @@ export function traduzirErro(err: unknown, padrao = "Não foi possível concluir
 
   // Mensagens que já vêm em português do nosso servidor são mantidas.
   const jaEmPortugues = /[ãõçáéíóúêô]|irmão|senha|obra|acervo|login/i.test(bruto);
+  const finalPadrao = padrao === "Não foi possível salvar a obra." ? "Não foi possível salvar essa obra." : padrao;
+  
   return {
-    titulo: jaEmPortugues && bruto ? bruto : padrao,
+    titulo: jaEmPortugues && bruto ? bruto : finalPadrao,
     dica: "Dica: confira os dados preenchidos e tente novamente. Se persistir, avise o administrador da Biblioteca.",
   };
 }

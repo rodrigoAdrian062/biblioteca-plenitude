@@ -180,7 +180,7 @@ export function BooksAdmin() {
       setOpen(false);
       reset();
     } catch (err) {
-      avisarErro(err, "Não foi possível salvar a obra.");
+      avisarErro(err, "Não foi possível salvar essa obra.");
     } finally {
       setSaving(false);
     }
