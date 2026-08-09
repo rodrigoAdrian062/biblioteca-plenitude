@@ -588,7 +588,30 @@ function Library() {
             ) : null}
           </div>
         ) : tema ? (
-          <BookGrid books={visible} favSet={favSet} onToggleFavorite={onToggleFavorite} className="mt-8" />
+          tipo ? (
+            <BookGrid books={visible} favSet={favSet} onToggleFavorite={onToggleFavorite} className="mt-8" />
+          ) : (
+            <div className="mt-8 space-y-8">
+              {KINDS.map((k) => {
+                const list = visible.filter((b) => (b.kind ?? "livro") === k.value);
+                if (list.length === 0) return null;
+                return (
+                  <section key={k.value} aria-labelledby={`tipo-${k.value}`}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 id={`tipo-${k.value}`} className="font-display text-lg text-foreground">
+                        {k.label}
+                      </h3>
+                      <Badge variant="outline" className="text-[10px]">
+                        {list.length} obra{list.length === 1 ? "" : "s"}
+                      </Badge>
+                    </div>
+                    <div className="gold-rule my-3 h-px w-full" />
+                    <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={list} />
+                  </section>
+                );
+              })}
+            </div>
+          )
         ) : (
           <div className="mt-8 space-y-10">
             {sections
@@ -620,7 +643,29 @@ function Library() {
                     </div>
                   </div>
                   <div className="gold-rule my-3 h-px w-full" />
-                  <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={s.books} />
+                  {tipo ? (
+                    <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={s.books} />
+                  ) : (
+                    <div className="space-y-6">
+                      {KINDS.map((k) => {
+                        const list = s.books.filter((b) => (b.kind ?? "livro") === k.value);
+                        if (list.length === 0) return null;
+                        return (
+                          <div key={k.value}>
+                            <div className="mb-2 flex items-center gap-2">
+                              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                                {k.label}
+                              </h3>
+                              <Badge variant="outline" className="text-[10px]">
+                                {list.length}
+                              </Badge>
+                            </div>
+                            <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={list} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </section>
               ))}
           </div>
