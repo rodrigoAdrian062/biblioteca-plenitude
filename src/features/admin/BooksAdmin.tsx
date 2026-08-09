@@ -156,7 +156,7 @@ export function BooksAdmin() {
         published: form.published,
         watermark_enabled: form.watermark_enabled,
         scope: form.scope,
-        kind: form.kind,
+        kind: form.kind || "livro",
         external_url: form.external_url.trim() || null,
         download_enabled: form.download_enabled,
       };
