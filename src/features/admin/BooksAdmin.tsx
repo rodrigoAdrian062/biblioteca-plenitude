@@ -52,7 +52,7 @@ const emptyBook: BookForm = {
   published: true,
   watermark_enabled: false,
   scope: "maconico",
-  kind: "arquivo",
+  kind: "livro",
   external_url: "",
   download_enabled: false,
 };
