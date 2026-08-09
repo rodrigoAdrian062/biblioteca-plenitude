@@ -15,6 +15,7 @@ export type BookItem = {
   min_degree: number;
   cover_url: string | null;
   external_url: string | null;
+  download_enabled: boolean;
 };
 
 interface BookGridProps {
