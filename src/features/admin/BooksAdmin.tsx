@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, BookOpen, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, Search, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { listBooks } from "@/lib/library.functions";
 import { avisarErro, avisarSucesso } from "@/lib/avisos";
@@ -40,6 +40,7 @@ type BookForm = {
   scope: BookScope;
   kind: BookKind;
   external_url: string;
+  download_enabled: boolean;
 };
 
 const emptyBook: BookForm = {
@@ -53,6 +54,7 @@ const emptyBook: BookForm = {
   scope: "maconico",
   kind: "arquivo",
   external_url: "",
+  download_enabled: false,
 };
 
 export function BooksAdmin() {
@@ -156,6 +158,7 @@ export function BooksAdmin() {
         scope: form.scope,
         kind: form.kind,
         external_url: form.external_url.trim() || null,
+        download_enabled: form.download_enabled,
       };
 
       if (file) payload.file_path = await upload(file, "obras");
@@ -353,6 +356,20 @@ export function BooksAdmin() {
                 />
               </div>
 
+              <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-3">
+                <div className="space-y-0.5">
+                  <Label htmlFor="download-toggle">Permitir Download</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Permite que os irmãos baixem o arquivo da obra.
+                  </p>
+                </div>
+                <Switch
+                  id="download-toggle"
+                  checked={form.download_enabled}
+                  onCheckedChange={(v) => setForm({ ...form, download_enabled: v })}
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="file">Arquivo PDF/EPUB (opcional se houver link)</Label>
                 <Input
@@ -471,33 +488,52 @@ export function BooksAdmin() {
                   {catalogName(b.author, b.title)}
                 </p>
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                  <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
+                  {(b as any).download_enabled && (
+                    <Badge variant="outline" className="h-5 gap-1 px-1.5 text-[10px] text-green-500 border-green-500/30 bg-green-500/5">
+                      <Download className="h-3 w-3" />
+                      Download Liberado
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+                    {degreeLabel(b.min_degree)}
+                  </Badge>
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+                    {kindLabel(b.kind)}
+                  </Badge>
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
                     {scopeLabel(b.scope)}
                   </Badge>
-                  <Badge variant="outline">{kindLabel(b.kind)}</Badge>
-                  <Badge variant="outline">{degreeLabel(b.min_degree)}</Badge>
-                  {!b.published ? <Badge variant="secondary">Rascunho</Badge> : null}
+                  {b.watermark_enabled && (
+                    <Badge variant="outline" className="h-5 px-1.5 text-[10px] text-primary border-primary/30">
+                      M.D.
+                    </Badge>
+                  )}
+                  {!b.published && (
+                    <Badge variant="outline" className="h-5 px-1.5 text-[10px] text-destructive border-destructive/30">
+                      Rascunho
+                    </Badge>
+                  )}
                 </div>
               </div>
-
-              <div className="col-span-2 flex justify-end gap-1 sm:col-span-1 sm:self-center">
+              <div className="flex items-center gap-1 sm:self-center">
                 <Button
                   size="icon"
                   variant="ghost"
-                  aria-label="Editar obra"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
                   onClick={() => {
                     setEditingId(b.id);
                     setForm({
                       title: b.title,
-                      author: b.author ?? "",
-                      category: b.category ?? "",
-                      description: b.description ?? "",
+                      author: b.author || "",
+                      category: b.category || "",
+                      description: b.description || "",
                       min_degree: b.min_degree,
                       published: b.published,
-                      watermark_enabled: b.watermark_enabled ?? true,
-                      scope: (b.scope as BookScope) ?? "maconico",
-                      kind: (b.kind as BookKind) ?? "livro",
-                      external_url: b.external_url ?? "",
+                      watermark_enabled: b.watermark_enabled,
+                      scope: b.scope as BookScope,
+                      kind: b.kind as BookKind,
+                      external_url: b.external_url || "",
+                      download_enabled: (b as any).download_enabled || false,
                     });
                     setOpen(true);
                   }}
@@ -507,17 +543,19 @@ export function BooksAdmin() {
                 <Button
                   size="icon"
                   variant="ghost"
-                  aria-label="Remover obra"
-                  onClick={() => void remove(b.id)}
+                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                  onClick={() => remove(b.id)}
                 >
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           ))}
-          {books.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nenhuma obra cadastrada ainda.</p>
-          ) : null}
+          {books.length === 0 && (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Nenhuma obra encontrada.
+            </p>
+          )}
         </div>
       )}
     </section>
