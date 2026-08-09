@@ -289,24 +289,17 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
             <span className="hidden sm:inline">{full ? "Sair" : "Tela cheia"}</span>
            </Button>
  
-           {downloadEnabled && (
-             <Button
-               variant="outline"
-               size="icon"
-               className="h-8 w-8 shrink-0 text-green-500 hover:text-green-600 hover:bg-green-500/10 border-green-500/30"
-               aria-label="Baixar obra"
-               onClick={() => {
-                 const link = document.createElement("a");
-                 link.href = url;
-                 link.download = "";
-                 document.body.appendChild(link);
-                 link.click();
-                 document.body.removeChild(link);
-               }}
-             >
-               <Download className="h-4 w-4" />
-             </Button>
-           )}
+            {downloadEnabled && (
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 shrink-0 text-green-500 hover:text-green-600 hover:bg-green-500/10 border-green-500/30"
+                aria-label="Baixar obra"
+                onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            )}
          </div>
        </div>
 

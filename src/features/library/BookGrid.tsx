@@ -15,6 +15,7 @@ export type BookItem = {
   min_degree: number;
   cover_url: string | null;
   external_url: string | null;
+  download_enabled: boolean;
 };
 
 interface BookGridProps {
@@ -153,6 +154,7 @@ export function BookGrid({
                     to="/obra/$id" 
                     params={{ id: book.id }}
                     search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
+                    {...(book.download_enabled ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   >
                     {book.kind === 'video' ? <Video className="h-4 w-4 sm:mr-1.5" /> : <BookOpen className="h-4 w-4 sm:mr-1.5" />}
                     <span className="hidden sm:inline">Ler</span>

@@ -89,7 +89,7 @@ export const listHistory = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("reading_progress")
-      .select("book_id, last_page, total_pages, updated_at, books(id, title, author, scope, min_degree, cover_path)")
+      .select("book_id, last_page, total_pages, updated_at, books(id, title, author, scope, min_degree, download_enabled, cover_path)")
       .eq("user_id", context.userId)
       .order("updated_at", { ascending: false })
       .limit(12);
@@ -110,6 +110,7 @@ export const listHistory = createServerFn({ method: "GET" })
         author: string | null;
         scope: string;
         min_degree: number;
+        download_enabled: boolean;
         cover_path: string | null;
       };
       return {
@@ -121,6 +122,7 @@ export const listHistory = createServerFn({ method: "GET" })
         author: book.author,
         scope: book.scope,
         min_degree: book.min_degree,
+        download_enabled: book.download_enabled,
         cover_url: book.cover_path ? (covers[book.cover_path] ?? null) : null,
       };
     });
