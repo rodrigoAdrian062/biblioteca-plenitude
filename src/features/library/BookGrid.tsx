@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Heart, LayoutGrid, List } from "lucide-react";
+import { BookOpen, Heart, LayoutGrid, List, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { scopeLabel, kindLabel } from "@/lib/catalog";
@@ -95,7 +95,7 @@ export function BookGrid({
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-primary/50">
-                    <BookOpen className="h-5 w-5" />
+                    {book.kind === 'video' ? <Video className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
                   </div>
                 )}
               </div>
@@ -143,7 +143,7 @@ export function BookGrid({
               {book.external_url ? (
                 <Button asChild size="sm">
                   <a href={book.external_url} target="_blank" rel="noopener noreferrer">
-                    <BookOpen className="h-4 w-4 sm:mr-1.5" />
+                    {book.kind === 'video' ? <Video className="h-4 w-4 sm:mr-1.5" /> : <BookOpen className="h-4 w-4 sm:mr-1.5" />}
                     <span className="hidden sm:inline">Acessar</span>
                   </a>
                 </Button>
@@ -154,7 +154,7 @@ export function BookGrid({
                     params={{ id: book.id }}
                     search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
                   >
-                    <BookOpen className="h-4 w-4 sm:mr-1.5" />
+                    {book.kind === 'video' ? <Video className="h-4 w-4 sm:mr-1.5" /> : <BookOpen className="h-4 w-4 sm:mr-1.5" />}
                     <span className="hidden sm:inline">Ler</span>
                   </Link>
                 </Button>
