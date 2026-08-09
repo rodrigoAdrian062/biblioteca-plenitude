@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Heart } from "lucide-react";
+import { BookOpen, Heart, LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { scopeLabel, kindLabel } from "@/lib/catalog";
@@ -32,6 +32,7 @@ export function BookGrid({
 }: BookGridProps) {
   const [limit, setLimit] = useState(15);
   const [isMobile, setIsMobile] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
     const checkMobile = () => {
@@ -53,27 +54,52 @@ export function BookGrid({
 
   return (
     <div className="space-y-6">
-      <div className={`grid grid-cols-1 gap-3 md:grid-cols-3 ${className}`}>
+      <div className="flex justify-end gap-2 mb-4">
+        <Button
+          variant={viewMode === "grid" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("grid")}
+          className="rounded-full h-8 w-8 p-0"
+          title="Visualização em Grade"
+        >
+          <LayoutGrid className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={viewMode === "list" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("list")}
+          className="rounded-full h-8 w-8 p-0"
+          title="Visualização em Lista"
+        >
+          <List className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className={viewMode === "grid" 
+        ? `grid grid-cols-1 gap-3 md:grid-cols-3 ${className}`
+        : `flex flex-col gap-2 ${className}`}>
         {visibleBooks.map((book) => (
           <div
             key={book.id}
-            className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5 transition-colors hover:border-primary/40"
+            className={`flex items-center gap-3 rounded-xl border border-border/60 bg-card transition-colors hover:border-primary/40 ${viewMode === 'grid' ? 'p-2.5' : 'p-3'}`}
           >
-            <div className="h-16 w-12 shrink-0 overflow-hidden rounded bg-secondary">
-              {book.cover_url ? (
-                <img
-                  src={book.cover_url}
-                  alt={`Capa da obra ${book.title}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-primary/50">
-                  <BookOpen className="h-5 w-5" />
-                </div>
-              )}
-            </div>
+            {viewMode === "grid" && (
+              <div className="h-16 w-12 shrink-0 overflow-hidden rounded bg-secondary">
+                {book.cover_url ? (
+                  <img
+                    src={book.cover_url}
+                    alt={`Capa da obra ${book.title}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-primary/50">
+                    <BookOpen className="h-5 w-5" />
+                  </div>
+                )}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <div className="flex flex-col">
                 <p className="line-clamp-1 font-display text-sm leading-snug text-foreground">

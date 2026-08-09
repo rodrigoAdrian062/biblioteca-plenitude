@@ -8,8 +8,9 @@ import {
   MoveVertical,
   MoveHorizontal,
   Maximize2,
-  X,
-} from "lucide-react";
+   X,
+   Download,
+ } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Button } from "@/components/ui/button";
@@ -24,8 +25,10 @@ type Props = {
   /** Página inicial vinda do histórico salvo no servidor */
   initialPage?: number | undefined;
   /** Notifica a página atual para salvar o histórico */
-  onProgress?: ((page: number, totalPages: number) => void) | undefined;
-};
+   onProgress?: ((page: number, totalPages: number) => void) | undefined;
+   /** Se o download está habilitado para esta obra */
+   downloadEnabled?: boolean;
+ };
 
 type Mode = "horizontal" | "vertical";
 
@@ -48,7 +51,7 @@ function readSaved(key: string | undefined): SavedPosition | null {
   }
 }
 
-export default function PdfReader({ url, watermark, storageKey, initialPage, onProgress }: Props) {
+export default function PdfReader({ url, watermark, storageKey, initialPage, onProgress, downloadEnabled }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [numPages, setNumPages] = useState(0);
@@ -284,9 +287,28 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
           >
             {full ? <X className="h-4 w-4 sm:mr-1" /> : <Maximize2 className="h-4 w-4 sm:mr-1" />}
             <span className="hidden sm:inline">{full ? "Sair" : "Tela cheia"}</span>
-          </Button>
-        </div>
-      </div>
+           </Button>
+ 
+           {downloadEnabled && (
+             <Button
+               variant="outline"
+               size="icon"
+               className="h-8 w-8 shrink-0 text-green-500 hover:text-green-600 hover:bg-green-500/10 border-green-500/30"
+               aria-label="Baixar obra"
+               onClick={() => {
+                 const link = document.createElement("a");
+                 link.href = url;
+                 link.download = "";
+                 document.body.appendChild(link);
+                 link.click();
+                 document.body.removeChild(link);
+               }}
+             >
+               <Download className="h-4 w-4" />
+             </Button>
+           )}
+         </div>
+       </div>
 
       {resumedFrom ? (
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 bg-accent/40 px-3 py-2 text-xs text-foreground">

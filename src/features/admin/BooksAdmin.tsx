@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, BookOpen, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, Search, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { listBooks } from "@/lib/library.functions";
 import { avisarErro, avisarSucesso } from "@/lib/avisos";
@@ -156,6 +156,7 @@ export function BooksAdmin() {
         scope: form.scope,
         kind: form.kind,
         external_url: form.external_url.trim() || null,
+        download_enabled: form.download_enabled,
       };
 
       if (file) payload.file_path = await upload(file, "obras");
@@ -347,11 +348,25 @@ export function BooksAdmin() {
                   </p>
                 </div>
                 <Switch
-                  id="watermark-toggle"
-                  checked={form.watermark_enabled}
-                  onCheckedChange={(v) => setForm({ ...form, watermark_enabled: v })}
-                />
-              </div>
+                   id="watermark-toggle"
+                   checked={form.watermark_enabled}
+                   onCheckedChange={(v) => setForm({ ...form, watermark_enabled: v })}
+                 />
+               </div>
+ 
+               <div className="flex items-center justify-between space-x-2 rounded-lg border border-border/60 p-3">
+                 <div className="space-y-0.5">
+                   <Label htmlFor="download-toggle">Permitir Download</Label>
+                   <p className="text-xs text-muted-foreground">
+                     Permite que os irmãos baixem o arquivo da obra.
+                   </p>
+                 </div>
+                 <Switch
+                   id="download-toggle"
+                   checked={form.download_enabled}
+                   onCheckedChange={(v) => setForm({ ...form, download_enabled: v })}
+                 />
+               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="file">Arquivo PDF/EPUB (opcional se houver link)</Label>
@@ -469,8 +484,14 @@ export function BooksAdmin() {
               <div className="min-w-0">
                 <p className="break-words font-medium leading-snug text-card-foreground">
                   {catalogName(b.author, b.title)}
-                </p>
-                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                 </p>
+                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                   {b.download_enabled && (
+                     <Badge variant="outline" className="h-5 gap-1 px-1.5 text-[10px] text-green-500 border-green-500/30 bg-green-500/5">
+                       <Download className="h-3 w-3" />
+                       Download Liberado
+                     </Badge>
+                   )}
                   <Badge variant={b.scope === "nao_maconico" ? "secondary" : "default"}>
                     {scopeLabel(b.scope)}
                   </Badge>
