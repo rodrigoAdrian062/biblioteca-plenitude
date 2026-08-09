@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, BookOpen, Search, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, Search, Download, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { listBooks } from "@/lib/library.functions";
 import { avisarErro, avisarSucesso } from "@/lib/avisos";
@@ -52,7 +52,7 @@ const emptyBook: BookForm = {
   published: true,
   watermark_enabled: false,
   scope: "maconico",
-  kind: "arquivo",
+  kind: "livro",
   external_url: "",
   download_enabled: false,
 };
@@ -156,7 +156,7 @@ export function BooksAdmin() {
         published: form.published,
         watermark_enabled: form.watermark_enabled,
         scope: form.scope,
-        kind: form.kind,
+        kind: form.kind || "livro",
         external_url: form.external_url.trim() || null,
         download_enabled: form.download_enabled,
       };
@@ -479,7 +479,7 @@ export function BooksAdmin() {
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-primary/50">
-                    <BookOpen className="h-4 w-4" />
+                    {b.kind === 'video' ? <Video className="h-4 w-4" /> : <BookOpen className="h-4 w-4" />}
                   </div>
                 )}
               </div>

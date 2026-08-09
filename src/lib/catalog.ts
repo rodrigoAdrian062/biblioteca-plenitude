@@ -10,17 +10,17 @@ export function scopeLabel(scope: string | null | undefined): string {
 }
 
 export const KINDS = [
-  { value: "arquivo", label: "Arquivo" },
+  { value: "livro", label: "Livros" },
   { value: "artigo", label: "Artigo" },
   { value: "peca_arquitetura", label: "Peça de Arquitetura" },
-  { value: "musica", label: "Música" },
+  { value: "video", label: "Vídeo" },
   { value: "outros", label: "Outros" },
 ] as const;
 
 export type BookKind = (typeof KINDS)[number]["value"];
 
 export function kindLabel(kind: string | null | undefined): string {
-  return KINDS.find((k) => k.value === kind)?.label ?? "Arquivo";
+  return KINDS.find((k) => k.value === kind)?.label ?? "Livros";
 }
 
 
