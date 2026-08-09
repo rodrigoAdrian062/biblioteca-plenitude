@@ -13,6 +13,7 @@ export const KINDS = [
   { value: "arquivo", label: "Arquivo" },
   { value: "artigo", label: "Artigo" },
   { value: "peca_arquitetura", label: "Peça de Arquitetura" },
+  { value: "musica", label: "Música" },
   { value: "outros", label: "Outros" },
 ] as const;
 
