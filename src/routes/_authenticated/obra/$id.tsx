@@ -175,7 +175,7 @@ function BookReaderPage() {
                     storageKey={id}
                     initialPage={entry?.last_page}
                     onProgress={handleProgress}
-                    downloadEnabled={(book as any).download_enabled}
+                    downloadEnabled={book.download_enabled}
                   />
                 </Suspense>
               </ClientOnly>
@@ -185,8 +185,10 @@ function BookReaderPage() {
               </p>
             )}
 
-            <p className="mt-4 text-xs text-muted-foreground">
-              Leitura restrita: o download e a impressão desta obra não são permitidos.
+            <p className={`mt-4 rounded-md px-3 py-2 text-xs font-medium ${book.download_enabled ? "bg-yellow-500/10 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400" : "text-muted-foreground"}`}>
+              {book.download_enabled 
+                ? "Download e impressão liberados para esta obra."
+                : "Leitura restrita: o download e a impressão desta obra não são permitidos."}
             </p>
           </>
         )}
