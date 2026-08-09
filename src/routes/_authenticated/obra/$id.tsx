@@ -175,6 +175,7 @@ function BookReaderPage() {
                     storageKey={id}
                     initialPage={entry?.last_page}
                     onProgress={handleProgress}
+                    downloadEnabled={book.download_enabled}
                   />
                 </Suspense>
               </ClientOnly>
