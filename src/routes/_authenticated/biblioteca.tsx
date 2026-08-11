@@ -167,13 +167,13 @@ function Library() {
         (b.author ?? "").toLowerCase().includes(t) ||
         (b.category ?? "").toLowerCase().includes(t) ||
         (b.description ?? "").toLowerCase().includes(t);
-      // Grau é cumulativo: ao escolher Mestre, aparecem também Aprendiz e Companheiro
-      const matchDegree = !grau || b.min_degree <= grau;
+      // Grau exato: ao escolher Aprendiz, aparecem somente obras de Aprendiz
+      const matchDegree = !grau || b.min_degree === grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
       const matchCategory =
         !categoria ||
         (b.category ?? "").trim() === categoria ||
-        (categoriaDegree !== null && b.min_degree > 0 && b.min_degree <= categoriaDegree);
+        (categoriaDegree !== null && b.min_degree === categoriaDegree);
       const matchKind = !tipo || (b.kind ?? "livro") === tipo;
       const matchFav = !fav || favSet.has(b.id);
       return matchTerm && matchDegree && matchAuthor && matchCategory && matchKind && matchFav;
