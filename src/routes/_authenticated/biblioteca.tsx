@@ -573,7 +573,7 @@ function Library() {
               </div>
             ))}
           </div>
-        ) : visible.length === 0 ? (
+        ) : grauBloqueado ? null : visible.length === 0 ? (
           <div className="mt-10 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border/60 px-6 py-12 text-center">
             <BookOpen className="h-8 w-8 text-primary/60" />
             <p className="text-sm text-muted-foreground">
