@@ -219,6 +219,9 @@ function Library() {
 
   const hasFilters = Boolean(q || autor || categoria || grau || tema || tipo || fav);
 
+  const grauSelecionado = DEGREES.find((d) => d.label === categoria)?.value ?? 0;
+  const grauBloqueado = !isAdmin && grauSelecionado > (profile?.degree ?? 0);
+
   // Filtros persistentes entre sessões
   useEffect(() => {
     if (typeof window === "undefined") return;
