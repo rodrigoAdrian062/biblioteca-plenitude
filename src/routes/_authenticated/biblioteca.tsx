@@ -149,16 +149,17 @@ function Library() {
     [books],
   );
 
-  const categories = useMemo(
-    () =>
-      Array.from(new Set(books.map((b) => (b.category ?? "").trim()).filter(Boolean))).sort((a, b) =>
-        a.localeCompare(b, "pt-BR"),
-      ),
-    [books],
-  );
+  const categories = useMemo(() => {
+    const fromDb = books.map((b) => (b.category ?? "").trim()).filter(Boolean);
+    const degreeNames = DEGREES.map((d) => d.label);
+    return Array.from(new Set([...degreeNames, ...fromDb])).sort((a, b) =>
+      a.localeCompare(b, "pt-BR"),
+    );
+  }, [books]);
 
   const matchesBase = useMemo(() => {
     const t = q.trim().toLowerCase();
+    const categoriaDegree = DEGREES.find((d) => d.label === categoria)?.value ?? null;
     return (b: (typeof books)[number]) => {
       const matchTerm =
         !t ||
@@ -166,14 +167,19 @@ function Library() {
         (b.author ?? "").toLowerCase().includes(t) ||
         (b.category ?? "").toLowerCase().includes(t) ||
         (b.description ?? "").toLowerCase().includes(t);
-      const matchDegree = !grau || b.min_degree === grau;
+      // Grau é cumulativo: ao escolher Mestre, aparecem também Aprendiz e Companheiro
+      const matchDegree = !grau || b.min_degree <= grau;
       const matchAuthor = !autor || (b.author ?? "").trim() === autor;
-      const matchCategory = !categoria || (b.category ?? "").trim() === categoria;
+      const matchCategory =
+        !categoria ||
+        (b.category ?? "").trim() === categoria ||
+        (categoriaDegree !== null && b.min_degree > 0 && b.min_degree <= categoriaDegree);
       const matchKind = !tipo || (b.kind ?? "livro") === tipo;
       const matchFav = !fav || favSet.has(b.id);
       return matchTerm && matchDegree && matchAuthor && matchCategory && matchKind && matchFav;
     };
   }, [q, grau, autor, categoria, tipo, fav, favSet]);
+
 
 
   const baseVisible = useMemo(() => books.filter(matchesBase), [books, matchesBase]);
