@@ -517,6 +517,27 @@ function Library() {
           </section>
         ) : null}
 
+        {(() => {
+          const selecionado = DEGREES.find((d) => d.label === categoria)?.value ?? 0;
+          const meuGrau = profile?.degree ?? 0;
+          if (isAdmin || !selecionado || selecionado <= meuGrau) return null;
+          return (
+            <div className="mt-8 rounded-xl border border-primary/40 bg-primary/10 p-5 text-center">
+              <h3 className="font-display text-lg text-foreground">
+                Acervo do grau de {categoria} ainda não liberado
+              </h3>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+                Meu Irmão, estas obras são reservadas aos Irmãos elevados ao grau de {categoria}. Elas
+                ficarão disponíveis automaticamente assim que o seu grau for atualizado no sistema.
+              </p>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+                Se você já foi elevado ao grau de {categoria}, entre em contato com o Mestre
+                Bibliotecário, Ir∴ Menezes, para atualizar o seu cadastro.
+              </p>
+            </div>
+          );
+        })()}
+
         {booksError ? (
           <div className="mt-8 rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-center">
             <h3 className="text-lg font-medium text-destructive">Erro ao carregar obras</h3>
