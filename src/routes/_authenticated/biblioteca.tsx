@@ -420,26 +420,7 @@ function Library() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Grau</span>
-            <Button
-              variant={!grau ? "default" : "outline"}
-              size="sm"
-              className="rounded-full"
-              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, grau: 0 }) })}
-            >
-              Todos
-            </Button>
-            {DEGREES.filter((d) => !profile || d.value <= profile.degree).map((d) => (
-              <Button
-                key={d.value}
-                variant={grau === d.value ? "default" : "outline"}
-                size="sm"
-                className="rounded-full"
-                onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, grau: d.value }) })}
-              >
-                {d.label}
-              </Button>
-            ))}
+
             {hasFilters ? (
               <Button
                 variant="ghost"
