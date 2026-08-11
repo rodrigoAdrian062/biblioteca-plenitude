@@ -219,6 +219,9 @@ function Library() {
 
   const hasFilters = Boolean(q || autor || categoria || grau || tema || tipo || fav);
 
+  const grauSelecionado = DEGREES.find((d) => d.label === categoria)?.value ?? 0;
+  const grauBloqueado = !isAdmin && grauSelecionado > (profile?.degree ?? 0);
+
   // Filtros persistentes entre sessões
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -517,6 +520,22 @@ function Library() {
           </section>
         ) : null}
 
+        {grauBloqueado ? (
+          <div className="mt-8 rounded-xl border border-primary/40 bg-primary/10 p-5 text-center">
+            <h3 className="font-display text-lg text-foreground">
+              Acervo do grau de {categoria} ainda não liberado
+            </h3>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+              Meu Irmão, estas obras são reservadas aos Irmãos do grau de {categoria}. Elas ficarão
+              disponíveis automaticamente assim que o seu grau for atualizado no sistema.
+            </p>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+              Se você já foi elevado ao grau de {categoria}, entre em contato com o Mestre
+              Bibliotecário, Ir∴ Menezes, para atualizar o seu cadastro.
+            </p>
+          </div>
+        ) : null}
+
         {booksError ? (
           <div className="mt-8 rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-center">
             <h3 className="text-lg font-medium text-destructive">Erro ao carregar obras</h3>
@@ -554,7 +573,7 @@ function Library() {
               </div>
             ))}
           </div>
-        ) : visible.length === 0 ? (
+        ) : grauBloqueado ? null : visible.length === 0 ? (
           <div className="mt-10 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border/60 px-6 py-12 text-center">
             <BookOpen className="h-8 w-8 text-primary/60" />
             <p className="text-sm text-muted-foreground">
