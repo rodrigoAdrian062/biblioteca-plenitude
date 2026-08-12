@@ -488,11 +488,12 @@ export function BooksAdmin() {
           {books
             .filter((b) => {
               const matchesScope = scopeFilter === "todos" || (b.scope ?? "maconico") === scopeFilter;
+              const matchesDegree = degreeFilter === "todos" || b.min_degree === degreeFilter;
               const matchesSearch = !searchTerm || 
                 b.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                 b.author?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 b.category?.toLowerCase().includes(searchTerm.toLowerCase());
-              return matchesScope && matchesSearch;
+              return matchesScope && matchesDegree && matchesSearch;
             })
             .map((b) => (
             <div
