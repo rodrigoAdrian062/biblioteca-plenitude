@@ -84,13 +84,16 @@ export function BooksAdmin() {
   }
 
   const checkDuplicate = async (title: string) => {
-    if (!title.trim() || editingId) return;
+    if (!title.trim() || editingId) {
+      setDuplicateBook(null);
+      return;
+    }
     const { data } = await supabase
       .from("books")
-      .select("id")
+      .select("id, title")
       .ilike("title", title.trim())
       .maybeSingle();
-    setDuplicateWarning(!!data);
+    setDuplicateBook(data ? { id: data.id, title: data.title } : null);
   };
 
   async function resizeImage(file: File, maxWidth = 300): Promise<Blob> {
