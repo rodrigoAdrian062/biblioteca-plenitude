@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Heart, LayoutGrid, List, Video } from "lucide-react";
+import { BookOpen, Heart, LayoutGrid, List, Video, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { scopeLabel, kindLabel } from "@/lib/catalog";
@@ -23,6 +23,7 @@ interface BookGridProps {
   className?: string;
   favSet: Set<string>;
   onToggleFavorite: (bookId: string, favorite: boolean) => void;
+  showShare?: boolean;
 }
 
 export function BookGrid({
@@ -30,6 +31,7 @@ export function BookGrid({
   className = "",
   favSet,
   onToggleFavorite,
+  showShare = false,
 }: BookGridProps) {
   const [limit, setLimit] = useState(15);
   const [isMobile, setIsMobile] = useState(false);
@@ -52,6 +54,12 @@ export function BookGrid({
 
   const visibleBooks = books.slice(0, limit);
   const hasMore = books.length > limit;
+
+  const handleShare = (book: BookItem) => {
+    const text = `Confira esta obra na Biblioteca Plenitude: ${book.title} - ${window.location.origin}/obra/${book.id}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <div className="space-y-6">
@@ -141,6 +149,18 @@ export function BookGrid({
                   className={`h-4 w-4 ${favSet.has(book.id) ? "fill-primary text-primary" : "text-muted-foreground"}`}
                 />
               </Button>
+              {showShare && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-[#25D366] hover:bg-[#25D366]/10"
+                  onClick={() => handleShare(book)}
+                  title="Compartilhar no WhatsApp"
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              )}
               {book.external_url ? (
                 <Button asChild size="sm">
                   <a href={book.external_url} target="_blank" rel="noopener noreferrer">
