@@ -596,7 +596,7 @@ function Library() {
           </div>
         ) : tema ? (
           tipo ? (
-            <BookGrid books={visible} favSet={favSet} onToggleFavorite={onToggleFavorite} className="mt-8" />
+            <BookGrid books={visible} favSet={favSet} onToggleFavorite={onToggleFavorite} className="mt-8" showShare={fav} />
           ) : (
             <div className="mt-8 space-y-8">
               {KINDS.map((k) => {
@@ -613,7 +613,7 @@ function Library() {
                       </Badge>
                     </div>
                     <div className="gold-rule my-3 h-px w-full" />
-                    <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={list} />
+                    <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={list} showShare={fav} />
                   </section>
                 );
               })}
@@ -651,7 +651,7 @@ function Library() {
                   </div>
                   <div className="gold-rule my-3 h-px w-full" />
                   {tipo ? (
-                    <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={s.books} />
+                    <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={s.books} showShare={fav} />
                   ) : (
                     <div className="space-y-6">
                       {KINDS.map((k) => {
@@ -667,7 +667,7 @@ function Library() {
                                 {list.length}
                               </Badge>
                             </div>
-                            <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={list} />
+                            <BookGrid favSet={favSet} onToggleFavorite={onToggleFavorite} books={list} showShare={fav} />
                           </div>
                         );
                       })}
