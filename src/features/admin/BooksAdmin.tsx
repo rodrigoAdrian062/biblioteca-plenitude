@@ -68,7 +68,7 @@ export function BooksAdmin() {
   const [scopeFilter, setScopeFilter] = useState<BookScope | "todos">("todos");
   const [degreeFilter, setDegreeFilter] = useState<number | "todos">("todos");
   const [searchTerm, setSearchTerm] = useState("");
-  const [duplicateWarning, setDuplicateWarning] = useState(false);
+  const [duplicateBook, setDuplicateBook] = useState<{ id: string; title: string } | null>(null);
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books"],
