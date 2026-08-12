@@ -237,9 +237,17 @@ export function BooksAdmin() {
                      checkDuplicate(e.target.value);
                    }}
                  />
-                 {duplicateWarning && (
+                 {duplicateBook && (
                    <p className="text-xs font-medium text-destructive">
                      ⚠️ Esta obra já existe na biblioteca.
+                     <a 
+                       href={`/obra/${duplicateBook.id}`} 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="ml-1 underline underline-offset-2 hover:text-destructive/80"
+                     >
+                       Ver obra existente
+                     </a>
                    </p>
                  )}
                </div>
