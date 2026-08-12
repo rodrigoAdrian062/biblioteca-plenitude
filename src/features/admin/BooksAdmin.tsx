@@ -80,7 +80,7 @@ export function BooksAdmin() {
     setFile(null);
     setCover(null);
     setEditingId(null);
-    setDuplicateWarning(false);
+    setDuplicateBook(null);
   }
 
   const checkDuplicate = async (title: string) => {
