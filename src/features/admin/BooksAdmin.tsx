@@ -407,34 +407,63 @@ export function BooksAdmin() {
         </Dialog>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="mb-4 space-y-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Tema:</span>
+            <Button
+              size="sm"
+              variant={scopeFilter === "todos" ? "default" : "outline"}
+              className="h-7 px-3 text-xs rounded-full"
+              onClick={() => setScopeFilter("todos")}
+            >
+              Todos
+            </Button>
+            {SCOPES.map((s) => (
+              <Button
+                key={s.value}
+                size="sm"
+                variant={scopeFilter === s.value ? "default" : "outline"}
+                className="h-7 px-3 text-xs rounded-full"
+                onClick={() => setScopeFilter(s.value)}
+              >
+                {s.label}
+              </Button>
+            ))}
+          </div>
+
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Procurar obras, autores, músicas..."
+              className="h-9 pl-9 text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
         <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Grau:</span>
           <Button
             size="sm"
-            variant={scopeFilter === "todos" ? "default" : "outline"}
-            onClick={() => setScopeFilter("todos")}
+            variant={degreeFilter === "todos" ? "default" : "outline"}
+            className="h-7 px-3 text-xs rounded-full"
+            onClick={() => setDegreeFilter("todos")}
           >
             Todos
           </Button>
-          {SCOPES.map((s) => (
+          {DEGREES.map((d) => (
             <Button
-              key={s.value}
+              key={d.value}
               size="sm"
-              variant={scopeFilter === s.value ? "default" : "outline"}
-              onClick={() => setScopeFilter(s.value)}
+              variant={degreeFilter === d.value ? "default" : "outline"}
+              className="h-7 px-3 text-xs rounded-full"
+              onClick={() => setDegreeFilter(d.value)}
             >
-              {s.label}
+              {d.label}
             </Button>
           ))}
-        </div>
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Procurar obras, autores, músicas..."
-            className="h-9 pl-9"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
         </div>
       </div>
 
