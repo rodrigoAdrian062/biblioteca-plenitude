@@ -11,9 +11,9 @@ export function scopeLabel(scope: string | null | undefined): string {
 
 export const KINDS = [
   { value: "livro", label: "Livros" },
-  { value: "artigo", label: "Artigo" },
-  { value: "peca_arquitetura", label: "Peça de Arquitetura" },
-  { value: "video", label: "Vídeo" },
+  { value: "artigo", label: "Artigos" },
+  { value: "peca_arquitetura", label: "Peças de Arquitetura" },
+  { value: "video", label: "Vídeos" },
   { value: "outros", label: "Outros" },
 ] as const;
 
