@@ -68,7 +68,7 @@ export function BooksAdmin() {
   const [scopeFilter, setScopeFilter] = useState<BookScope | "todos">("todos");
   const [degreeFilter, setDegreeFilter] = useState<number | "todos">("todos");
   const [searchTerm, setSearchTerm] = useState("");
-  const [duplicateWarning, setDuplicateWarning] = useState(false);
+  const [duplicateBook, setDuplicateBook] = useState<{ id: string; title: string } | null>(null);
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books"],
@@ -80,17 +80,20 @@ export function BooksAdmin() {
     setFile(null);
     setCover(null);
     setEditingId(null);
-    setDuplicateWarning(false);
+    setDuplicateBook(null);
   }
 
   const checkDuplicate = async (title: string) => {
-    if (!title.trim() || editingId) return;
+    if (!title.trim() || editingId) {
+      setDuplicateBook(null);
+      return;
+    }
     const { data } = await supabase
       .from("books")
-      .select("id")
+      .select("id, title")
       .ilike("title", title.trim())
       .maybeSingle();
-    setDuplicateWarning(!!data);
+    setDuplicateBook(data ? { id: data.id, title: data.title } : null);
   };
 
   async function resizeImage(file: File, maxWidth = 300): Promise<Blob> {
@@ -234,9 +237,17 @@ export function BooksAdmin() {
                      checkDuplicate(e.target.value);
                    }}
                  />
-                 {duplicateWarning && (
+                 {duplicateBook && (
                    <p className="text-xs font-medium text-destructive">
                      ⚠️ Esta obra já existe na biblioteca.
+                     <a 
+                       href={`/obra/${duplicateBook.id}`} 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="ml-1 underline underline-offset-2 hover:text-destructive/80"
+                     >
+                       Ver obra existente
+                     </a>
                    </p>
                  )}
                </div>
