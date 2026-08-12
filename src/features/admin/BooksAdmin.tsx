@@ -66,6 +66,7 @@ export function BooksAdmin() {
   const [cover, setCover] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [scopeFilter, setScopeFilter] = useState<BookScope | "todos">("todos");
+  const [degreeFilter, setDegreeFilter] = useState<number | "todos">("todos");
   const [searchTerm, setSearchTerm] = useState("");
   const [duplicateWarning, setDuplicateWarning] = useState(false);
 
