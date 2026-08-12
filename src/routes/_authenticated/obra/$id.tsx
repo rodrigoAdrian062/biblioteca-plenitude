@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { ClientOnly } from "@tanstack/react-router";
-import { ArrowLeft, Heart } from "lucide-react";
+import { ArrowLeft, Heart, BookOpen } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { getBook, getGlobalSettings } from "@/lib/library.functions";
@@ -98,19 +98,19 @@ function BookReaderPage() {
         </Button>
 
         {isLoading ? (
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <Skeleton className="h-9 w-3/4" />
-              <Skeleton className="h-5 w-1/4" />
+          <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-700">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-card shadow-lg ring-1 ring-border/60">
+                <BookOpen className="h-10 w-10 animate-pulse text-primary" />
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Skeleton className="h-9 w-24" />
-              <Skeleton className="h-9 w-24" />
-              <Skeleton className="h-9 w-24" />
+            <h2 className="font-display text-xl text-foreground">Abrindo acervo...</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Isso pode levar alguns segundos.</p>
+            <div className="mt-8 grid w-full max-w-md gap-4">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4 mx-auto" />
             </div>
-            <Skeleton className="h-px w-32" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-[600px] w-full rounded-xl" />
           </div>
         ) : error || !book ? (
           <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center">

@@ -342,7 +342,15 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
         <Document
           file={url}
           onLoadSuccess={onLoad}
-          loading={<p className="p-8 text-sm text-muted-foreground">Abrindo a obra...</p>}
+          loading={
+            <div className="flex flex-col items-center justify-center py-16 animate-in fade-in duration-500">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <BookOpen className="h-8 w-8 animate-pulse text-primary" />
+              </div>
+              <p className="text-sm font-medium text-foreground">Abrindo a obra...</p>
+              <p className="mt-1 text-xs text-muted-foreground">Preparando as páginas para leitura</p>
+            </div>
+          }
           error={<p className="p-8 text-sm text-destructive">Não foi possível abrir a obra.</p>}
           className={
             mode === "vertical"
