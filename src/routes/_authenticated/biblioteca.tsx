@@ -422,13 +422,16 @@ function Library() {
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-
-            {hasFilters ? (
+          {hasFilters && (
+            <div className="flex w-full items-center justify-between border-t border-border/40 pt-4">
+              <span className="text-xs font-medium text-primary animate-pulse flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                Dica: Limpe os filtros para ver todo o acervo
+              </span>
               <Button
                 variant="ghost"
                 size="sm"
-                className="ml-auto rounded-full"
+                className="rounded-full text-muted-foreground hover:text-foreground"
                 onClick={() =>
                   void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } })
                 }
@@ -436,8 +439,8 @@ function Library() {
                 <X className="mr-1 h-4 w-4" />
                 Limpar filtros
               </Button>
-            ) : null}
-          </div>
+            </div>
+          )}
         </section>
 
 
