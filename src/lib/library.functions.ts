@@ -127,14 +127,16 @@ export const adminStats = createServerFn({ method: "GET" })
     const { assertAdmin, admin } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
     const db = await admin();
-    const [books, members, logs] = await Promise.all([
+    const [books, members, logs, visitingStats] = await Promise.all([
       db.from("books").select("id", { count: "exact", head: true }),
       db.from("profiles").select("id", { count: "exact", head: true }),
       db.from("book_access_logs").select("id", { count: "exact", head: true }),
+      db.rpc("get_visiting_stats"),
     ]);
     return {
       books: books.count ?? 0,
       members: members.count ?? 0,
       reads: logs.count ?? 0,
+      visitingStats: (visitingStats.data || []) as Array<{ full_name: string; reads_count: number }>,
     };
   });

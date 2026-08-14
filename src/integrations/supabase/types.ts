@@ -244,6 +244,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_visiting_stats: {
+        Args: never
+        Returns: {
+          full_name: string
+          reads_count: number
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
