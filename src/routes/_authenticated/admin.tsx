@@ -220,6 +220,45 @@ function StatsPanel() {
       {!isLoadingStats && (
         <div className="grid gap-6">
           <Card className="rounded-2xl border-border/60 bg-card/60">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-sm font-medium">Contador de Visitas por Irmão</CardTitle>
+              <Badge variant="outline" className="text-[10px] uppercase">
+                Acervo Aberto
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-border/40 text-muted-foreground">
+                      <th className="pb-2 font-medium">Nome do Irmão</th>
+                      <th className="pb-2 text-right font-medium">Obras Abertas</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/20">
+                    {data?.visitingStats?.length ? (
+                      data.visitingStats.map((stat: any) => (
+                        <tr key={stat.full_name} className="hover:bg-primary/5">
+                          <td className="py-2 pr-4 font-medium">{stat.full_name}</td>
+                          <td className="py-2 text-right text-primary tabular-nums">
+                            {stat.reads_count}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={2} className="py-4 text-center text-muted-foreground italic">
+                          Nenhum registro de acesso encontrado.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl border-border/60 bg-card/60">
             <CardHeader>
               <CardTitle className="text-sm font-medium">Configurações Globais</CardTitle>
             </CardHeader>
