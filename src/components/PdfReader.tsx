@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import {
   ChevronLeft,
@@ -11,10 +11,12 @@ import {
   X,
   Download,
   BookOpen,
+  Search,
 } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -63,7 +65,11 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const [full, setFull] = useState(false);
   const [restored, setRestored] = useState(false);
   const [resumedFrom, setResumedFrom] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<{ pageIndex: number }[]>([]);
+  const [currentResultIndex, setCurrentResultIndex] = useState(-1);
   const pendingPage = useRef<number | null>(null);
+  const pdfInstance = useRef<any>(null);
 
   // Restaura preferências salvas (modo/zoom) ao montar
   useEffect(() => {
@@ -112,7 +118,9 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     };
   }, [full]);
 
-  const onLoad = useCallback(({ numPages: total }: { numPages: number }) => {
+  const onLoad = useCallback((pdf: any) => {
+    pdfInstance.current = pdf;
+    const total = pdf.numPages;
     setNumPages(total);
     const target = Math.min(Math.max(1, pendingPage.current ?? 1), total);
     setPage(target);
@@ -177,6 +185,67 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     Object.values(pageRefs.current).forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
   }, [mode, numPages, restored]);
+
+  const handleSearch = useCallback(async (text: string) => {
+    setSearchTerm(text);
+    if (!text || !pdfInstance.current || text.length < 3) {
+      setSearchResults([]);
+      setCurrentResultIndex(-1);
+      return;
+    }
+
+    const results: { pageIndex: number }[] = [];
+    const pdf = pdfInstance.current;
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items.map((item: any) => item.str).join(" ");
+      
+      if (pageText.toLowerCase().includes(text.toLowerCase())) {
+        results.push({ pageIndex: i });
+      }
+    }
+
+    setSearchResults(results);
+    if (results.length > 0) {
+      setCurrentResultIndex(0);
+      goTo(results[0].pageIndex);
+    } else {
+      setCurrentResultIndex(-1);
+    }
+  }, [goTo]);
+
+  const nextResult = () => {
+    if (searchResults.length === 0) return;
+    const nextIndex = (currentResultIndex + 1) % searchResults.length;
+    setCurrentResultIndex(nextIndex);
+    goTo(searchResults[nextIndex].pageIndex);
+  };
+
+  const prevResult = () => {
+    if (searchResults.length === 0) return;
+    const prevIndex = (currentResultIndex - 1 + searchResults.length) % searchResults.length;
+    setCurrentResultIndex(prevIndex);
+    goTo(searchResults[prevIndex].pageIndex);
+  };
+
+  const textRenderer = useMemo(() => {
+    return (textItem: any) => {
+      if (!searchTerm || searchTerm.length < 3) return textItem.str;
+      
+      const regex = new RegExp(`(${searchTerm})`, 'gi');
+      const parts = textItem.str.split(regex);
+      
+      return parts.map((part: string, i: number) => 
+        regex.test(part) ? (
+          <mark key={i} className="bg-yellow-300 text-black px-0.5 rounded-sm">
+            {part}
+          </mark>
+        ) : part
+      );
+    };
+  }, [searchTerm]);
 
   return (
     <div
@@ -255,6 +324,41 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
               <MoveHorizontal className="h-4 w-4 sm:mr-1" />
               <span className="hidden sm:inline">Horizontal</span>
             </Button>
+          </div>
+
+          <div className="flex items-center gap-1.5 border-l border-border/60 pl-1.5">
+            <div className="relative flex items-center">
+              <Search className="absolute left-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Buscar na obra..."
+                className="h-8 w-32 pl-7 pr-2 text-xs focus-visible:ring-primary/50 sm:w-48"
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+              {searchResults.length > 0 && (
+                <div className="absolute right-2 flex items-center gap-1">
+                  <span className="text-[10px] text-muted-foreground">
+                    {currentResultIndex + 1}/{searchResults.length}
+                  </span>
+                  <div className="flex flex-col">
+                    <button 
+                      onClick={prevResult}
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label="Resultado anterior"
+                    >
+                      <ChevronLeft className="h-2.5 w-2.5 rotate-90" />
+                    </button>
+                    <button 
+                      onClick={nextResult}
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label="Próximo resultado"
+                    >
+                      <ChevronLeft className="h-2.5 w-2.5 -rotate-90" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <Button
@@ -372,10 +476,12 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 <Page
                   pageNumber={n}
                   width={width}
-                  scale={scale}
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                />
+                   scale={scale}
+                   customTextRenderer={textRenderer}
+                   renderTextLayer={true}
+                   renderAnnotationLayer={false}
+                   className="select-none"
+                 />
               </div>
             ))
           ) : (
@@ -383,10 +489,12 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
               <Page
                 pageNumber={page}
                 width={width}
-                scale={scale}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-              />
+                 scale={scale}
+                 customTextRenderer={textRenderer}
+                 renderTextLayer={true}
+                 renderAnnotationLayer={false}
+                 className="select-none"
+               />
             </div>
           )}
         </Document>
