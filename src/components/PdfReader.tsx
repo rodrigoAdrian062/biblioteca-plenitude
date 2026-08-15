@@ -210,7 +210,8 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     setSearchResults(results);
     if (results.length > 0) {
       setCurrentResultIndex(0);
-      goTo(results[0].pageIndex);
+      const firstMatch = results[0];
+      if (firstMatch) goTo(firstMatch.pageIndex);
     } else {
       setCurrentResultIndex(-1);
     }
@@ -220,14 +221,16 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     if (searchResults.length === 0) return;
     const nextIndex = (currentResultIndex + 1) % searchResults.length;
     setCurrentResultIndex(nextIndex);
-    goTo(searchResults[nextIndex].pageIndex);
+    const nextMatch = searchResults[nextIndex];
+    if (nextMatch) goTo(nextMatch.pageIndex);
   };
 
   const prevResult = () => {
     if (searchResults.length === 0) return;
     const prevIndex = (currentResultIndex - 1 + searchResults.length) % searchResults.length;
     setCurrentResultIndex(prevIndex);
-    goTo(searchResults[prevIndex].pageIndex);
+    const prevMatch = searchResults[prevIndex];
+    if (prevMatch) goTo(prevMatch.pageIndex);
   };
 
   const textRenderer = useMemo(() => {
