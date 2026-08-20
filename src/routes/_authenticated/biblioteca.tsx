@@ -280,7 +280,24 @@ function Library() {
         userId={profile?.id}
       />
 
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10 relative">
+        {profile && (
+          <div className="absolute -top-6 right-4 z-10 flex items-start gap-3 rounded-2xl border border-primary/30 bg-card/80 p-3 pr-4 shadow-lg backdrop-blur-sm sm:-top-8 animate-in fade-in slide-in-from-top-2 duration-700">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <BookOpen className="h-5 w-5" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary/80">Mentoria Ir∴ Menezes</p>
+              <p className="text-xs leading-relaxed text-foreground">
+                {profile.degree === 1 && "Meu Irmão Aprendiz, sugiro iniciar sua jornada pelas Peças de Arquitetura deste grau."}
+                {profile.degree === 2 && "Dileto Irmão Companheiro, aprofunde seus estudos nas instruções de simbologia e ritualística."}
+                {profile.degree === 3 && "Respeitável Mestre, o acervo completo está à sua disposição para o constante aperfeiçoamento."}
+                {profile.degree === 0 && "Seja bem-vindo. Explore as obras gerais enquanto preparamos seu acesso completo."}
+              </p>
+            </div>
+          </div>
+        )}
+
         <section className="rounded-2xl border border-border/60 bg-card/60 p-4 sm:p-5">
           <div className="flex items-center justify-between gap-4">
             <div className="min-w-0">
