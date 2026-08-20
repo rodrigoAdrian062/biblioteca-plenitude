@@ -248,6 +248,8 @@ export type Database = {
         Args: never
         Returns: {
           full_name: string
+          last_login_at: string
+          last_read_at: string
           reads_count: number
           user_id: string
         }[]
