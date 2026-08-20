@@ -281,7 +281,24 @@ function Library() {
       />
 
       <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
-        <section className="rounded-2xl border border-border/60 bg-card/60 p-4 sm:p-5">
+        <section className="relative rounded-2xl border border-border/60 bg-card/60 p-4 sm:p-5 mb-8">
+          {profile && (
+            <div className="absolute -top-6 right-4 z-10 flex items-start gap-3 rounded-2xl border border-primary/30 bg-card/80 p-3 pr-4 shadow-lg backdrop-blur-sm sm:-top-8 animate-in fade-in slide-in-from-top-2 duration-700 max-w-[280px] sm:max-w-md">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary/80">Mentoria Ir∴ Menezes</p>
+                <p className="text-xs leading-relaxed text-foreground italic">
+                  "{profile.degree === 1 && "Meu Irmão Aprendiz, sugiro iniciar sua jornada pelas Peças de Arquitetura deste grau."}
+                  {profile.degree === 2 && "Dileto Irmão Companheiro, aprofunde seus estudos nas instruções de simbologia e ritualística."}
+                  {profile.degree === 3 && "Respeitável Mestre, o acervo completo está à sua disposição para o constante aperfeiçoamento."}
+                  {profile.degree === 0 && "Seja bem-vindo. Explore as obras gerais enquanto preparamos seu acesso completo."}"
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between gap-4">
             <div className="min-w-0">
               <h1 className="font-display text-xl text-foreground sm:text-2xl uppercase tracking-tight">Acervo</h1>
@@ -298,6 +315,7 @@ function Library() {
             </div>
           </div>
         </section>
+
 
         <section className="mt-5 space-y-4 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5">
           <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_13rem_13rem]">
