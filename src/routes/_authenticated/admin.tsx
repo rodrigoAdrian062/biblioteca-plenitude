@@ -230,24 +230,56 @@ function StatsPanel() {
               <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-border/40 text-muted-foreground">
+                    <tr className="border-b border-border/40 text-muted-foreground text-[10px] uppercase tracking-wider">
                       <th className="pb-2 font-medium">Nome do Irmão</th>
-                      <th className="pb-2 text-right font-medium">Obras Abertas</th>
+                      <th className="pb-2 text-center font-medium">Obras</th>
+                      <th className="pb-2 text-center font-medium">Último Acesso</th>
+                      <th className="pb-2 text-right font-medium">Última Leitura</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/20">
                     {data?.visitingStats?.length ? (
-                      data.visitingStats.map((stat: any) => (
-                        <tr key={stat.full_name} className="hover:bg-primary/5">
-                          <td className="py-2 pr-4 font-medium">{stat.full_name}</td>
-                          <td className="py-2 text-right text-primary tabular-nums">
-                            {stat.reads_count}
-                          </td>
-                        </tr>
-                      ))
+                      data.visitingStats.map((stat: any) => {
+                        const formatDate = (dateStr: string | null) => {
+                          if (!dateStr) return "Nunca";
+                          const date = new Date(dateStr);
+                          const now = new Date();
+                          const diff = now.getTime() - date.getTime();
+                          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                          
+                          if (days === 0) {
+                            const hours = Math.floor(diff / (1000 * 60 * 60));
+                            if (hours === 0) return "Agora";
+                            return `Há ${hours}h`;
+                          }
+                          if (days < 7) return `Há ${days}d`;
+                          
+                          return new Intl.DateTimeFormat("pt-BR", { 
+                            day: "2-digit", 
+                            month: "2-digit" 
+                          }).format(date);
+                        };
+
+                        return (
+                          <tr key={stat.user_id} className="hover:bg-primary/5 transition-colors">
+                            <td className="py-3 pr-4 font-medium truncate max-w-[150px]" title={stat.full_name}>
+                              {stat.full_name}
+                            </td>
+                            <td className="py-3 text-center text-primary tabular-nums font-mono">
+                              {stat.reads_count}
+                            </td>
+                            <td className="py-3 text-center text-muted-foreground text-xs tabular-nums">
+                              {formatDate(stat.last_login_at)}
+                            </td>
+                            <td className="py-3 text-right text-xs tabular-nums text-muted-foreground/80">
+                              {formatDate(stat.last_read_at)}
+                            </td>
+                          </tr>
+                        );
+                      })
                     ) : (
                       <tr>
-                        <td colSpan={2} className="py-4 text-center text-muted-foreground italic">
+                        <td colSpan={4} className="py-8 text-center text-muted-foreground italic">
                           Nenhum registro de acesso encontrado.
                         </td>
                       </tr>

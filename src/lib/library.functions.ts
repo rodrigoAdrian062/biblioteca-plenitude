@@ -137,6 +137,11 @@ export const adminStats = createServerFn({ method: "GET" })
       books: books.count ?? 0,
       members: members.count ?? 0,
       reads: logs.count ?? 0,
-      visitingStats: (visitingStats.data || []) as Array<{ full_name: string; reads_count: number }>,
+      visitingStats: (visitingStats.data || []) as Array<{ 
+        full_name: string; 
+        reads_count: number;
+        last_login_at: string | null;
+        last_read_at: string | null;
+      }>,
     };
   });
