@@ -42,16 +42,20 @@ export async function listMembersImpl(): Promise<MemberRow[]> {
   const emails = new Map((users?.data?.users ?? []).map((u) => [u.id, u.email ?? ""]));
   const adminIds = new Set((roles ?? []).filter((r) => r.role === "admin").map((r) => r.user_id));
 
-  return (profiles ?? []).map((p) => ({
-    id: p.id,
-    email: emails.get(p.id) ?? "",
-    full_name: p.full_name,
-    degree: p.degree,
-    lodge: p.lodge,
-    active: p.active,
-    is_admin: adminIds.has(p.id),
-    created_at: p.created_at,
-  }));
+  return (profiles ?? []).map((p) => {
+    const user = users?.data?.users?.find((u) => u.id === p.id);
+    return {
+      id: p.id,
+      email: user?.email ?? "",
+      full_name: p.full_name,
+      degree: p.degree,
+      lodge: p.lodge,
+      active: p.active,
+      is_admin: adminIds.has(p.id),
+      created_at: p.created_at,
+      last_sign_in_at: user?.last_sign_in_at ?? null,
+    };
+  });
 }
 
 export async function createMemberImpl(input: {
