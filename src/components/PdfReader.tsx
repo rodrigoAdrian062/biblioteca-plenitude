@@ -337,6 +337,8 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     }
   };
 
+  const progressPercent = numPages > 0 ? Math.round((page / numPages) * 100) : 0;
+
   return (
     <div
       className={
@@ -351,9 +353,20 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
             <ChevronLeft className="mr-1 h-4 w-4" />
             Voltar
           </Button>
-          <span className="truncate text-xs text-muted-foreground">
-            {watermark ? `Leitura de ${watermark}` : "Leitura"}
-          </span>
+          <div className="flex flex-col items-center min-w-0">
+            <span className="truncate text-[10px] xs:text-xs text-muted-foreground font-medium uppercase tracking-wider">
+              {watermark ? `Leitura de ${watermark}` : "Leitura em progresso"}
+            </span>
+            <div className="flex items-center gap-2">
+              <div className="h-1 w-24 xs:w-32 rounded-full bg-secondary overflow-hidden">
+                <div 
+                  className="h-full bg-primary transition-all duration-300" 
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-bold text-primary">{progressPercent}%</span>
+            </div>
+          </div>
           <Button
             variant="outline"
             size="icon"
