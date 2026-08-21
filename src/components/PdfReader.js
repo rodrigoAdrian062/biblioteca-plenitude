@@ -68,7 +68,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 map[ann.page_number] = ann.canvas_data;
             });
             setLoadedAnnotations(map);
-        }).catch(err => {
+        }).catch((err) => {
             console.error("Erro ao carregar anotações:", err);
         });
     }, [bookId]);
@@ -374,7 +374,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
             if (canvas) {
                 const data = canvas.toDataURL();
                 saveAnnotation({ data: { book_id: bookId, page_number: pageNum, canvas_data: data } })
-                    .catch(err => console.error("Erro ao salvar anotação:", err));
+                    .catch((err) => console.error("Erro ao salvar anotação:", err));
             }
         }
     };
@@ -387,7 +387,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (bookId) {
                 saveAnnotation({ data: { book_id: bookId, page_number: pageNum, canvas_data: "" } })
-                    .catch(err => console.error("Erro ao limpar anotação no banco:", err));
+                    .catch((err) => console.error("Erro ao limpar anotação no banco:", err));
             }
         }
     };
