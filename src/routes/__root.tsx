@@ -14,7 +14,6 @@ import { seedBook } from "@/lib/books.functions";
 
 import { Toaster } from "@/components/ui/sonner";
 import { isPublicThemeRoute } from "@/hooks/useTheme";
-import { AccessibilityProvider } from "@/hooks/useAccessibility";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -158,13 +157,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AccessibilityProvider>
-        <div className="flex min-h-screen flex-col">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-          <Toaster />
-        </div>
-      </AccessibilityProvider>
+      <div className="flex min-h-screen flex-col">
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <Toaster />
+      </div>
     </QueryClientProvider>
   );
 }
