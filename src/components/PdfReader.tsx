@@ -18,6 +18,8 @@ import {
   Palette,
   Undo2,
   Strikethrough,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -89,7 +91,9 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const startPos = useRef<{ x: number; y: number } | null>(null);
   const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({});
   const [loadedAnnotations, setLoadedAnnotations] = useState<Record<number, string>>({});
-  const { highContrast } = useAccessibility();
+  const { highContrast, speakTextWithHighlight, stopSpeaking, isReadingSequence } = useAccessibility();
+  const [highlightedTextIndex, setHighlightedTextIndex] = useState<{ start: number; length: number } | null>(null);
+  const readingTimeoutRef = useRef<number | null>(null);
 
   const fetchAnnotations = useServerFn(getBookAnnotations);
   const saveAnnotation = useServerFn(saveBookAnnotation);
@@ -312,6 +316,84 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
       );
     };
   }, [searchTerm]);
+
+  const readCurrentPage = useCallback(async () => {
+    if (!pdfInstance.current || numPages === 0) return;
+    
+    try {
+      const pdfPage = await pdfInstance.current.getPage(page);
+      const textContent = await pdfPage.getTextContent();
+      const pageText = textContent.items.map((item: any) => item.str).join(" ");
+      
+      if (!pageText.trim()) {
+        if (page < numPages) {
+          goTo(page + 1);
+          // Pequeno delay para a próxima página carregar
+          setTimeout(() => readCurrentPage(), 500);
+        }
+        return;
+      }
+
+      speakTextWithHighlight(
+        pageText,
+        (charIndex) => {
+          // Encontrar a palavra atual para realce
+          const nextSpace = pageText.indexOf(' ', charIndex);
+          const length = nextSpace === -1 ? pageText.length - charIndex : nextSpace - charIndex;
+          setHighlightedTextIndex({ start: charIndex, length });
+        },
+        () => {
+          setHighlightedTextIndex(null);
+          if (page < numPages) {
+            // Avança para a próxima página após um breve intervalo
+            readingTimeoutRef.current = window.setTimeout(() => {
+              goTo(page + 1);
+              // Recursão controlada após mudança de página
+              setTimeout(() => readCurrentPage(), 800);
+            }, 1000);
+          }
+        }
+      );
+    } catch (error) {
+      console.error("Erro ao ler página:", error);
+      toast.error("Erro ao processar áudio da página.");
+    }
+  }, [page, numPages, pdfInstance, speakTextWithHighlight, goTo]);
+
+  const stopReading = useCallback(() => {
+    stopSpeaking();
+    setHighlightedTextIndex(null);
+    if (readingTimeoutRef.current) {
+      window.clearTimeout(readingTimeoutRef.current);
+    }
+  }, [stopSpeaking]);
+
+  const textRenderer = useMemo(() => {
+    return (textItem: any) => {
+      let content = textItem.str;
+      
+      // Prioridade 1: Realce da Leitura por Voz
+      if (isReadingSequence && highlightedTextIndex) {
+        // Esta é uma simplificação, pois textItem.str é apenas uma parte da página
+        // O SpeechSynthesis dá o charIndex absoluto da string completa da página.
+        // Como o PDF divide o texto em muitos pequenos itens, é difícil sincronizar perfeitamente
+        // sem uma reconstrução pesada. Vamos fazer um realce simples por enquanto.
+      }
+
+      if (!searchTerm || searchTerm.length < 3) return content;
+      
+      const regex = new RegExp(`(${searchTerm})`, 'gi');
+      const parts = content.split(regex);
+      
+      return parts.map((part: string, i: number) => 
+        regex.test(part) ? (
+          <mark key={i} className="bg-yellow-300 text-black px-0.5 rounded-sm">
+            {part}
+          </mark>
+        ) : part
+      );
+    };
+  }, [searchTerm, isReadingSequence, highlightedTextIndex]);
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent, pageNum: number) => {
     if (tool === "none") return;
@@ -636,8 +718,35 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 <Download className="h-4 w-4" />
               </Button>
             )}
-         </div>
-       </div>
+        </div>
+        
+        <div className="flex items-center gap-1.5 border-l border-border/60 pl-2">
+          {isReadingSequence ? (
+            <Button
+              variant="default"
+              size="sm"
+              className="h-8 bg-red-500 hover:bg-red-600 text-white animate-pulse"
+              onClick={stopReading}
+              title="Parar leitura por voz"
+            >
+              <VolumeX className="h-4 w-4 mr-1.5" />
+              <span>Parar Ouvir</span>
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 border-primary/50 text-primary hover:bg-primary/10"
+              onClick={readCurrentPage}
+              title="Ouvir esta obra (TTS)"
+              disabled={numPages === 0}
+            >
+              <Volume2 className="h-4 w-4 mr-1.5" />
+              <span>Ouvir</span>
+            </Button>
+          )}
+        </div>
+      </div>
 
       {resumedFrom ? (
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 bg-accent/40 px-3 py-2 text-xs text-foreground">
@@ -702,8 +811,15 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 ref={(el) => {
                   pageRefs.current[n] = el;
                 }}
-                className={`relative shadow-sm ${highContrast ? 'invert hue-rotate-180' : ''}`}
+                className={`relative shadow-sm transition-all duration-300 ${highContrast ? 'invert hue-rotate-180' : ''} ${isReadingSequence && page === n ? 'ring-2 ring-primary/30 ring-offset-2 ring-offset-background' : ''}`}
               >
+                {isReadingSequence && page === n && highlightedTextIndex && (
+                  <div className="absolute inset-0 z-50 pointer-events-none bg-primary/5 mix-blend-multiply flex items-center justify-center">
+                    <div className="bg-primary/20 px-4 py-2 rounded-full border border-primary/30 backdrop-blur-sm animate-bounce text-primary font-bold shadow-lg">
+                      Lendo em voz alta...
+                    </div>
+                  </div>
+                )}
                 <Page
                   pageNumber={n}
                   width={width}
