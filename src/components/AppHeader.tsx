@@ -178,7 +178,7 @@ export function AppHeader({
         aria-label="Menu principal"
         className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
       >
-        <div className="grid grid-cols-4 items-stretch">
+        <div className="grid grid-cols-5 items-stretch">
           <Link
             to="/biblioteca"
             search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
@@ -188,6 +188,50 @@ export function AppHeader({
             <Library className="h-5 w-5" />
             Acervo
           </Link>
+          
+          {/* Histórico Mobile */}
+          {userId ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground"
+                >
+                  <History className="h-5 w-5" />
+                  Lidos
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="top" align="center" className="w-[calc(100vw-2rem)] p-0">
+                <div className="flex items-center justify-between border-b border-border/60 px-3 py-2">
+                  <span className="font-display text-sm tracking-wide">Livros Lidos</span>
+                </div>
+                <ScrollArea className="max-h-60">
+                  {history.length === 0 ? (
+                    <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+                      vc ainda não tem livro abertos ou lidos
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-border/60">
+                      {history.map((h) => (
+                        <li key={h.book_id} className="px-3 py-2">
+                          <Link
+                            to="/obra/$id"
+                            params={{ id: h.book_id }}
+                            className="block min-w-0 text-left"
+                          >
+                            <span className="line-clamp-1 text-sm text-foreground">{h.title}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <span aria-hidden />
+          )}
+
           <Link
             to="/perfil"
             className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
@@ -196,6 +240,7 @@ export function AppHeader({
             <UserCog className="h-5 w-5" />
             Conta
           </Link>
+
           {isAdmin ? (
             <Link
               to="/admin"
