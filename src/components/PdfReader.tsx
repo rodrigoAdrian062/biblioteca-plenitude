@@ -12,6 +12,11 @@ import {
   Download,
   BookOpen,
   Search,
+  Highlighter,
+  Pencil,
+  Eraser,
+  Palette,
+  Undo2,
 } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -34,6 +39,7 @@ type Props = {
  };
 
 type Mode = "horizontal" | "vertical";
+type DrawingTool = "none" | "pen" | "highlighter" | "eraser";
 
 type SavedPosition = { page: number; mode: Mode; scale: number };
 
@@ -70,6 +76,13 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const [currentResultIndex, setCurrentResultIndex] = useState(-1);
   const pendingPage = useRef<number | null>(null);
   const pdfInstance = useRef<any>(null);
+  const [tool, setTool] = useState<DrawingTool>("none");
+  const [penColor, setPenColor] = useState("#F6AC19"); // Ouro Plenitude
+  const [annotations, setAnnotations] = useState<Record<number, string[]>>({}); // SVG paths por página
+  const isDrawing = useRef(false);
+  const currentPath = useRef<string>("");
+  const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({});
+  const contextRefs = useRef<Record<number, CanvasRenderingContext2D | null>>({});
 
   // Restaura preferências salvas (modo/zoom) ao montar
   useEffect(() => {
@@ -250,6 +263,68 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     };
   }, [searchTerm]);
 
+  const startDrawing = (e: React.MouseEvent | React.TouchEvent, pageNum: number) => {
+    if (tool === "none") return;
+    isDrawing.current = true;
+    const canvas = canvasRefs.current[pageNum];
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = ('touches' in e && e.touches[0]) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
+    const y = ('touches' in e && e.touches[0]) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    ctx.beginPath();
+    ctx.moveTo(x / scale, y / scale);
+    currentPath.current = `M ${x/scale} ${y/scale}`;
+    
+    ctx.strokeStyle = tool === "eraser" ? "white" : (tool === "highlighter" ? `${penColor}66` : penColor);
+    ctx.lineWidth = tool === "highlighter" ? 20 / scale : 3 / scale;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    
+    if (tool === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = 20 / scale;
+    } else {
+      ctx.globalCompositeOperation = "source-over";
+    }
+  };
+
+  const draw = (e: React.MouseEvent | React.TouchEvent, pageNum: number) => {
+    if (!isDrawing.current || tool === "none") return;
+    const canvas = canvasRefs.current[pageNum];
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = ('touches' in e && e.touches[0]) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
+    const y = ('touches' in e && e.touches[0]) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    ctx.lineTo(x / scale, y / scale);
+    ctx.stroke();
+    currentPath.current += ` L ${x/scale} ${y/scale}`;
+  };
+
+  const stopDrawing = (pageNum: number) => {
+    if (!isDrawing.current) return;
+    isDrawing.current = false;
+    // Aqui poderíamos salvar as anotações no DB se necessário
+  };
+
+  const clearCanvas = (pageNum: number) => {
+    const canvas = canvasRefs.current[pageNum];
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+
   return (
     <div
       className={
@@ -327,6 +402,65 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
               <MoveHorizontal className="h-4 w-4 sm:mr-1" />
               <span className="hidden sm:inline">Horizontal</span>
             </Button>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-1 rounded-md border border-border/60 p-0.5">
+            <Button
+              variant={tool === "none" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("none")}
+              title="Seleção/Navegação"
+            >
+              <BookOpen className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={tool === "pen" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("pen")}
+              title="Caneta"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={tool === "highlighter" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("highlighter")}
+              title="Marca-texto"
+            >
+              <Highlighter className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={tool === "eraser" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("eraser")}
+              title="Borracha"
+            >
+              <Eraser className="h-4 w-4" />
+            </Button>
+            {tool !== "none" && (
+              <div className="flex items-center gap-1 px-1 border-l border-border/60 ml-1">
+                <input
+                  type="color"
+                  value={penColor}
+                  onChange={(e) => setPenColor(e.target.value)}
+                  className="w-5 h-5 rounded cursor-pointer bg-transparent border-none p-0"
+                  title="Cor da ferramenta"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-muted-foreground"
+                  onClick={() => clearCanvas(page)}
+                  title="Limpar anotações desta página"
+                >
+                  <Undo2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 border-l border-border/60 pl-1.5">
@@ -474,30 +608,60 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 ref={(el) => {
                   pageRefs.current[n] = el;
                 }}
-                className="shadow-sm"
+                className="relative shadow-sm"
               >
                 <Page
                   pageNumber={n}
                   width={width}
-                   scale={scale}
-                   customTextRenderer={textRenderer}
-                   renderTextLayer={true}
-                   renderAnnotationLayer={false}
-                   className="select-none"
-                 />
+                  scale={scale}
+                  customTextRenderer={textRenderer}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={false}
+                  className="select-none"
+                />
+                <canvas
+                  ref={(el) => {
+                    canvasRefs.current[n] = el;
+                  }}
+                  width={width * scale}
+                  height={(width * 1.41) * scale} // A4 ratio 1:1.41
+                  className={`absolute inset-0 z-10 ${tool === 'none' ? 'pointer-events-none' : 'cursor-crosshair'}`}
+                  onMouseDown={(e) => startDrawing(e, n)}
+                  onMouseMove={(e) => draw(e, n)}
+                  onMouseUp={() => stopDrawing(n)}
+                  onMouseLeave={() => stopDrawing(n)}
+                  onTouchStart={(e) => startDrawing(e, n)}
+                  onTouchMove={(e) => draw(e, n)}
+                  onTouchEnd={() => stopDrawing(n)}
+                />
               </div>
             ))
           ) : (
-            <div className="mx-auto snap-center shadow-sm">
+            <div className="relative mx-auto snap-center shadow-sm">
               <Page
                 pageNumber={page}
                 width={width}
-                 scale={scale}
-                 customTextRenderer={textRenderer}
-                 renderTextLayer={true}
-                 renderAnnotationLayer={false}
-                 className="select-none"
-               />
+                scale={scale}
+                customTextRenderer={textRenderer}
+                renderTextLayer={true}
+                renderAnnotationLayer={false}
+                className="select-none"
+              />
+              <canvas
+                ref={(el) => {
+                  canvasRefs.current[page] = el;
+                }}
+                width={width * scale}
+                height={(width * 1.41) * scale}
+                className={`absolute inset-0 z-10 ${tool === 'none' ? 'pointer-events-none' : 'cursor-crosshair'}`}
+                onMouseDown={(e) => startDrawing(e, page)}
+                onMouseMove={(e) => draw(e, page)}
+                onMouseUp={() => stopDrawing(page)}
+                onMouseLeave={() => stopDrawing(page)}
+                onTouchStart={(e) => startDrawing(e, page)}
+                onTouchMove={(e) => draw(e, page)}
+                onTouchEnd={() => stopDrawing(page)}
+              />
             </div>
           )}
         </Document>
