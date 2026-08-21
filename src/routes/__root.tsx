@@ -9,6 +9,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { seedBook } from "@/lib/books.functions";
+
 
 import { Toaster } from "@/components/ui/sonner";
 import { isPublicThemeRoute } from "@/hooks/useTheme";
