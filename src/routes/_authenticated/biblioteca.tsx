@@ -6,7 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
-import { DEGREES } from "@/lib/masonic";
+import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, KINDS, catalogName } from "@/lib/catalog";
 import { BookGrid } from "@/features/library/BookGrid";
 
