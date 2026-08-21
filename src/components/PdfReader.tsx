@@ -263,6 +263,68 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     };
   }, [searchTerm]);
 
+  const startDrawing = (e: React.MouseEvent | React.TouchEvent, pageNum: number) => {
+    if (tool === "none") return;
+    isDrawing.current = true;
+    const canvas = canvasRefs.current[pageNum];
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
+    const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    ctx.beginPath();
+    ctx.moveTo(x / scale, y / scale);
+    currentPath.current = `M ${x/scale} ${y/scale}`;
+    
+    ctx.strokeStyle = tool === "eraser" ? "white" : (tool === "highlighter" ? `${penColor}66` : penColor);
+    ctx.lineWidth = tool === "highlighter" ? 20 / scale : 3 / scale;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    
+    if (tool === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = 20 / scale;
+    } else {
+      ctx.globalCompositeOperation = "source-over";
+    }
+  };
+
+  const draw = (e: React.MouseEvent | React.TouchEvent, pageNum: number) => {
+    if (!isDrawing.current || tool === "none") return;
+    const canvas = canvasRefs.current[pageNum];
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
+    const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    ctx.lineTo(x / scale, y / scale);
+    ctx.stroke();
+    currentPath.current += ` L ${x/scale} ${y/scale}`;
+  };
+
+  const stopDrawing = (pageNum: number) => {
+    if (!isDrawing.current) return;
+    isDrawing.current = false;
+    // Aqui poderíamos salvar as anotações no DB se necessário
+  };
+
+  const clearCanvas = (pageNum: number) => {
+    const canvas = canvasRefs.current[pageNum];
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+
   return (
     <div
       className={
