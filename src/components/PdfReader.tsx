@@ -329,7 +329,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     currentPath.current = `M ${x/scale} ${y/scale}`;
     startPos.current = { x: x / scale, y: y / scale };
     
-    ctx.strokeStyle = tool === "eraser" ? "white" : (tool === "highlighter" ? `${penColor}66` : (tool === "strikethrough" ? penColor : penColor));
+    ctx.strokeStyle = tool === "eraser" ? "white" : (tool === "highlighter" ? `${penColor}33` : (tool === "strikethrough" ? penColor : penColor));
     ctx.lineWidth = (tool === "highlighter" || tool === "strikethrough") ? 20 / scale : 3 / scale;
     if (tool === "strikethrough") ctx.lineWidth = 4 / scale;
     ctx.lineCap = "round";
