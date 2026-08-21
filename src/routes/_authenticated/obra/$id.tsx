@@ -127,18 +127,47 @@ function BookReaderPage() {
         </Button>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-700">
-            <div className="relative mb-6">
-              <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-card shadow-lg ring-1 ring-border/60">
-                <BookOpen className="h-10 w-10 animate-pulse text-primary" />
+          <div className="animate-in fade-in duration-500">
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="space-y-3 flex-1">
+                  <Skeleton className="h-9 w-3/4 max-w-lg" />
+                  <Skeleton className="h-4 w-1/2 max-w-xs opacity-60" />
+                </div>
+                <div className="flex gap-2">
+                  <Skeleton className="h-9 w-24 rounded-lg" />
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                </div>
               </div>
-            </div>
-            <h2 className="font-display text-xl text-foreground">Abrindo acervo...</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Isso pode levar alguns segundos.</p>
-            <div className="mt-8 grid w-full max-w-md gap-4">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4 mx-auto" />
+              
+              <div className="gold-rule my-4 h-px w-32 bg-primary/20" />
+              
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+
+              <div className="aspect-[3/4] sm:aspect-[4/3] w-full rounded-2xl border border-border/40 bg-card/40 flex flex-col items-center justify-center p-8 gap-4 shadow-inner">
+                <div className="relative">
+                  <div className="absolute inset-0 animate-ping rounded-full bg-primary/10" />
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-card shadow-lg ring-1 ring-border/60">
+                    <BookOpen className="h-10 w-10 animate-pulse text-primary/40" />
+                  </div>
+                </div>
+                <div className="text-center space-y-2">
+                  <h2 className="font-display text-xl text-foreground/80">Abrindo acervo...</h2>
+                  <p className="text-sm text-muted-foreground/60 max-w-xs mx-auto">Preparando ambiente de leitura segura para o Irmão.</p>
+                </div>
+                <div className="w-full max-w-xs space-y-2 mt-4">
+                  <Skeleton className="h-2 w-full rounded-full" />
+                  <div className="flex justify-between px-1">
+                    <Skeleton className="h-2 w-8 rounded-full opacity-40" />
+                    <Skeleton className="h-2 w-12 rounded-full opacity-40" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         ) : error || !book ? (
