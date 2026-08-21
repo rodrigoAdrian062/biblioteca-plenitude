@@ -300,22 +300,6 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     if (prevMatch) goTo(prevMatch.pageIndex);
   };
 
-  const textRenderer = useMemo(() => {
-    return (textItem: any) => {
-      if (!searchTerm || searchTerm.length < 3) return textItem.str;
-      
-      const regex = new RegExp(`(${searchTerm})`, 'gi');
-      const parts = textItem.str.split(regex);
-      
-      return parts.map((part: string, i: number) => 
-        regex.test(part) ? (
-          <mark key={i} className="bg-yellow-300 text-black px-0.5 rounded-sm">
-            {part}
-          </mark>
-        ) : part
-      );
-    };
-  }, [searchTerm]);
 
   const readCurrentPage = useCallback(async () => {
     if (!pdfInstance.current || numPages === 0) return;
