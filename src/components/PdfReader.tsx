@@ -702,7 +702,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 ref={(el) => {
                   pageRefs.current[n] = el;
                 }}
-                className="relative shadow-sm"
+                className={`relative shadow-sm ${highContrast ? 'invert hue-rotate-180' : ''}`}
               >
                 <Page
                   pageNumber={n}
@@ -731,7 +731,8 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
               </div>
             ))
           ) : (
-            <div className="relative mx-auto snap-center shadow-sm">
+            <div className={`relative mx-auto snap-center shadow-sm ${highContrast ? 'invert hue-rotate-180' : ''}`}>
+
               <Page
                 pageNumber={page}
                 width={width}
