@@ -708,15 +708,8 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 ref={(el) => {
                   pageRefs.current[n] = el;
                 }}
-                className={`relative shadow-sm transition-all duration-300 ${highContrast ? 'invert hue-rotate-180' : ''} ${isReadingSequence && page === n ? 'ring-2 ring-primary/30 ring-offset-2 ring-offset-background' : ''}`}
+                className={`relative shadow-sm transition-all duration-300 ${highContrast ? 'invert hue-rotate-180' : ''}`}
               >
-                {isReadingSequence && page === n && highlightedTextIndex && (
-                  <div className="absolute inset-0 z-50 pointer-events-none bg-primary/5 mix-blend-multiply flex items-center justify-center">
-                    <div className="bg-primary/20 px-4 py-2 rounded-full border border-primary/30 backdrop-blur-sm animate-bounce text-primary font-bold shadow-lg">
-                      Lendo em voz alta...
-                    </div>
-                  </div>
-                )}
                 <Page
                   pageNumber={n}
                   width={width}

@@ -48,11 +48,6 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
 
   const setFontSize = (size: FontSize) => setFontSizeState(size);
   const setHighContrast = (enabled: boolean) => setHighContrastState(enabled);
-  const stopSpeaking = () => {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-  };
 
   return (
     <AccessibilityContext.Provider
@@ -61,7 +56,7 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
         setFontSize,
         highContrast,
         setHighContrast,
-        stopSpeaking,
+        
       }}
     >
       {children}
