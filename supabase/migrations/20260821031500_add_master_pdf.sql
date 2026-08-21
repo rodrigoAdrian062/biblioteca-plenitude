@@ -1,0 +1,1 @@
+INSERT INTO public.books (title, author, min_degree, scope, kind, external_url, published) VALUES ('Instruções do Grau de Mestre', 'Menezes, Ir', 3, 'maconico', 'livro', '/__l5e/assets-v1/fe6a38e4-30f2-4369-9724-4edc0089018d/000097465.pdf', true);

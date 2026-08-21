@@ -9,6 +9,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { seedBook } from "@/lib/books.functions";
+
 
 import { Toaster } from "@/components/ui/sonner";
 import { isPublicThemeRoute } from "@/hooks/useTheme";
@@ -140,6 +142,12 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    // Executa uma vez para garantir que o PDF Mestre esteja no acervo
+    seedBook().catch(() => {});
+  }, []);
+
 
   useEffect(() => {
     if (isPublicThemeRoute(pathname)) {
