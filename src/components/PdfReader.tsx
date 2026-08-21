@@ -299,8 +299,8 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     if (!canvas) return;
     
     const rect = canvas.getBoundingClientRect();
-    const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
-    const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    const x = ('touches' in e && e.touches[0]) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
+    const y = ('touches' in e && e.touches[0]) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
