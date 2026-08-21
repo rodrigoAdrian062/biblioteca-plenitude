@@ -129,14 +129,40 @@ function AdminPage() {
         </section>
 
         {loading ? (
-          <div className="mt-6 space-y-4">
-            <Skeleton className="h-10 w-48" />
-            <div className="grid gap-4 sm:grid-cols-3">
-              <Skeleton className="h-24 rounded-2xl" />
-              <Skeleton className="h-24 rounded-2xl" />
-              <Skeleton className="h-24 rounded-2xl" />
+          <div className="mt-6 space-y-6">
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-24 rounded-lg" />
+              <Skeleton className="h-9 w-24 rounded-lg" />
+              <Skeleton className="h-9 w-24 rounded-lg" />
             </div>
-            <Skeleton className="h-64 rounded-2xl" />
+            
+            <div className="grid gap-4 sm:grid-cols-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="rounded-2xl border border-border/60 bg-card/60 p-6 space-y-3">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-8 w-12" />
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-2xl border border-border/60 bg-card/60 p-6 space-y-4">
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="h-9 w-32" />
+              </div>
+              <div className="space-y-3">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="flex items-center gap-4 py-3 border-b border-border/10">
+                    <Skeleton className="h-10 w-10 rounded-lg" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-48" />
+                      <Skeleton className="h-3 w-32 opacity-60" />
+                    </div>
+                    <Skeleton className="h-8 w-20 rounded-lg" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         ) : !isAdmin ? (
           <p className="mt-6 text-sm text-muted-foreground">
