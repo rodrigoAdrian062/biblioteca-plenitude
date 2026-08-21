@@ -300,12 +300,12 @@ function Library() {
         </section>
 
 
-        <section className="mt-5 space-y-4 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5">
-          <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_13rem_13rem]">
+        <section className="mt-6 space-y-6 rounded-2xl border border-border/40 bg-card/30 p-5 sm:p-6 backdrop-blur-sm">
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_14rem_14rem]">
             <div className="relative min-w-0">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
               <Input
-                className="pl-9"
+                className="pl-9 h-11 border-border/60 bg-background/40 hover:border-primary/30 transition-colors"
                 type="search"
                 inputMode="search"
                 aria-label="Buscar por título, autor ou categoria"
@@ -322,7 +322,7 @@ function Library() {
                 void navigate({ search: (prev: LibrarySearch) => ({ ...prev, autor: v === ALL ? "" : v }) })
               }
             >
-              <SelectTrigger className="w-full" aria-label="Filtrar por autor">
+              <SelectTrigger className="w-full h-11 border-border/60 bg-background/40" aria-label="Filtrar por autor">
                 <SelectValue placeholder="Autor" />
               </SelectTrigger>
               <SelectContent>
@@ -341,7 +341,7 @@ function Library() {
                 void navigate({ search: (prev: LibrarySearch) => ({ ...prev, categoria: v === ALL ? "" : v }) })
               }
             >
-              <SelectTrigger className="w-full" aria-label="Filtrar por categoria">
+              <SelectTrigger className="w-full h-11 border-border/60 bg-background/40" aria-label="Filtrar por categoria">
                 <SelectValue placeholder="Categoria" />
               </SelectTrigger>
               <SelectContent>
@@ -355,89 +355,95 @@ function Library() {
             </Select>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tema do acervo</span>
-            <Button
-              variant={!tema ? "default" : "outline"}
-              size="sm"
-              className="rounded-full"
-              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: "" }) })}
-            >
-              Todos ({baseVisible.length})
-            </Button>
-            {SCOPES.map((s) => (
-              <Button
-                key={s.value}
-                variant={tema === s.value ? "default" : "outline"}
-                size="sm"
-                className="rounded-full flex items-center gap-2"
-                onClick={() =>
-                  void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
-                }
-              >
-                <div className={`w-2 h-2 rounded-full ${tema === s.value ? 'bg-primary shadow-[0_0_8px_rgba(246,172,25,0.6)]' : 'bg-muted-foreground/40'}`} />
-                {s.label} ({counts[s.value] ?? 0})
-              </Button>
-            ))}
-          </div>
+          <div className="space-y-5">
+            <div className="flex flex-col gap-2.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 ml-1">Tema do acervo</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant={!tema ? "default" : "outline"}
+                  size="sm"
+                  className={`rounded-full px-4 h-8 transition-all ${!tema ? 'shadow-[0_0_12px_rgba(246,172,25,0.3)]' : 'border-border/60 hover:border-primary/40'}`}
+                  onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: "" }) })}
+                >
+                  Todos ({baseVisible.length})
+                </Button>
+                {SCOPES.map((s) => (
+                  <Button
+                    key={s.value}
+                    variant={tema === s.value ? "default" : "outline"}
+                    size="sm"
+                    className={`rounded-full px-4 h-8 transition-all flex items-center gap-2 ${tema === s.value ? 'shadow-[0_0_12px_rgba(246,172,25,0.3)]' : 'border-border/60 hover:border-primary/40'}`}
+                    onClick={() =>
+                      void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
+                    }
+                  >
+                    <div className={`w-1.5 h-1.5 rounded-full transition-all ${tema === s.value ? 'bg-primary-foreground shadow-[0_0_8px_white]' : 'bg-muted-foreground/40'}`} />
+                    {s.label} ({counts[s.value] ?? 0})
+                  </Button>
+                ))}
+              </div>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Tipo</span>
-            <Button
-              variant={!tipo ? "default" : "outline"}
-              size="sm"
-              className="rounded-full"
-              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: "" }) })}
-            >
-              Todos
-            </Button>
-            {KINDS.map((k) => (
-              <Button
-                key={k.value}
-                variant={tipo === k.value ? "default" : "outline"}
-                size="sm"
-                className="rounded-full flex items-center gap-2"
-                onClick={() =>
-                  void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: k.value }) })
-                }
-              >
-                <div className={`w-2 h-2 rounded-full ${tipo === k.value ? 'bg-primary shadow-[0_0_8px_rgba(246,172,25,0.6)]' : 'bg-muted-foreground/40'}`} />
-                {k.label} ({kindCounts[k.value] ?? 0})
-              </Button>
-            ))}
-          </div>
+            <div className="flex flex-col gap-2.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 ml-1">Tipo</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant={!tipo ? "default" : "outline"}
+                  size="sm"
+                  className={`rounded-full px-4 h-8 transition-all ${!tipo ? 'shadow-[0_0_12px_rgba(246,172,25,0.3)]' : 'border-border/60 hover:border-primary/40'}`}
+                  onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: "" }) })}
+                >
+                  Todos
+                </Button>
+                {KINDS.map((k) => (
+                  <Button
+                    key={k.value}
+                    variant={tipo === k.value ? "default" : "outline"}
+                    size="sm"
+                    className={`rounded-full px-4 h-8 transition-all flex items-center gap-2 ${tipo === k.value ? 'shadow-[0_0_12px_rgba(246,172,25,0.3)]' : 'border-border/60 hover:border-primary/40'}`}
+                    onClick={() =>
+                      void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tipo: k.value }) })
+                    }
+                  >
+                    <div className={`w-1.5 h-1.5 rounded-full transition-all ${tipo === k.value ? 'bg-primary-foreground shadow-[0_0_8px_white]' : 'bg-muted-foreground/40'}`} />
+                    {k.label} ({kindCounts[k.value] ?? 0})
+                  </Button>
+                ))}
+              </div>
+            </div>
 
-
-
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="w-12 text-xs uppercase tracking-wide text-muted-foreground">Minhas</span>
-            <Button
-              variant={fav ? "default" : "outline"}
-              size="sm"
-              className="rounded-full"
-              aria-pressed={fav}
-              onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, fav: !prev.fav }) })}
-            >
-              <Heart className={`mr-1.5 h-4 w-4 ${fav ? "fill-current" : ""}`} />
-              Favoritas ({favorites.length})
-            </Button>
+            <div className="flex flex-col gap-2.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 ml-1">Minhas</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant={fav ? "default" : "outline"}
+                  size="sm"
+                  className={`rounded-full px-4 h-8 transition-all flex items-center gap-2 ${fav ? 'shadow-[0_0_12px_rgba(246,172,25,0.3)]' : 'border-border/60 hover:border-primary/40'}`}
+                  aria-pressed={fav}
+                  onClick={() => void navigate({ search: (prev: LibrarySearch) => ({ ...prev, fav: !prev.fav }) })}
+                >
+                  <Heart className={`h-3.5 w-3.5 transition-all ${fav ? "fill-current scale-110" : ""}`} />
+                  Favoritas ({favorites.length})
+                </Button>
+              </div>
+            </div>
           </div>
 
           {hasFilters && (
-            <div className="flex w-full items-center justify-between border-t border-border/40 pt-4">
-              <span className="text-xs font-medium text-primary animate-pulse flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <div className="flex w-full items-center justify-between border-t border-border/20 pt-5">
+              <span className="text-[10px] font-semibold text-primary/80 flex items-center gap-2">
+                <div className="w-1 h-1 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
                 Dica: Limpe os filtros para ver todo o acervo
               </span>
               <Button
                 variant="ghost"
                 size="sm"
-                className="rounded-full text-muted-foreground hover:text-foreground"
+                className="h-8 rounded-full text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted/30"
                 onClick={() =>
                   void navigate({ search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false } })
                 }
               >
-                <X className="mr-1 h-4 w-4" />
+                <X className="mr-1.5 h-3.5 w-3.5" />
                 Limpar filtros
               </Button>
             </div>

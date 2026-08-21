@@ -49,15 +49,18 @@ export function AppHeader({
 
   return (
     <>
-    <header className="border-b border-border/60 bg-card/40 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-        <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }} className="flex min-w-0 items-center gap-2">
-          <img
-            src={logo}
-            alt="Logo A.R.L.S. Plenitude nº 4759"
-            className="h-9 w-9 shrink-0 rounded-full object-contain"
-          />
-          <span className="truncate font-display text-lg tracking-wide text-foreground">
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-card/60 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:py-4">
+        <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }} className="flex min-w-0 items-center gap-3 group">
+          <div className="relative">
+            <div className="absolute -inset-1 rounded-full bg-primary/20 blur opacity-0 group-hover:opacity-100 transition-opacity" />
+            <img
+              src={logo}
+              alt="Logo A.R.L.S. Plenitude nº 4759"
+              className="relative h-10 w-10 shrink-0 rounded-full object-contain transition-transform group-hover:scale-105"
+            />
+          </div>
+          <span className="truncate font-display text-lg tracking-wider text-foreground sm:text-xl">
             Biblioteca Plenitude
           </span>
         </Link>
