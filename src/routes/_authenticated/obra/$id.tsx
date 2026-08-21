@@ -3,16 +3,25 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { ClientOnly } from "@tanstack/react-router";
-import { ArrowLeft, Heart, BookOpen } from "lucide-react";
+import { ArrowLeft, Heart, BookOpen, Save, Trash2, StickyNote, Loader2 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { getBook, getGlobalSettings } from "@/lib/library.functions";
-import { listFavorites, toggleFavorite, listHistory, saveProgress } from "@/lib/reading.functions";
+import { 
+  listFavorites, 
+  toggleFavorite, 
+  listHistory, 
+  saveProgress,
+  getBookNote,
+  saveBookNote
+} from "@/lib/reading.functions";
 import { degreeLabel } from "@/lib/masonic";
 import { catalogName, scopeLabel, kindLabel } from "@/lib/catalog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 const PdfReader = lazy(() => import("@/components/PdfReader"));
 
@@ -36,6 +45,8 @@ export const Route = createFileRoute("/_authenticated/obra/$id")({
 function BookReaderPage() {
   const { id } = Route.useParams();
   const { profile, isAdmin } = useSessionProfile();
+  const [noteContent, setNoteContent] = useState("");
+  const [isEditingNote, setIsEditingNote] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -72,6 +83,25 @@ function BookReaderPage() {
     queryFn: () => listHistory(),
   });
   const entry = history.find((h) => h.book_id === id);
+
+  const { data: note = "", isLoading: noteLoading } = useQuery({
+    queryKey: ["book-note", id],
+    queryFn: () => getBookNote({ data: { bookId: id } }),
+  });
+
+  useEffect(() => {
+    if (note) setNoteContent(note);
+  }, [note]);
+
+  const noteMutation = useMutation({
+    mutationFn: (content: string) => saveBookNote({ data: { bookId: id, content } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["book-note", id] });
+      toast.success("Nota salva com sucesso!");
+      setIsEditingNote(false);
+    },
+    onError: () => toast.error("Erro ao salvar nota."),
+  });
 
   const handleProgress = useCallback(
     (page: number, totalPages: number) => {
@@ -185,7 +215,64 @@ function BookReaderPage() {
               </p>
             )}
 
-            <p className={`mt-4 rounded-md px-3 py-2 text-xs font-medium ${book.download_enabled ? "bg-yellow-500/10 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400" : "text-muted-foreground"}`}>
+            <div className="mt-8 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <StickyNote className="h-5 w-5 text-primary" />
+                  <h2 className="font-display text-lg text-foreground">Notas Pessoais</h2>
+                </div>
+                {!isEditingNote && note && (
+                  <Button variant="ghost" size="sm" onClick={() => setIsEditingNote(true)}>
+                    Editar nota
+                  </Button>
+                )}
+              </div>
+              
+              {isEditingNote || !note ? (
+                <div className="space-y-3 rounded-xl border border-border/60 bg-card/40 p-4">
+                  <Textarea
+                    placeholder="Escreva aqui suas anotações privadas sobre esta obra..."
+                    className="min-h-[120px] bg-background/50"
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
+                  />
+                  <div className="flex justify-end gap-2">
+                    {note && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => {
+                          setNoteContent(note);
+                          setIsEditingNote(false);
+                        }}
+                      >
+                        Cancelar
+                      </Button>
+                    )}
+                    <Button 
+                      size="sm" 
+                      onClick={() => noteMutation.mutate(noteContent)}
+                      disabled={noteMutation.isPending}
+                    >
+                      {noteMutation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Save className="mr-2 h-4 w-4" />
+                      )}
+                      Salvar Nota
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-border/60 bg-card/40 p-4">
+                  <p className="whitespace-pre-wrap text-sm text-muted-foreground italic">
+                    "{note}"
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <p className={`mt-8 rounded-md px-3 py-2 text-xs font-medium ${book.download_enabled ? "bg-yellow-500/10 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400" : "text-muted-foreground"}`}>
               {book.download_enabled 
                 ? "Download e impressão liberados para esta obra."
                 : "Leitura restrita: o download e a impressão desta obra não são permitidos."}
