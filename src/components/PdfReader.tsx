@@ -652,7 +652,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                   canvasRefs.current[page] = el;
                 }}
                 width={width * scale}
-                height={(width * 1.4) * scale}
+                height={(width * 1.41) * scale}
                 className={`absolute inset-0 z-10 ${tool === 'none' ? 'pointer-events-none' : 'cursor-crosshair'}`}
                 onMouseDown={(e) => startDrawing(e, page)}
                 onMouseMove={(e) => draw(e, page)}
