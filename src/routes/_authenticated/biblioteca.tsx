@@ -367,20 +367,29 @@ function Library() {
                 >
                   Todos ({baseVisible.length})
                 </Button>
-                {SCOPES.map((s) => (
-                  <Button
-                    key={s.value}
-                    variant={tema === s.value ? "default" : "outline"}
-                    size="sm"
-                    className={`rounded-full px-4 h-8 transition-all flex items-center gap-2 ${tema === s.value ? 'shadow-[0_0_12px_rgba(246,172,25,0.3)]' : 'border-border/60 hover:border-primary/40'}`}
-                    onClick={() =>
-                      void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
-                    }
-                  >
-                    <div className={`w-1.5 h-1.5 rounded-full transition-all ${tema === s.value ? 'bg-primary-foreground shadow-[0_0_8px_white]' : 'bg-muted-foreground/40'}`} />
-                    {s.label} ({counts[s.value] ?? 0})
-                  </Button>
-                ))}
+                {SCOPES.map((s) => {
+                  const degreeValue = s.value === 'maconico' ? (profile?.degree ?? 0) : null;
+                  return (
+                    <Button
+                      key={s.value}
+                      variant={tema === s.value ? "default" : "outline"}
+                      size="sm"
+                      className={`rounded-full px-4 h-8 transition-all flex items-center gap-2 ${tema === s.value ? 'shadow-[0_0_12px_rgba(246,172,25,0.3)]' : 'border-border/60 hover:border-primary/40'}`}
+                      onClick={() =>
+                        void navigate({ search: (prev: LibrarySearch) => ({ ...prev, tema: s.value }) })
+                      }
+                    >
+                      <div className={`w-1.5 h-1.5 rounded-full transition-all ${tema === s.value ? 'bg-primary-foreground shadow-[0_0_8px_white]' : 'bg-muted-foreground/40'}`} />
+                      {s.label}
+                      {degreeValue !== null && (
+                        <span className="ml-1 opacity-70 font-bold">({degreeValue})</span>
+                      )}
+                      <span className="ml-1 text-[10px] opacity-60">
+                        ({counts[s.value] ?? 0})
+                      </span>
+                    </Button>
+                  );
+                })}
               </div>
             </div>
 
