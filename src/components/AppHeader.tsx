@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { History, Library, LogOut, Moon, Search, Shield, Sun, UserCog, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { degreeLabel } from "@/lib/masonic";
 import { useTheme } from "@/hooks/useTheme";
+import { listHistory } from "@/lib/reading.functions";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import logo from "@/assets/logo.png";
 
@@ -28,6 +31,13 @@ export function AppHeader({
   const queryClient = useQueryClient();
   const { theme, toggle } = useTheme();
   const [q, setQ] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(false);
+
+  const { data: history = [] } = useQuery({
+    queryKey: ["reading-history"],
+    queryFn: () => listHistory(),
+    enabled: !!userId,
+  });
 
 
   async function signOut() {
@@ -61,6 +71,73 @@ export function AppHeader({
               <NotificationsBell userId={userId} />
             </span>
           ) : null}
+
+          {/* Histórico / Livros Lidos */}
+          {userId && (
+            <Popover open={historyOpen} onOpenChange={setHistoryOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9"
+                  aria-label="Livros lidos"
+                  title="Livros lidos"
+                >
+                  <History className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-80 p-0">
+                <div className="flex items-center justify-between border-b border-border/60 px-3 py-2">
+                  <span className="font-display text-sm tracking-wide">Livros Lidos</span>
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setHistoryOpen(false)}>
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+                <ScrollArea className="max-h-72">
+                  {history.length === 0 ? (
+                    <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+                      vc ainda não tem livro abertos ou lidos
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-border/60">
+                      {history.map((h) => (
+                        <li key={h.book_id} className="px-3 py-2 hover:bg-muted/30">
+                          <Link
+                            to="/obra/$id"
+                            params={{ id: h.book_id }}
+                            className="block min-w-0 text-left"
+                            onClick={() => setHistoryOpen(false)}
+                          >
+                            <span className="line-clamp-1 text-sm text-foreground">{h.title}</span>
+                            <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">
+                              {h.author || "Autor desconhecido"}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </ScrollArea>
+                {history.length > 0 && (
+                  <div className="border-t border-border/60 p-2">
+                    <Button asChild variant="ghost" size="sm" className="w-full text-xs" onClick={() => setHistoryOpen(false)}>
+                      <Link to="/biblioteca" search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}>
+                        Ver todo histórico
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
+          )}
+
+          {/* Configurações (Minha conta) */}
+          <Button asChild variant="ghost" size="icon" className="h-9 w-9">
+            <Link to="/perfil" title="Configurações">
+              <UserCog className="h-4 w-4" />
+            </Link>
+          </Button>
+
           <Button
             variant="ghost"
             size="icon"
@@ -72,17 +149,8 @@ export function AppHeader({
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
 
-          {degree ? <Badge variant="outline">{degreeLabel(degree)}</Badge> : null}
+          {degree ? <Badge variant="outline" className="hidden xs:inline-flex">{degreeLabel(degree)}</Badge> : null}
 
-          {fullName ? (
-            <span className="hidden text-sm text-muted-foreground sm:inline">{fullName}</span>
-          ) : null}
-          <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-            <Link to="/perfil">
-              <UserCog className="mr-1 h-4 w-4" />
-              <span className="hidden sm:inline">Minha conta</span>
-            </Link>
-          </Button>
           {isAdmin ? (
             <Button asChild variant="secondary" size="sm" className="hidden sm:inline-flex">
               <Link to="/admin">
@@ -91,11 +159,13 @@ export function AppHeader({
               </Link>
             </Button>
           ) : null}
+
           <Button
             variant="ghost"
             size="sm"
             className="hidden sm:inline-flex"
             onClick={() => void signOut()}
+            title="Sair"
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -108,7 +178,7 @@ export function AppHeader({
         aria-label="Menu principal"
         className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
       >
-        <div className="grid grid-cols-4 items-stretch">
+        <div className="grid grid-cols-5 items-stretch">
           <Link
             to="/biblioteca"
             search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
@@ -118,6 +188,50 @@ export function AppHeader({
             <Library className="h-5 w-5" />
             Acervo
           </Link>
+          
+          {/* Histórico Mobile */}
+          {userId ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground"
+                >
+                  <History className="h-5 w-5" />
+                  Lidos
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="top" align="center" className="w-[calc(100vw-2rem)] p-0">
+                <div className="flex items-center justify-between border-b border-border/60 px-3 py-2">
+                  <span className="font-display text-sm tracking-wide">Livros Lidos</span>
+                </div>
+                <ScrollArea className="max-h-60">
+                  {history.length === 0 ? (
+                    <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+                      vc ainda não tem livro abertos ou lidos
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-border/60">
+                      {history.map((h) => (
+                        <li key={h.book_id} className="px-3 py-2">
+                          <Link
+                            to="/obra/$id"
+                            params={{ id: h.book_id }}
+                            className="block min-w-0 text-left"
+                          >
+                            <span className="line-clamp-1 text-sm text-foreground">{h.title}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <span aria-hidden />
+          )}
+
           <Link
             to="/perfil"
             className="flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors [&.active]:text-primary"
@@ -126,6 +240,7 @@ export function AppHeader({
             <UserCog className="h-5 w-5" />
             Conta
           </Link>
+
           {isAdmin ? (
             <Link
               to="/admin"
