@@ -540,14 +540,11 @@ export function BooksAdmin() {
                       Download Liberado
                     </Badge>
                   )}
-                  <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
-                    {degreeLabel(b.min_degree)}
+                  <Badge variant={b.scope === "nao_maconico" ? "outline" : "default"} className="h-5 px-1.5 text-[10px]">
+                    {b.scope === "maconico" ? degreeLabel(b.min_degree) : scopeLabel(b.scope)}
                   </Badge>
                   <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
                     {kindLabel(b.kind)}
-                  </Badge>
-                  <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
-                    {scopeLabel(b.scope)}
                   </Badge>
                   {b.watermark_enabled && (
                     <Badge variant="outline" className="h-5 px-1.5 text-[10px] text-primary border-primary/30">
