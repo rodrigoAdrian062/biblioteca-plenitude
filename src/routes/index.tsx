@@ -27,28 +27,35 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background">
-      <section className="relative mx-auto max-w-5xl px-6 py-24 text-center">
-        <img
-          src={logo}
-          alt="Brasão A.R.L.S. Plenitude nº 4759"
-          className="mx-auto mb-6 h-28 w-28 object-contain drop-shadow"
-        />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Elementos decorativos de fundo */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
 
-        <h1 className="font-display text-4xl text-foreground sm:text-5xl">Biblioteca Plenitude</h1>
-        <div className="gold-rule mx-auto my-6 h-px w-40" />
-        <p className="mx-auto max-w-2xl text-muted-foreground">
+      <section className="relative mx-auto max-w-5xl px-6 py-24 sm:py-32 text-center">
+        <div className="relative inline-block mb-8 group">
+          <div className="absolute -inset-4 rounded-full bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          <img
+            src={logo}
+            alt="Brasão A.R.L.S. Plenitude nº 4759"
+            className="relative mx-auto h-32 w-32 object-contain drop-shadow-[0_0_15px_rgba(246,172,25,0.2)] transition-transform duration-700 group-hover:scale-105"
+          />
+        </div>
+
+        <h1 className="font-display text-4xl text-foreground sm:text-6xl tracking-tighter">Biblioteca Plenitude</h1>
+        <div className="gold-rule mx-auto my-8 h-px w-48 opacity-60" />
+        <p className="mx-auto max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
           Acervo reservado aos irmãos da Loja. Cada irmão acessa somente as obras compatíveis com o
-          seu grau, com credenciais fornecidas pelo Mestre Bibliotecário Ir∴ Menezes.
+          seu grau, com credenciais fornecidas pelo Mestre Bibliotecário <span className="text-primary font-semibold">Ir∴ Menezes</span>.
         </p>
-        <div className="mt-8 flex justify-center gap-3">
-          <Button asChild size="lg">
+        <div className="mt-12 flex justify-center gap-4">
+          <Button asChild size="lg" className="h-12 px-8 rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95">
             <Link to="/auth">Entrar na biblioteca</Link>
           </Button>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-5xl gap-4 px-6 pb-24 sm:grid-cols-2">
+      <section className="relative z-10 mx-auto grid max-w-5xl gap-6 px-6 pb-32 sm:grid-cols-2">
         {[
           {
             icon: Layers,
@@ -61,10 +68,12 @@ function Landing() {
             text: "Não há cadastro público. O Mestre Bibliotecário Ir∴ Menezes cria e gerencia cada credencial.",
           },
         ].map((f) => (
-          <div key={f.title} className="rounded-lg border border-border/60 bg-card p-6 text-left">
-            <f.icon className="mb-3 h-5 w-5 text-primary" />
-            <h2 className="font-display text-lg text-card-foreground">{f.title}</h2>
-            <p className="mt-2 text-sm text-muted-foreground">{f.text}</p>
+          <div key={f.title} className="group rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-8 text-left transition-all hover:border-primary/40 hover:bg-card/60 hover:shadow-xl hover:shadow-black/10">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+              <f.icon className="h-6 w-6" />
+            </div>
+            <h2 className="font-display text-xl text-foreground">{f.title}</h2>
+            <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">{f.text}</p>
           </div>
         ))}
       </section>

@@ -179,7 +179,7 @@ export function AppHeader({
       {/* Menu inferior no celular */}
       <nav
         aria-label="Menu principal"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-border/40 bg-card/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg sm:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border/40 bg-card/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg sm:hidden shadow-[0_-8px_20px_rgba(0,0,0,0.1)]"
       >
         <div className="grid grid-cols-5 items-stretch h-16">
           <Link
