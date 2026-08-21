@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { useServerFn } from "@tanstack/react-start";
 import { getBookAnnotations, saveBookAnnotation } from "@/lib/library.functions";
 import { toast } from "sonner";
+import { useAccessibility } from "@/hooks/useAccessibility";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -88,6 +89,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const startPos = useRef<{ x: number; y: number } | null>(null);
   const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({});
   const [loadedAnnotations, setLoadedAnnotations] = useState<Record<number, string>>({});
+  const { highContrast } = useAccessibility();
 
   const fetchAnnotations = useServerFn(getBookAnnotations);
   const saveAnnotation = useServerFn(saveBookAnnotation);
@@ -700,7 +702,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 ref={(el) => {
                   pageRefs.current[n] = el;
                 }}
-                className="relative shadow-sm"
+                className={`relative shadow-sm ${highContrast ? 'invert hue-rotate-180' : ''}`}
               >
                 <Page
                   pageNumber={n}
@@ -729,7 +731,8 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
               </div>
             ))
           ) : (
-            <div className="relative mx-auto snap-center shadow-sm">
+            <div className={`relative mx-auto snap-center shadow-sm ${highContrast ? 'invert hue-rotate-180' : ''}`}>
+
               <Page
                 pageNumber={page}
                 width={width}

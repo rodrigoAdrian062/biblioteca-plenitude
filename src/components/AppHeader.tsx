@@ -12,6 +12,7 @@ import { degreeLabel } from "@/lib/masonic";
 import { useTheme } from "@/hooks/useTheme";
 import { listHistory } from "@/lib/reading.functions";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import logo from "@/assets/logo.png";
 
 
@@ -76,6 +77,8 @@ export function AppHeader({
             </span>
           ) : null}
 
+
+          <AccessibilityMenu />
 
           {/* Configurações (Minha conta) */}
           <Button asChild variant="ghost" size="icon" className="h-9 w-9">
@@ -164,6 +167,11 @@ export function AppHeader({
             <Search className="h-5 w-5" />
             Buscar
           </button>
+
+          <div className="flex flex-col items-center justify-center py-1">
+            <AccessibilityMenu />
+            <span className="text-[10px] text-muted-foreground mt-[-4px]">Acesso</span>
+          </div>
           
           {isAdmin ? (
             <Link
