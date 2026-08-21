@@ -145,3 +145,43 @@ export const adminStats = createServerFn({ method: "GET" })
       }>,
     };
   });
+
+export const getBookAnnotations = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ book_id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: annotations, error } = await context.supabase
+      .from("book_annotations")
+      .select("page_number, canvas_data")
+      .eq("book_id", data.book_id)
+      .eq("user_id", context.userId);
+
+    if (error) throw new Error("Erro ao buscar anotações: " + error.message);
+    return annotations || [];
+  });
+
+export const saveBookAnnotation = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => 
+    z.object({ 
+      book_id: z.string().uuid(),
+      page_number: z.number().int(),
+      canvas_data: z.string()
+    }).parse(data)
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("book_annotations")
+      .upsert({
+        user_id: context.userId,
+        book_id: data.book_id,
+        page_number: data.page_number,
+        canvas_data: data.canvas_data,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id, book_id, page_number'
+      });
+
+    if (error) throw new Error("Erro ao salvar anotação: " + error.message);
+    return { success: true };
+  });
