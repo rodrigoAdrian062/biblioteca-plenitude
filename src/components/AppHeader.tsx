@@ -12,7 +12,6 @@ import { degreeLabel } from "@/lib/masonic";
 import { useTheme } from "@/hooks/useTheme";
 import { listHistory } from "@/lib/reading.functions";
 import { NotificationsBell } from "@/components/NotificationsBell";
-import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import logo from "@/assets/logo.png";
 
 
@@ -77,9 +76,6 @@ export function AppHeader({
             </span>
           ) : null}
 
-
-          {/* Acessibilidade */}
-          <AccessibilityMenu />
 
           {/* Configurações (Minha conta) */}
           <Button asChild variant="ghost" size="icon" className="h-9 w-9">
