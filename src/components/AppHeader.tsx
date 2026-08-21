@@ -31,6 +31,13 @@ export function AppHeader({
   const queryClient = useQueryClient();
   const { theme, toggle } = useTheme();
   const [q, setQ] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(false);
+
+  const { data: history = [] } = useQuery({
+    queryKey: ["reading-history"],
+    queryFn: () => listHistory(),
+    enabled: !!userId,
+  });
 
 
   async function signOut() {
