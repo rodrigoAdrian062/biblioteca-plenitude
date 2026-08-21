@@ -624,7 +624,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                     canvasRefs.current[n] = el;
                   }}
                   width={width * scale}
-                  height={(width * 1.4) * scale} // Aproximação, o react-pdf ajusta depois
+                  height={(width * 1.41) * scale} // A4 ratio 1:1.41
                   className={`absolute inset-0 z-10 ${tool === 'none' ? 'pointer-events-none' : 'cursor-crosshair'}`}
                   onMouseDown={(e) => startDrawing(e, n)}
                   onMouseMove={(e) => draw(e, n)}
