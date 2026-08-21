@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { KeyRound, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
+import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 
 
 export const Route = createFileRoute("/")({
@@ -28,6 +29,10 @@ export const Route = createFileRoute("/")({
 function Landing() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="absolute top-4 right-4 z-50">
+        <AccessibilityMenu />
+      </div>
+
       {/* Elementos decorativos de fundo */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
