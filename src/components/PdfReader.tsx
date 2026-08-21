@@ -107,7 +107,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
         map[ann.page_number] = ann.canvas_data;
       });
       setLoadedAnnotations(map);
-    }).catch(err => {
+    }).catch((err: any) => {
       console.error("Erro ao carregar anotações:", err);
     });
   }, [bookId]);
@@ -320,7 +320,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
 
       speakTextWithHighlight(
         pageText,
-        (charIndex) => {
+        (charIndex: number) => {
           // Encontrar a palavra atual para realce
           const nextSpace = pageText.indexOf(' ', charIndex);
           const length = nextSpace === -1 ? pageText.length - charIndex : nextSpace - charIndex;
@@ -445,7 +445,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
       if (canvas) {
         const data = canvas.toDataURL();
         saveAnnotation({ data: { book_id: bookId, page_number: pageNum, canvas_data: data } })
-          .catch(err => console.error("Erro ao salvar anotação:", err));
+          .catch((err: any) => console.error("Erro ao salvar anotação:", err));
       }
     }
   };
@@ -458,7 +458,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (bookId) {
         saveAnnotation({ data: { book_id: bookId, page_number: pageNum, canvas_data: "" } })
-          .catch(err => console.error("Erro ao limpar anotação no banco:", err));
+          .catch((err: any) => console.error("Erro ao limpar anotação no banco:", err));
       }
     }
   };
@@ -630,7 +630,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 placeholder="Buscar na obra..."
                 className="h-8 w-32 pl-7 pr-2 text-xs focus-visible:ring-primary/50 sm:w-48"
                 value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearch(e.target.value)}
               />
               {searchResults.length > 0 && (
                 <div className="absolute right-2 flex items-center gap-1">
