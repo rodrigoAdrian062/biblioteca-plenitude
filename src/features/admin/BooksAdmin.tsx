@@ -479,17 +479,21 @@ export function BooksAdmin() {
       </div>
 
       {isLoading ? (
-        <div className="space-y-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="grid grid-cols-[3rem_minmax(0,1fr)] items-start gap-3 rounded-md border border-border/60 bg-card p-3">
-              <Skeleton className="h-16 w-12 rounded border border-border/60" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
-                <div className="flex gap-1.5">
+        <div className="space-y-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="grid grid-cols-[3rem_minmax(0,1fr)] items-start gap-3 rounded-xl border border-border/40 bg-card/40 p-3 animate-pulse">
+              <Skeleton className="h-16 w-12 rounded bg-muted/20" />
+              <div className="flex-1 space-y-2 py-1">
+                <Skeleton className="h-4 w-3/4 rounded" />
+                <div className="flex gap-1.5 pt-1">
+                  <Skeleton className="h-4 w-16 rounded-full" />
                   <Skeleton className="h-4 w-16 rounded-full" />
                   <Skeleton className="h-4 w-16 rounded-full" />
                 </div>
+              </div>
+              <div className="hidden sm:flex items-center gap-1">
+                <Skeleton className="h-8 w-8 rounded-lg" />
+                <Skeleton className="h-8 w-8 rounded-lg" />
               </div>
             </div>
           ))}
