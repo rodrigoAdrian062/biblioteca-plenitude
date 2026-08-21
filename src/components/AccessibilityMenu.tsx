@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Accessibility, Type, Contrast, Volume2, VolumeX } from "lucide-react";
+import { Accessibility, Type, Contrast } from "lucide-react";
 import { useAccessibility, FontSize } from "@/hooks/useAccessibility";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,6 @@ export function AccessibilityMenu() {
   const { 
     fontSize, setFontSize, 
     highContrast, setHighContrast, 
-    ttsEnabled, setTtsEnabled 
   } = useAccessibility();
 
   const fontSizes: { label: string; value: FontSize }[] = [
@@ -75,17 +74,6 @@ export function AccessibilityMenu() {
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <Label htmlFor="tts-mode" className="text-xs font-medium flex items-center gap-2 cursor-pointer">
-              {ttsEnabled ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
-              Leitura por Voz
-            </Label>
-            <Switch
-              id="tts-mode"
-              checked={ttsEnabled}
-              onCheckedChange={setTtsEnabled}
-            />
-          </div>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
