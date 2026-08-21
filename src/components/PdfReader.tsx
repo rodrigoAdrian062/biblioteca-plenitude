@@ -23,6 +23,9 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useServerFn } from "@tanstack/react-start";
+import { getBookAnnotations, saveBookAnnotation } from "@/lib/library.functions";
+import { toast } from "sonner";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -34,10 +37,11 @@ type Props = {
   /** Página inicial vinda do histórico salvo no servidor */
   initialPage?: number | undefined;
   /** Notifica a página atual para salvar o histórico */
-   onProgress?: ((page: number, totalPages: number) => void) | undefined;
-   /** Se o download está habilitado para esta obra */
-   downloadEnabled?: boolean;
- };
+  onProgress?: ((page: number, totalPages: number) => void) | undefined;
+  /** Se o download está habilitado para esta obra */
+  downloadEnabled?: boolean;
+  bookId?: string;
+};
 
 type Mode = "horizontal" | "vertical";
 type DrawingTool = "none" | "pen" | "highlighter" | "eraser" | "strikethrough";
@@ -61,7 +65,7 @@ function readSaved(key: string | undefined): SavedPosition | null {
   }
 }
 
-export default function PdfReader({ url, watermark, storageKey, initialPage, onProgress, downloadEnabled }: Props) {
+export default function PdfReader({ url, watermark, storageKey, initialPage, onProgress, downloadEnabled, bookId }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [numPages, setNumPages] = useState(0);
@@ -79,12 +83,54 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const pdfInstance = useRef<any>(null);
   const [tool, setTool] = useState<DrawingTool>("none");
   const [penColor, setPenColor] = useState("#F6AC19"); // Ouro Plenitude
-  const [annotations, setAnnotations] = useState<Record<number, string[]>>({}); // SVG paths por página
   const isDrawing = useRef(false);
   const currentPath = useRef<string>("");
   const startPos = useRef<{ x: number; y: number } | null>(null);
   const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({});
-  const contextRefs = useRef<Record<number, CanvasRenderingContext2D | null>>({});
+  const [loadedAnnotations, setLoadedAnnotations] = useState<Record<number, string>>({});
+
+  const fetchAnnotations = useServerFn(getBookAnnotations);
+  const saveAnnotation = useServerFn(saveBookAnnotation);
+
+  // Carrega anotações do banco
+  useEffect(() => {
+    if (!bookId) return;
+    fetchAnnotations({ book_id: bookId }).then(data => {
+      const map: Record<number, string> = {};
+      data.forEach((ann: any) => {
+        map[ann.page_number] = ann.canvas_data;
+      });
+      setLoadedAnnotations(map);
+    }).catch(err => {
+      console.error("Erro ao carregar anotações:", err);
+    });
+  }, [bookId]);
+
+  // Aplica anotações carregadas no canvas
+  const applyAnnotations = useCallback((pageNum: number) => {
+    const canvas = canvasRefs.current[pageNum];
+    const data = loadedAnnotations[pageNum];
+    if (canvas && data) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+        img.src = data;
+      }
+    }
+  }, [loadedAnnotations]);
+
+  useEffect(() => {
+    if (numPages > 0) {
+      Object.keys(loadedAnnotations).forEach(pageNum => {
+        applyAnnotations(Number(pageNum));
+      });
+    }
+  }, [numPages, applyAnnotations, loadedAnnotations, scale, width]);
+
 
   // Restaura preferências salvas (modo/zoom) ao montar
   useEffect(() => {
