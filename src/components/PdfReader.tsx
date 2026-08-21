@@ -637,16 +637,31 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
               </div>
             ))
           ) : (
-            <div className="mx-auto snap-center shadow-sm">
+            <div className="relative mx-auto snap-center shadow-sm">
               <Page
                 pageNumber={page}
                 width={width}
-                 scale={scale}
-                 customTextRenderer={textRenderer}
-                 renderTextLayer={true}
-                 renderAnnotationLayer={false}
-                 className="select-none"
-               />
+                scale={scale}
+                customTextRenderer={textRenderer}
+                renderTextLayer={true}
+                renderAnnotationLayer={false}
+                className="select-none"
+              />
+              <canvas
+                ref={(el) => {
+                  canvasRefs.current[page] = el;
+                }}
+                width={width * scale}
+                height={(width * 1.4) * scale}
+                className={`absolute inset-0 z-10 ${tool === 'none' ? 'pointer-events-none' : 'cursor-crosshair'}`}
+                onMouseDown={(e) => startDrawing(e, page)}
+                onMouseMove={(e) => draw(e, page)}
+                onMouseUp={() => stopDrawing(page)}
+                onMouseLeave={() => stopDrawing(page)}
+                onTouchStart={(e) => startDrawing(e, page)}
+                onTouchMove={(e) => draw(e, page)}
+                onTouchEnd={() => stopDrawing(page)}
+              />
             </div>
           )}
         </Document>
