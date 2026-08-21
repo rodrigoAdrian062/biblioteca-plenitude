@@ -59,7 +59,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   // Lido apenas após a hidratação para não divergir do HTML renderizado no servidor.
   const [lockedUntil, setLockedUntil] = useState(0);
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(0);
 
   useEffect(() => {
     setLockedUntil(readAttempts().lockedUntil ?? 0);

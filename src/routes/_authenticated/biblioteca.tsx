@@ -380,10 +380,9 @@ function Library() {
                       }
                     >
                       <div className={`w-1.5 h-1.5 rounded-full transition-all ${tema === s.value ? 'bg-primary-foreground shadow-[0_0_8px_white]' : 'bg-muted-foreground/40'}`} />
-                      {s.label}
-                      {degreeValue !== null && (
-                        <span className="ml-1 opacity-70 font-bold">({degreeLabel(degreeValue)})</span>
-                      )}
+                      {degreeValue !== null ? (
+                        <span className="font-bold">{degreeLabel(degreeValue)}</span>
+                      ) : s.label}
                       <span className="ml-1 text-[10px] opacity-60">
                         ({counts[s.value] ?? 0})
                       </span>

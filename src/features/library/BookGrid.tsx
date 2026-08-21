@@ -130,10 +130,9 @@ export function BookGrid({
                   variant={book.scope === "nao_maconico" ? "secondary" : "default"}
                   className="px-1.5 text-[10px]"
                 >
-                  {scopeLabel(book.scope)}
-                  {book.scope === 'maconico' && (
-                    <span className="ml-1 font-bold">({degreeLabel(book.min_degree)})</span>
-                  )}
+                  {book.scope === 'maconico' ? (
+                    <span className="font-bold">{degreeLabel(book.min_degree)}</span>
+                  ) : scopeLabel(book.scope)}
                 </Badge>
                 <Badge variant="outline" className="px-1.5 text-[10px]">
                   {kindLabel(book.kind)}
