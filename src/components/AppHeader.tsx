@@ -179,9 +179,9 @@ export function AppHeader({
       {/* Menu inferior no celular */}
       <nav
         aria-label="Menu principal"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border/40 bg-card/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg sm:hidden"
       >
-        <div className="grid grid-cols-5 items-stretch">
+        <div className="grid grid-cols-5 items-stretch h-16">
           <Link
             to="/biblioteca"
             search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
