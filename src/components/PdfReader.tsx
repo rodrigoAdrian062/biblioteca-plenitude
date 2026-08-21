@@ -95,7 +95,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   // Carrega anotações do banco
   useEffect(() => {
     if (!bookId) return;
-    fetchAnnotations({ book_id: bookId }).then(data => {
+    fetchAnnotations({ data: { book_id: bookId } }).then((data: any) => {
       const map: Record<number, string> = {};
       data.forEach((ann: any) => {
         map[ann.page_number] = ann.canvas_data;
