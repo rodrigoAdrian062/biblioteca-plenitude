@@ -404,6 +404,65 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
             </Button>
           </div>
 
+          <div className="flex shrink-0 items-center gap-1 rounded-md border border-border/60 p-0.5">
+            <Button
+              variant={tool === "none" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("none")}
+              title="Seleção/Navegação"
+            >
+              <BookOpen className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={tool === "pen" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("pen")}
+              title="Caneta"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={tool === "highlighter" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("highlighter")}
+              title="Marca-texto"
+            >
+              <Highlighter className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={tool === "eraser" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("eraser")}
+              title="Borracha"
+            >
+              <Eraser className="h-4 w-4" />
+            </Button>
+            {tool !== "none" && (
+              <div className="flex items-center gap-1 px-1 border-l border-border/60 ml-1">
+                <input
+                  type="color"
+                  value={penColor}
+                  onChange={(e) => setPenColor(e.target.value)}
+                  className="w-5 h-5 rounded cursor-pointer bg-transparent border-none p-0"
+                  title="Cor da ferramenta"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-muted-foreground"
+                  onClick={() => clearCanvas(page)}
+                  title="Limpar anotações desta página"
+                >
+                  <Undo2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-1.5 border-l border-border/60 pl-1.5">
             <div className="relative flex items-center">
               <Search className="absolute left-2 h-3.5 w-3.5 text-muted-foreground" />
