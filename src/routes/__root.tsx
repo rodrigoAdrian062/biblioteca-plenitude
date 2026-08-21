@@ -144,6 +144,12 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
+    // Executa uma vez para garantir que o PDF Mestre esteja no acervo
+    seedBook().catch(() => {});
+  }, []);
+
+
+  useEffect(() => {
     if (isPublicThemeRoute(pathname)) {
       document.documentElement.classList.add("dark");
     }
