@@ -39,6 +39,7 @@ type Props = {
  };
 
 type Mode = "horizontal" | "vertical";
+type DrawingTool = "none" | "pen" | "highlighter" | "eraser";
 
 type SavedPosition = { page: number; mode: Mode; scale: number };
 
