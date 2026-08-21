@@ -111,9 +111,14 @@ export function BookGrid({
             )}
             <div className="min-w-0 flex-1">
               <div className="flex flex-col">
-                <p className="line-clamp-1 font-display text-sm leading-snug text-foreground">
-                  {book.title}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className="line-clamp-1 font-display text-sm leading-snug text-foreground">
+                    {book.title}
+                  </p>
+                  {favSet.has(book.id) && (
+                    <Heart className="h-3 w-3 fill-primary text-primary shrink-0" />
+                  )}
+                </div>
                 {book.author && (
                   <p className="line-clamp-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                     {book.author}
