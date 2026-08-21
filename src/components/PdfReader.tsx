@@ -608,17 +608,32 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
                 ref={(el) => {
                   pageRefs.current[n] = el;
                 }}
-                className="shadow-sm"
+                className="relative shadow-sm"
               >
                 <Page
                   pageNumber={n}
                   width={width}
-                   scale={scale}
-                   customTextRenderer={textRenderer}
-                   renderTextLayer={true}
-                   renderAnnotationLayer={false}
-                   className="select-none"
-                 />
+                  scale={scale}
+                  customTextRenderer={textRenderer}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={false}
+                  className="select-none"
+                />
+                <canvas
+                  ref={(el) => {
+                    canvasRefs.current[n] = el;
+                  }}
+                  width={width * scale}
+                  height={(width * 1.4) * scale} // Aproximação, o react-pdf ajusta depois
+                  className={`absolute inset-0 z-10 ${tool === 'none' ? 'pointer-events-none' : 'cursor-crosshair'}`}
+                  onMouseDown={(e) => startDrawing(e, n)}
+                  onMouseMove={(e) => draw(e, n)}
+                  onMouseUp={() => stopDrawing(n)}
+                  onMouseLeave={() => stopDrawing(n)}
+                  onTouchStart={(e) => startDrawing(e, n)}
+                  onTouchMove={(e) => draw(e, n)}
+                  onTouchEnd={() => stopDrawing(n)}
+                />
               </div>
             ))
           ) : (
