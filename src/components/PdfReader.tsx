@@ -388,6 +388,10 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (bookId) {
+        saveAnnotation({ data: { book_id: bookId, page_number: pageNum, canvas_data: "" } })
+          .catch(err => console.error("Erro ao limpar anotação no banco:", err));
+      }
     }
   };
 
