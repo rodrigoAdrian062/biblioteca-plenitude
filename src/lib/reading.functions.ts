@@ -127,3 +127,50 @@ export const listHistory = createServerFn({ method: "GET" })
       };
     });
   });
+
+/** Busca a nota pessoal de uma obra */
+export const getBookNote = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ bookId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: note, error } = await context.supabase
+      .from("book_notes")
+      .select("content")
+      .eq("user_id", context.userId)
+      .eq("book_id", data.bookId)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    return note?.content ?? "";
+  });
+
+/** Salva ou atualiza a nota pessoal de uma obra */
+export const saveBookNote = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ bookId: z.string().uuid(), content: z.string() }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    if (!data.content.trim()) {
+      const { error } = await context.supabase
+        .from("book_notes")
+        .delete()
+        .eq("user_id", context.userId)
+        .eq("book_id", data.bookId);
+      if (error) throw new Error(error.message);
+      return { ok: true, deleted: true };
+    }
+
+    const { error } = await context.supabase.from("book_notes").upsert(
+      {
+        user_id: context.userId,
+        book_id: data.bookId,
+        content: data.content,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,book_id" },
+    );
+
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
