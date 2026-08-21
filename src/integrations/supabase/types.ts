@@ -46,6 +46,44 @@ export type Database = {
           },
         ]
       }
+      book_annotations: {
+        Row: {
+          book_id: string
+          canvas_data: string
+          created_at: string | null
+          id: string
+          page_number: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          canvas_data: string
+          created_at?: string | null
+          id?: string
+          page_number: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          canvas_data?: string
+          created_at?: string | null
+          id?: string
+          page_number?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_annotations_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       book_notes: {
         Row: {
           book_id: string
