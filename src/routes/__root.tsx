@@ -14,6 +14,7 @@ import { seedBook } from "@/lib/books.functions";
 
 import { Toaster } from "@/components/ui/sonner";
 import { isPublicThemeRoute } from "@/hooks/useTheme";
+import { AccessibilityProvider } from "@/hooks/useAccessibility";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
