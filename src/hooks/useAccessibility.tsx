@@ -43,6 +43,24 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [state]);
 
+  useEffect(() => {
+    if (!state.ttsEnabled) return;
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && (target.innerText || target.title || target.getAttribute('aria-label'))) {
+        const text = target.getAttribute('aria-label') || target.title || target.innerText;
+        if (text && text.length < 500) {
+          // Debounce ou check para não repetir o mesmo texto imediatamente
+          speak(text);
+        }
+      }
+    };
+
+    document.addEventListener('mouseover', handleMouseOver);
+    return () => document.removeEventListener('mouseover', handleMouseOver);
+  }, [state.ttsEnabled]);
+
   const setFontSize = (fontSize: number) => setState(s => ({ ...s, fontSize }));
   const toggleHighContrast = () => setState(s => ({ ...s, highContrast: !s.highContrast }));
   const toggleTTS = () => {
