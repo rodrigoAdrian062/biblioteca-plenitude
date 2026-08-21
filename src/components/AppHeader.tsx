@@ -123,7 +123,7 @@ export function AppHeader({
         aria-label="Menu principal"
         className="fixed inset-x-0 bottom-0 z-50 border-t border-border/40 bg-card/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg sm:hidden shadow-[0_-8px_20px_rgba(0,0,0,0.1)]"
       >
-        <div className="grid grid-cols-3 items-stretch h-16">
+        <div className="grid grid-cols-4 items-stretch h-16">
           <Link
             to="/biblioteca"
             search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
@@ -133,6 +133,21 @@ export function AppHeader({
             <Library className="h-5 w-5" />
             Acervo
           </Link>
+
+          <button
+            type="button"
+            onClick={() => {
+              const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
+              if (searchInput) {
+                searchInput.focus();
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }}
+            className="flex flex-col items-center justify-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors hover:text-primary"
+          >
+            <Search className="h-5 w-5" />
+            Buscar
+          </button>
           
           {isAdmin ? (
             <Link
