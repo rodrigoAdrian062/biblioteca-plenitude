@@ -76,6 +76,13 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const [currentResultIndex, setCurrentResultIndex] = useState(-1);
   const pendingPage = useRef<number | null>(null);
   const pdfInstance = useRef<any>(null);
+  const [tool, setTool] = useState<DrawingTool>("none");
+  const [penColor, setPenColor] = useState("#F6AC19"); // Ouro Plenitude
+  const [annotations, setAnnotations] = useState<Record<number, string[]>>({}); // SVG paths por página
+  const isDrawing = useRef(false);
+  const currentPath = useRef<string>("");
+  const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({});
+  const contextRefs = useRef<Record<number, CanvasRenderingContext2D | null>>({});
 
   // Restaura preferências salvas (modo/zoom) ao montar
   useEffect(() => {
