@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { Library, LogOut, Moon, Search, Shield, Sun, UserCog } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { History, Library, LogOut, Moon, Search, Shield, Sun, UserCog, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { degreeLabel } from "@/lib/masonic";
 import { useTheme } from "@/hooks/useTheme";
+import { listHistory } from "@/lib/reading.functions";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import logo from "@/assets/logo.png";
 
