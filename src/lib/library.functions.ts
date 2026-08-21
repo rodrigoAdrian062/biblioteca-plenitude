@@ -150,7 +150,7 @@ export const getBookAnnotations = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({ book_id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
-    const { data: annotations, error } = await context.supabase
+    const { data: annotations, error } = await (context.supabase as any)
       .from("book_annotations")
       .select("page_number, canvas_data")
       .eq("book_id", data.book_id)
@@ -170,7 +170,7 @@ export const saveBookAnnotation = createServerFn({ method: "POST" })
     }).parse(data)
   )
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("book_annotations")
       .upsert({
         user_id: context.userId,
