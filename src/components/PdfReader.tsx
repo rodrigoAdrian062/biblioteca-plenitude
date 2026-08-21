@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useAccessibility } from "@/hooks/useAccessibility";
 import { Document, Page, pdfjs } from "react-pdf";
 import {
   ChevronLeft,
@@ -88,6 +89,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const startPos = useRef<{ x: number; y: number } | null>(null);
   const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({});
   const [loadedAnnotations, setLoadedAnnotations] = useState<Record<number, string>>({});
+  const { highContrast } = useAccessibility();
 
   const fetchAnnotations = useServerFn(getBookAnnotations);
   const saveAnnotation = useServerFn(saveBookAnnotation);
@@ -401,8 +403,8 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     <div
       className={
         full
-          ? "fixed inset-0 z-[60] flex min-w-0 flex-col bg-background"
-          : "w-full max-w-full min-w-0 overflow-hidden rounded-xl border border-border/60 bg-secondary/40"
+          ? `fixed inset-0 z-[60] flex min-w-0 flex-col bg-background ${highContrast ? 'invert grayscale' : ''}`
+          : `w-full max-w-full min-w-0 overflow-hidden rounded-xl border border-border/60 bg-secondary/40 ${highContrast ? 'invert grayscale' : ''}`
       }
     >
       {full ? (
