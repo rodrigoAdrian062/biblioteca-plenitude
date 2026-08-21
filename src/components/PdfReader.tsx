@@ -17,6 +17,7 @@ import {
   Eraser,
   Palette,
   Undo2,
+  Strikethrough,
 } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -39,7 +40,7 @@ type Props = {
  };
 
 type Mode = "horizontal" | "vertical";
-type DrawingTool = "none" | "pen" | "highlighter" | "eraser";
+type DrawingTool = "none" | "pen" | "highlighter" | "eraser" | "strikethrough";
 
 type SavedPosition = { page: number; mode: Mode; scale: number };
 
@@ -81,6 +82,7 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const [annotations, setAnnotations] = useState<Record<number, string[]>>({}); // SVG paths por página
   const isDrawing = useRef(false);
   const currentPath = useRef<string>("");
+  const startPos = useRef<{ x: number; y: number } | null>(null);
   const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({});
   const contextRefs = useRef<Record<number, CanvasRenderingContext2D | null>>({});
 
@@ -279,9 +281,11 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     ctx.beginPath();
     ctx.moveTo(x / scale, y / scale);
     currentPath.current = `M ${x/scale} ${y/scale}`;
+    startPos.current = { x: x / scale, y: y / scale };
     
-    ctx.strokeStyle = tool === "eraser" ? "white" : (tool === "highlighter" ? `${penColor}66` : penColor);
-    ctx.lineWidth = tool === "highlighter" ? 20 / scale : 3 / scale;
+    ctx.strokeStyle = tool === "eraser" ? "white" : (tool === "highlighter" ? `${penColor}66` : (tool === "strikethrough" ? penColor : penColor));
+    ctx.lineWidth = (tool === "highlighter" || tool === "strikethrough") ? 20 / scale : 3 / scale;
+    if (tool === "strikethrough") ctx.lineWidth = 4 / scale;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     
@@ -305,7 +309,15 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    ctx.lineTo(x / scale, y / scale);
+    if (tool === "strikethrough" && startPos.current) {
+      // Para o tachado, redesenhamos a linha do ponto inicial ao atual (mais ou menos horizontal)
+      // Primeiro limpamos o traço temporário anterior se fôssemos fazer algo mais complexo, 
+      // mas aqui vamos apenas desenhar a linha. O ideal para "preview" é um pouco diferente,
+      // mas vamos simplificar: o tachado risca do início ao fim do movimento.
+      ctx.lineTo(x / scale, startPos.current.y);
+    } else {
+      ctx.lineTo(x / scale, y / scale);
+    }
     ctx.stroke();
     currentPath.current += ` L ${x/scale} ${y/scale}`;
   };
@@ -431,6 +443,15 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
               title="Marca-texto"
             >
               <Highlighter className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={tool === "strikethrough" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => setTool("strikethrough")}
+              title="Tachado (Riscar)"
+            >
+              <Strikethrough className="h-4 w-4" />
             </Button>
             <Button
               variant={tool === "eraser" ? "default" : "ghost"}
