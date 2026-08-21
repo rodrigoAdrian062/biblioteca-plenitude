@@ -371,7 +371,15 @@ export default function PdfReader({ url, watermark, storageKey, initialPage, onP
   const stopDrawing = (pageNum: number) => {
     if (!isDrawing.current) return;
     isDrawing.current = false;
-    // Aqui poderíamos salvar as anotações no DB se necessário
+    
+    if (bookId) {
+      const canvas = canvasRefs.current[pageNum];
+      if (canvas) {
+        const data = canvas.toDataURL();
+        saveAnnotation({ data: { book_id: bookId, page_number: pageNum, canvas_data: data } })
+          .catch(err => console.error("Erro ao salvar anotação:", err));
+      }
+    }
   };
 
   const clearCanvas = (pageNum: number) => {
