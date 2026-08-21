@@ -233,6 +233,7 @@ function BookReaderPage() {
                     initialPage={entry?.last_page}
                     onProgress={handleProgress}
                     downloadEnabled={book.download_enabled}
+                    bookId={id}
                   />
                 </Suspense>
               </ClientOnly>
