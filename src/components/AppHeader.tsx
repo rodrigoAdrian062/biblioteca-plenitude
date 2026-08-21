@@ -123,7 +123,7 @@ export function AppHeader({
         aria-label="Menu principal"
         className="fixed inset-x-0 bottom-0 z-50 border-t border-border/40 bg-card/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg sm:hidden shadow-[0_-8px_20px_rgba(0,0,0,0.1)]"
       >
-        <div className="grid grid-cols-4 items-stretch h-16">
+        <div className="grid grid-cols-3 items-stretch h-16">
           <Link
             to="/biblioteca"
             search={{ q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }}
@@ -134,9 +134,6 @@ export function AppHeader({
             Acervo
           </Link>
           
-          {/* Espaço para manter o grid de 4 colunas equilibrado se necessário, ou remover o grid fixo */}
-          <div />
-
           {isAdmin ? (
             <Link
               to="/admin"
