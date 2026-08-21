@@ -203,10 +203,9 @@ function BookReaderPage() {
                   {isFavorite ? "Favorita" : "Favoritar"}
                 </Button>
                 <Badge variant={book.scope === "nao_maconico" ? "secondary" : "default"}>
-                  {scopeLabel(book.scope)}
+                  {book.scope === "maconico" ? degreeLabel(book.min_degree) : scopeLabel(book.scope)}
                 </Badge>
                 <Badge variant="outline">{kindLabel(book.kind)}</Badge>
-                <Badge variant="outline">{degreeLabel(book.min_degree)}</Badge>
 
               </div>
             </div>
