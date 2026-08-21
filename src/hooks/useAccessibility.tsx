@@ -11,6 +11,9 @@ interface AccessibilityContextType {
   setTtsEnabled: (enabled: boolean) => void;
   speak: (text: string) => void;
   stopSpeaking: () => void;
+  isReadingSequence: boolean;
+  currentSpokenText: string;
+  speakTextWithHighlight: (text: string, onBoundary: (charIndex: number) => void, onEnd: () => void) => void;
 }
 
 const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
@@ -19,6 +22,8 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   const [fontSize, setFontSizeState] = useState<FontSize>("normal");
   const [highContrast, setHighContrastState] = useState(false);
   const [ttsEnabled, setTtsEnabledState] = useState(false);
+  const [isReadingSequence, setIsReadingSequence] = useState(false);
+  const [currentSpokenText, setCurrentSpokenText] = useState("");
 
   // Initialize from localStorage
   useEffect(() => {
@@ -71,6 +76,40 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
       window.speechSynthesis.cancel();
     }
   };
+  
+  const speakTextWithHighlight = (text: string, onBoundary: (charIndex: number) => void, onEnd: () => void) => {
+    if (!window.speechSynthesis) return;
+    
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "pt-BR";
+    utterance.rate = 1.0;
+    
+    utterance.onboundary = (event) => {
+      if (event.name === 'word') {
+        onBoundary(event.charIndex);
+      }
+    };
+    
+    utterance.onstart = () => {
+      setIsReadingSequence(true);
+      setCurrentSpokenText(text);
+    };
+    
+    utterance.onend = () => {
+      setIsReadingSequence(false);
+      setCurrentSpokenText("");
+      onEnd();
+    };
+    
+    utterance.onerror = () => {
+      setIsReadingSequence(false);
+      setCurrentSpokenText("");
+      onEnd();
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   // Listen for mouseover events for TTS
   useEffect(() => {
@@ -100,7 +139,10 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
         ttsEnabled,
         setTtsEnabled,
         speak,
-        stopSpeaking
+        stopSpeaking,
+        isReadingSequence,
+        currentSpokenText,
+        speakTextWithHighlight
       }}
     >
       {children}
