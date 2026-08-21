@@ -438,9 +438,9 @@ function Library() {
           </div>
 
           {hasFilters && (
-            <div className="flex w-full items-center justify-between border-t border-border/20 pt-5">
-              <span className="text-[10px] font-semibold text-primary/80 flex items-center gap-2">
-                <div className="w-1 h-1 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
+            <div className="flex flex-col sm:flex-row w-full items-start sm:items-center justify-between border-t border-border/20 pt-5 gap-3">
+              <span className="text-[11px] sm:text-sm font-[900] text-primary flex items-center gap-2 whitespace-nowrap overflow-hidden">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)] shrink-0" />
                 Dica: Limpe os filtros para ver todo o acervo
               </span>
               <Button
