@@ -87,7 +87,7 @@ export function NotificationsBell({
     if (pending.length === 0) return;
     for (const b of pending.slice(0, 3)) {
       try {
-        new Notification("Nova obra na Biblioteca Plenitude", {
+        new Notification("Obaa irmao tem obras novas", {
           body: catalogName(b.author, b.title),
           tag: b.id,
         });
@@ -160,7 +160,7 @@ export function NotificationsBell({
 
       <PopoverContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between gap-2 border-b border-border/60 px-3 py-2">
-          <span className="font-display text-sm tracking-wide">Novos acervos</span>
+          <span className="font-display text-sm tracking-wide">Obaa irmao tem obras novas</span>
           {count > 0 ? (
             <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={clearAll}>
               <X className="mr-1 h-3.5 w-3.5" />
