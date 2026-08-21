@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { History, Library, LogOut, Moon, Search, Shield, Sun, UserCog, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,6 +28,7 @@ export function AppHeader({
   userId?: string | undefined;
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { theme, toggle } = useTheme();
   const [q, setQ] = useState("");
@@ -137,10 +138,25 @@ export function AppHeader({
           <button
             type="button"
             onClick={() => {
-              const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
-              if (searchInput) {
-                searchInput.focus();
-                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              if (location.pathname === '/biblioteca') {
+                const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
+                if (searchInput) {
+                  searchInput.focus();
+                  searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              } else {
+                void navigate({
+                  to: "/biblioteca",
+                  search: { q: "", autor: "", categoria: "", grau: 0, tema: "", tipo: "", fav: false }
+                }).then(() => {
+                  // Pequeno delay para garantir que o componente carregou antes de focar
+                  setTimeout(() => {
+                    const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
+                    if (searchInput) {
+                      searchInput.focus();
+                    }
+                  }, 100);
+                });
               }
             }}
             className="flex flex-col items-center justify-center gap-0.5 py-2 text-[11px] text-muted-foreground transition-colors hover:text-primary"
