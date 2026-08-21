@@ -177,3 +177,46 @@
     transparent
   );
 }
+
+/* Accessibility - Font Sizes */
+:root.font-large {
+  font-size: 115%;
+}
+
+:root.font-extra-large {
+  font-size: 130%;
+}
+
+/* Accessibility - High Contrast */
+:root.high-contrast {
+  --background: oklch(0% 0 0); /* Black #000 */
+  --foreground: oklch(80% 0.16 76.7); /* Gold #F6AC19 */
+  --card: oklch(0% 0 0);
+  --card-foreground: oklch(100% 0 0); /* White #FFF */
+  --popover: oklch(5% 0 0);
+  --popover-foreground: oklch(100% 0 0);
+  --primary: oklch(80% 0.16 76.7);
+  --primary-foreground: oklch(0% 0 0);
+  --secondary: oklch(15% 0 0);
+  --secondary-foreground: oklch(100% 0 0);
+  --muted: oklch(15% 0 0);
+  --muted-foreground: oklch(90% 0 0);
+  --accent: oklch(25% 0 0);
+  --accent-foreground: oklch(80% 0.16 76.7);
+  --border: oklch(80% 0.16 76.7 / 80%);
+  --input: oklch(100% 0 0 / 20%);
+}
+
+.high-contrast * {
+  border-color: var(--color-border) !important;
+}
+
+.high-contrast .backdrop-blur-md,
+.high-contrast .backdrop-blur-lg {
+  backdrop-filter: none !important;
+  background-color: var(--color-background) !important;
+}
+
+.high-contrast img:not([src*="logo"]) {
+  filter: grayscale(1) contrast(1.2);
+}
