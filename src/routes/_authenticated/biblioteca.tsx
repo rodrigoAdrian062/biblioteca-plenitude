@@ -300,7 +300,7 @@ function Library() {
         </section>
 
 
-        <section className="mt-6 space-y-6 rounded-2xl border border-border/40 bg-card/30 p-5 sm:p-6 backdrop-blur-sm">
+        <section className="mt-6 space-y-6 rounded-2xl border border-border/40 bg-card/30 p-5 sm:p-6 backdrop-blur-sm shadow-xl shadow-black/20">
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_14rem_14rem]">
             <div className="relative min-w-0">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
