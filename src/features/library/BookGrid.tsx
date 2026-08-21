@@ -90,7 +90,7 @@ export function BookGrid({
         {visibleBooks.map((book) => (
           <div
             key={book.id}
-            className={`flex items-center gap-3 rounded-xl border border-border/60 bg-card transition-colors hover:border-primary/40 ${viewMode === 'grid' ? 'p-2.5' : 'p-3'}`}
+            className={`flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm transition-all hover:border-primary/50 hover:bg-card/60 hover:shadow-lg hover:shadow-black/20 ${viewMode === 'grid' ? 'p-3' : 'p-3'}`}
           >
             {viewMode === "grid" && (
               <div className="h-16 w-12 shrink-0 overflow-hidden rounded bg-secondary">
