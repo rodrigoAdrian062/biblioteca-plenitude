@@ -6,7 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { listBooks } from "@/lib/library.functions";
 import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib/reading.functions";
-import { DEGREES } from "@/lib/masonic";
+import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, KINDS, catalogName } from "@/lib/catalog";
 import { BookGrid } from "@/features/library/BookGrid";
 
@@ -382,7 +382,7 @@ function Library() {
                       <div className={`w-1.5 h-1.5 rounded-full transition-all ${tema === s.value ? 'bg-primary-foreground shadow-[0_0_8px_white]' : 'bg-muted-foreground/40'}`} />
                       {s.label}
                       {degreeValue !== null && (
-                        <span className="ml-1 opacity-70 font-bold">({degreeValue})</span>
+                        <span className="ml-1 opacity-70 font-bold">({degreeLabel(degreeValue)})</span>
                       )}
                       <span className="ml-1 text-[10px] opacity-60">
                         ({counts[s.value] ?? 0})
