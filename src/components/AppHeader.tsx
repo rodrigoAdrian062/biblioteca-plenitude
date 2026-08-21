@@ -134,48 +134,8 @@ export function AppHeader({
             Acervo
           </Link>
           
-          {/* Histórico Mobile */}
-          {userId ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="flex flex-col items-center justify-center gap-0.5 py-2 text-[11px] text-muted-foreground"
-                >
-                  <History className="h-5 w-5" />
-                  Lidos
-                </button>
-              </PopoverTrigger>
-              <PopoverContent side="top" align="center" className="w-[calc(100vw-2rem)] p-0">
-                <div className="flex items-center justify-between border-b border-border/60 px-3 py-2">
-                  <span className="font-display text-sm tracking-wide">Livros Lidos</span>
-                </div>
-                <ScrollArea className="max-h-60">
-                  {history.length === 0 ? (
-                    <p className="px-3 py-6 text-center text-sm text-muted-foreground">
-                      vc ainda não tem livro abertos ou lidos
-                    </p>
-                  ) : (
-                    <ul className="divide-y divide-border/60">
-                      {history.map((h) => (
-                        <li key={h.book_id} className="px-3 py-2">
-                          <Link
-                            to="/obra/$id"
-                            params={{ id: h.book_id }}
-                            className="block min-w-0 text-left"
-                          >
-                            <span className="line-clamp-1 text-sm text-foreground">{h.title}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </ScrollArea>
-              </PopoverContent>
-            </Popover>
-          ) : (
-            <div />
-          )}
+          {/* Espaço para manter o grid de 4 colunas equilibrado se necessário, ou remover o grid fixo */}
+          <div />
 
           {isAdmin ? (
             <Link
