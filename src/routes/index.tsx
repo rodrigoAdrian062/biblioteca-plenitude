@@ -58,6 +58,13 @@ function Landing() {
             <Link to="/auth">Entrar na biblioteca</Link>
           </Button>
         </div>
+
+        <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-primary/30 bg-primary/10 px-5 py-3 text-sm text-foreground shadow-[0_0_20px_rgba(246,172,25,0.1)]">
+          <Download className="h-4 w-4 text-primary shrink-0" />
+          <span className="font-medium">
+            Precisa fazer o download de alguma obra? Entre em contato com o Mestre Bibliotecário <span className="text-primary font-semibold">Ir∴ Menezes</span>.
+          </span>
+        </div>
       </section>
 
       <section className="relative z-10 mx-auto grid max-w-5xl gap-6 px-6 pb-32 sm:grid-cols-2">
