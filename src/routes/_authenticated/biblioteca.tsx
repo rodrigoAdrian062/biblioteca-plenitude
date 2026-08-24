@@ -299,6 +299,15 @@ function Library() {
           </div>
         </section>
 
+        <section className="mt-6 rounded-xl border border-primary/30 bg-primary/10 p-4 sm:p-5">
+          <div className="flex items-start gap-3 sm:items-center">
+            <Download className="mt-0.5 h-5 w-5 shrink-0 text-primary sm:mt-0" />
+            <p className="text-sm font-medium leading-relaxed text-foreground">
+              Precisa fazer o download de alguma obra? Entre em contato com o Mestre Bibliotecário{" "}
+              <span className="text-primary font-semibold">Ir∴ Menezes</span>.
+            </p>
+          </div>
+        </section>
 
         <section className="mt-6 space-y-6 rounded-2xl border border-border/40 bg-card/40 p-5 sm:p-6 backdrop-blur-sm shadow-xl shadow-black/20">
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_14rem_14rem]">
