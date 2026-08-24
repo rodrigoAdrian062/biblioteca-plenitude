@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { KeyRound, Layers } from "lucide-react";
+import { KeyRound, Layers, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
@@ -57,6 +57,13 @@ function Landing() {
           <Button asChild size="lg" className="h-12 px-8 rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95">
             <Link to="/auth">Entrar na biblioteca</Link>
           </Button>
+        </div>
+
+        <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-primary/30 bg-primary/10 px-5 py-3 text-sm text-foreground shadow-[0_0_20px_rgba(246,172,25,0.1)]">
+          <Download className="h-4 w-4 text-primary shrink-0" />
+          <span className="font-medium">
+            Precisa fazer o download de alguma obra? Entre em contato com o Mestre Bibliotecário <span className="text-primary font-semibold">Ir∴ Menezes</span>.
+          </span>
         </div>
       </section>
 
