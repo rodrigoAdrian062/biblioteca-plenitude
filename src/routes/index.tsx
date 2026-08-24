@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { KeyRound, Layers } from "lucide-react";
+import { KeyRound, Layers, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
