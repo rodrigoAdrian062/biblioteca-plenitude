@@ -9,6 +9,7 @@ import { listFavorites, toggleFavorite, listHistory, clearProgress } from "@/lib
 import { DEGREES, degreeLabel } from "@/lib/masonic";
 import { SCOPES, KINDS, catalogName } from "@/lib/catalog";
 import { BookGrid } from "@/features/library/BookGrid";
+import { AppFooter } from "@/components/AppFooter";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -705,6 +706,10 @@ function Library() {
         )}
 
       </main>
+
+      <div className="pb-20 sm:pb-0">
+        <AppFooter />
+      </div>
     </div>
   );
 }
