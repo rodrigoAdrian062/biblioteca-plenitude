@@ -3,6 +3,7 @@ import { KeyRound, Layers, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
+import { AppFooter } from "@/components/AppFooter";
 
 
 export const Route = createFileRoute("/")({
@@ -89,6 +90,8 @@ function Landing() {
           </div>
         ))}
       </section>
+
+      <AppFooter />
     </div>
   );
 }
